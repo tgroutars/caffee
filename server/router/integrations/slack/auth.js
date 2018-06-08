@@ -3,7 +3,13 @@ const axios = require('axios');
 const querystring = require('querystring');
 const SlackClient = require('@slack/client').WebClient;
 
-const { SlackWorkspace: SlackWorkspaceService } = require('../../../services');
+const {
+  Product: ProductService,
+  SlackInstall: SlackInstallService,
+  SlackUser: SlackUserService,
+  SlackWorkspace: SlackWorkspaceService,
+} = require('../../../services');
+const { getUserVals } = require('../../../integrations/slack/helpers/user');
 
 const SCOPES = [
   'channels:history',
@@ -54,12 +60,15 @@ router.get('/install/callback', async ctx => {
 
   const {
     access_token: accessToken,
-    authorizing_user: { /* user_id: slackUserId, */ app_home: appHome },
+    authorizing_user: { user_id: slackUserId, app_home: appHome },
     app_user_id: appUserId,
     app_id: appId,
   } = access;
 
   const slackClient = new SlackClient(accessToken);
+  const { user: userInfo } = await slackClient.users.info({
+    user: slackUserId,
+  });
   const { team: workspaceInfo } = await slackClient.team.info();
   const {
     id: workspaceSlackId,
@@ -68,7 +77,7 @@ router.get('/install/callback', async ctx => {
     domain,
   } = workspaceInfo;
 
-  await SlackWorkspaceService.findOrCreate({
+  const [workspace] = await SlackWorkspaceService.findOrCreate({
     accessToken,
     domain,
     appId,
@@ -76,6 +85,26 @@ router.get('/install/callback', async ctx => {
     slackId: workspaceSlackId,
     name: workspaceName,
     image: workspaceImage,
+  });
+
+  const userVals = getUserVals(userInfo);
+
+  const [slackUser] = await SlackUserService.findOrCreate({
+    ...userVals,
+    workspaceId: workspace.id,
+  });
+
+  const { user } = slackUser;
+
+  const product = await ProductService.create({
+    name: workspaceName,
+    image: workspaceImage,
+    ownerId: user.id,
+  });
+
+  await SlackInstallService.create({
+    productId: product.id,
+    workspaceId: workspace.id,
   });
 
   ctx.redirect(`https://slack.com/app_redirect?channel=${appHome}`);

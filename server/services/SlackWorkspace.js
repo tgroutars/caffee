@@ -1,6 +1,6 @@
 const { SlackWorkspace } = require('../models');
 
-module.exports = (/* services */) => ({
+const SlackWorkspaceService = (/* services */) => ({
   async findOrCreate({
     accessToken,
     appId,
@@ -23,3 +23,7 @@ module.exports = (/* services */) => ({
     });
   },
 });
+
+SlackWorkspaceService.key = 'SlackWorkspace';
+
+module.exports = SlackWorkspaceService;

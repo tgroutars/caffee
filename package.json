@@ -3,24 +3,33 @@
   "version": "0.0.1",
   "main": "server/server.js",
   "scripts": {
+    "db:migrate": "sequelize db:migrate",
+    "db:rollback": "sequelize db:migrate:undo",
+    "dev-server": "cross-env NODE_ENV=development nodemon -x \"node -r dotenv/config bin/www\"",
     "dev": "npm run dev-server",
-    "lint": "eslint --ext .js,.jsx server",
-    "lint:fix": "eslint --ext .js,.jsx --fix server",
-    "prettier": "prettier --write \"server/**/*.js\"",
     "format": "npm run prettier && npm run lint:fix",
-    "start": "node bin/www",
-    "dev-server": "cross-env NODE_ENV=development nodemon -x \"node -r dotenv/config bin/www\""
+    "lint:fix": "eslint --ext .js,.jsx --fix server",
+    "lint": "eslint --ext .js,.jsx server",
+    "migration:create": "sequelize migration:create",
+    "prettier": "prettier --write \"server/**/*.js\"",
+    "start": "node bin/www"
   },
   "repository": "https://github.com/tgroutars/caffee-old/settings",
   "license": "MIT",
   "dependencies": {
+    "@slack/client": "^4.3.1",
+    "axios": "^0.18.0",
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "koa-sendfile": "^2.0.0",
     "koa-sslify": "^2.1.2",
-    "koa-static": "^4.0.3"
+    "koa-static": "^4.0.3",
+    "lodash": "^4.17.10",
+    "pg": "^7.4.3",
+    "sequelize": "^4.37.10",
+    "sequelize-cli": "^4.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

@@ -54,5 +54,15 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
+  /**
+   * Associations
+   */
+  SlackWorkspace.associate = models => {
+    const { SlackInstall } = models;
+    SlackWorkspace.hasMany(SlackInstall, {
+      as: 'installs',
+      foreignKey: 'workspaceId',
+    });
+  };
   return SlackWorkspace;
 };

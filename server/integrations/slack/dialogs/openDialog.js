@@ -10,8 +10,8 @@ const openDialog = type => {
     throw new Error(`Unknown dialog type: ${type}`);
   }
 
-  return dialogOpts => {
-    const dialog = getDialog(dialogOpts);
+  return dialogArgs => {
+    const dialog = getDialog(dialogArgs);
 
     return async ({ accessToken, triggerId }) => {
       dialog.callback_id = await callbackIdStore.set(dialog.callback_id);

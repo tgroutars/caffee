@@ -1,5 +1,5 @@
 const { SlackWorkspace } = require('../../../models');
-const openDialog = require('../dialogs/openDialog');
+const { openDialog } = require('../dialogs');
 
 const openIssueDialog = openDialog('new_issue');
 

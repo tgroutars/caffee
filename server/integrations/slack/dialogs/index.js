@@ -10,8 +10,8 @@ const openDialog = type => {
     throw new Error(`Unknown dialog type: ${type}`);
   }
 
-  return dialogArgs => {
-    const dialog = getDialog(dialogArgs);
+  return (...dialogArgs) => {
+    const dialog = getDialog(...dialogArgs);
 
     return async ({ accessToken, triggerId }) => {
       dialog.callback_id = await callbackIdStore.set(dialog.callback_id);
@@ -26,4 +26,4 @@ const openDialog = type => {
   };
 };
 
-module.exports = openDialog;
+module.exports = { openDialog };

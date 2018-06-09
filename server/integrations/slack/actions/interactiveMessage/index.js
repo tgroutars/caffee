@@ -1,0 +1,33 @@
+const ObjectStore = require('../../../../lib/redis/ObjectStore');
+const interactions = require('./interactions');
+
+const actionValueStore = new ObjectStore('slack:action_value');
+
+/**
+ * Retrieve action value from Redis
+ */
+const preProcessPayload = async payload => {
+  const {
+    actions: [action],
+  } = payload;
+  return {
+    ...payload,
+    action: {
+      ...action,
+      value: action.value && (await actionValueStore.get(action.value)),
+    },
+  };
+};
+
+const interactiveMessage = async rawPayload => {
+  const payload = await preProcessPayload(rawPayload);
+  const { action } = payload;
+  const interaction = interactions[action.name];
+  if (typeof interaction !== 'function') {
+    throw new Error(`Unknow interaction: ${action.name}`);
+  }
+
+  await interaction(payload);
+};
+
+module.exports = interactiveMessage;

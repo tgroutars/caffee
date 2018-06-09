@@ -11,11 +11,13 @@ const openDialog = type => {
   }
 
   return (...dialogArgs) => {
-    const dialog = getDialog(...dialogArgs);
+    const rawDialog = getDialog(...dialogArgs);
 
     return async ({ accessToken, triggerId }) => {
-      dialog.callback_id = await callbackIdStore.set(dialog.callback_id);
-
+      const dialog = {
+        ...rawDialog,
+        callback_id: await callbackIdStore.set(rawDialog.callback_id),
+      };
       const slackClient = new SlackClient(accessToken);
       const dialogJSON = JSON.stringify(dialog);
       return slackClient.dialog.open({

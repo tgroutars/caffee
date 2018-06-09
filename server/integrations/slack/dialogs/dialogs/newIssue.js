@@ -1,4 +1,4 @@
-const newIssue = ({ description, productId }) => {
+const newIssue = ({ productId, description = '' }) => {
   const callbackId = {
     type: 'new_issue',
     productId,

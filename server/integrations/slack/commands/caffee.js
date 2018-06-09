@@ -1,26 +1,41 @@
-const { SlackWorkspace } = require('../../../models');
+const uniqBy = require('lodash/uniqBy');
+
+const { Product, SlackWorkspace } = require('../../../models');
 const { openDialog } = require('../dialogs');
+const { postEphemeral } = require('../messages');
 
 const openIssueDialog = openDialog('new_issue');
+const sendChooseProductMessage = postEphemeral('feedback_choose_product');
 
 const caffee = async ({
   workspaceSlackId,
   triggerId,
-  // channel,
-  // userSlackId,
+  channel,
+  userSlackId,
 }) => {
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
     include: ['installs'],
   });
-  const { installs, accessToken } = workspace;
+  const { accessToken } = workspace;
+
+  const installs = uniqBy(workspace.installs, ({ productId }) => productId);
 
   if (!installs.length) {
     return;
   }
 
-  // TODO: handle several possible installs
   if (installs.length > 1) {
+    const products = await Product.findAll({
+      where: {
+        id: installs.map(({ productId }) => productId),
+      },
+    });
+    await sendChooseProductMessage({ products })({
+      accessToken,
+      channel,
+      user: userSlackId,
+    });
     return;
   }
 

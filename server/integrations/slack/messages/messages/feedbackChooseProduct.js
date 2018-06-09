@@ -3,7 +3,7 @@ const feedbackChooseProduct = ({ products }) => {
   const actions = products.map(product => ({
     type: 'button',
     text: product.name,
-    name: 'open_issue_dialog',
+    name: 'open_feedback_dialog',
     value: {
       productId: product.id,
     },

@@ -4,7 +4,7 @@ const { Product, SlackWorkspace } = require('../../../models');
 const { openDialog } = require('../dialogs');
 const { postEphemeral } = require('../messages');
 
-const openIssueDialog = openDialog('new_issue');
+const openFeedbackDialog = openDialog('feedback');
 const sendChooseProductMessage = postEphemeral('feedback_choose_product');
 
 const caffee = async ({
@@ -41,7 +41,7 @@ const caffee = async ({
 
   const install = installs[0];
   const { productId } = install;
-  await openIssueDialog({ productId })({ accessToken, triggerId });
+  await openFeedbackDialog({ productId })({ accessToken, triggerId });
 };
 
 module.exports = caffee;

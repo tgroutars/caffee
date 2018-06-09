@@ -1,5 +1,5 @@
-const newIssue = require('./newIssue');
+const feedback = require('./feedback');
 
 module.exports = {
-  new_issue: newIssue,
+  feedback,
 };

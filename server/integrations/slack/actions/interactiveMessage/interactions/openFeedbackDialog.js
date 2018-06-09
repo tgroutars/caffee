@@ -1,9 +1,9 @@
 const { SlackWorkspace } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 
-const openNewIssueDialog = openDialog('new_issue');
+const openFeedbackDialogHelper = openDialog('feedback');
 
-const openIssueDialog = async payload => {
+const openFeedbackDialog = async payload => {
   const {
     team: { id: workspaceSlackId },
     trigger_id: triggerId,
@@ -16,7 +16,7 @@ const openIssueDialog = async payload => {
   });
   const { accessToken } = workspace;
 
-  await openNewIssueDialog({ productId })({ accessToken, triggerId });
+  await openFeedbackDialogHelper({ productId })({ accessToken, triggerId });
 };
 
-module.exports = openIssueDialog;
+module.exports = openFeedbackDialog;

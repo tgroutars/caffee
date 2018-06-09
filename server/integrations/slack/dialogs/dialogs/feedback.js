@@ -1,6 +1,6 @@
-const newIssue = ({ productId, description = '' }) => {
+const feedback = ({ productId, description = '' }) => {
   const callbackId = {
-    type: 'new_issue',
+    type: 'feedback',
     productId,
   };
 
@@ -23,4 +23,4 @@ const newIssue = ({ productId, description = '' }) => {
   };
 };
 
-module.exports = newIssue;
+module.exports = feedback;

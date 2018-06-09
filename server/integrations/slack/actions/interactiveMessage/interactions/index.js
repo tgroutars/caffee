@@ -1,5 +1,5 @@
-const openIssueDialog = require('./openIssueDialog');
+const openFeedbackDialog = require('./openFeedbackDialog');
 
 module.exports = {
-  open_issue_dialog: openIssueDialog,
+  open_feedback_dialog: openFeedbackDialog,
 };

@@ -36,5 +36,16 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
+  /**
+   * Associations
+   */
+  User.associate = models => {
+    const { SlackUser } = models;
+    User.hasMany(SlackUser, {
+      as: 'slackUsers',
+      foreignKey: 'userId',
+    });
+  };
+
   return User;
 };

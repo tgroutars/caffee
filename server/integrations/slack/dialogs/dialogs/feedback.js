@@ -11,7 +11,7 @@ const feedback = ({ productId, description = '' }) => {
       type: 'textarea',
       value: description,
       max_length: 3000, // Maximum imposed by Slack
-      optional: true,
+      optional: false,
     },
   ];
 

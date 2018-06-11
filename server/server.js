@@ -9,7 +9,10 @@ const koaLogger = require('koa-logger');
 const koaBodyParser = require('koa-bodyparser');
 const koaStatic = require('koa-static');
 
+const { init: initEventListeners } = require('./eventQueue/listeners');
 const router = require('./router');
+
+initEventListeners();
 
 const app = new Koa();
 

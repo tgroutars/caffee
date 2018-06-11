@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     const { SlackWorkspace, Product } = models;
     SlackInstall.belongsTo(SlackWorkspace, {
       as: 'workspace',
-      foreignKey: 'workspace_id',
+      foreignKey: 'workspaceId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });

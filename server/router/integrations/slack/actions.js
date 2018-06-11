@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const Boom = require('boom');
+const winston = require('winston');
 
 const { handleAction } = require('../../../integrations/slack/actions');
 
@@ -23,8 +24,7 @@ const verifyToken = async (ctx, next) => {
 router.use(parsePayload, verifyToken);
 
 router.post('/', async ctx => {
-  await handleAction(ctx.state.payload);
-  ctx.body = '';
+  ctx.body = await handleAction(ctx.state.payload);
 });
 
 module.exports = router;

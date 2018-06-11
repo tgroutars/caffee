@@ -1,3 +1,4 @@
+const { SlackDialogSubmissionError } = require('../../../../lib/errors');
 const ObjectStore = require('../../../../lib/redis/ObjectStore');
 const dialogs = require('./dialogs');
 
@@ -18,7 +19,16 @@ const dialogSubmission = async rawPayload => {
   if (typeof dialog !== 'function') {
     throw new Error(`Unknown dialog submission type: ${type}`);
   }
-  await dialog(payload);
+
+  try {
+    await dialog(payload);
+  } catch (err) {
+    if (err instanceof SlackDialogSubmissionError) {
+      return { errors: err.errors };
+    }
+    throw err;
+  }
+  return null;
 };
 
 module.exports = dialogSubmission;

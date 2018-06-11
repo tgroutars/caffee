@@ -29,11 +29,14 @@
     "koa-sendfile": "^2.0.0",
     "koa-sslify": "^2.1.2",
     "koa-static": "^4.0.3",
+    "kue": "^0.11.6",
     "lodash": "^4.17.10",
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.37.10",
-    "sequelize-cli": "^4.0.0"
+    "sequelize-cli": "^4.0.0",
+    "uuid": "^3.2.1",
+    "winston": "^2.4.2"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

@@ -102,6 +102,8 @@ router.get('/install/callback', async ctx => {
     ownerId: user.id,
   });
 
+  await product.addUser(user);
+
   await SlackInstallService.create({
     productId: product.id,
     workspaceId: workspace.id,

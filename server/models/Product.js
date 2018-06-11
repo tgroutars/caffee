@@ -27,13 +27,19 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   Product.associate = models => {
-    const { User } = models;
+    const { User, ProductUser } = models;
 
     Product.belongsTo(User, {
       as: 'owner',
       onDelete: 'restrict',
       onUpdate: 'restrict',
       foreignKey: 'ownerId',
+    });
+    Product.belongsToMany(User, {
+      as: 'users',
+      through: ProductUser,
+      foreignKey: 'productId',
+      otherKey: 'userId',
     });
   };
 

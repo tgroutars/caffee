@@ -1,8 +1,8 @@
 const { SlackDialogSubmissionError } = require('../../../../lib/errors');
-const ObjectStore = require('../../../../lib/redis/ObjectStore');
+const HashStore = require('../../../../lib/redis/HashStore');
 const dialogs = require('./dialogs');
 
-const callbackIdStore = new ObjectStore('slack:callback_id');
+const callbackIdStore = new HashStore('slack:callback_id');
 
 /**
  * Retrieve action value from Redis

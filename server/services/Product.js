@@ -8,6 +8,16 @@ const ProductService = (/* services */) => ({
       ownerId,
     });
   },
+
+  async setTrelloTokens(productId, { accessToken, accessTokenSecret }) {
+    return Product.update(
+      {
+        trelloAccessToken: accessToken,
+        trelloAccessTokenSecret: accessTokenSecret,
+      },
+      { where: { id: productId } },
+    );
+  },
 });
 
 ProductService.key = 'Product';

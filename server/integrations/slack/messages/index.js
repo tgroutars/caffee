@@ -2,9 +2,9 @@ const SlackClient = require('@slack/client').WebClient;
 const Promise = require('bluebird');
 
 const messages = require('./messages');
-const ObjectStore = require('../../../lib/redis/ObjectStore');
+const HashStore = require('../../../lib/redis/HashStore');
 
-const actionValueStore = new ObjectStore('slack:action_value');
+const actionValueStore = new HashStore('slack:action_value');
 
 /**
  * Store message action values in Redis
@@ -17,7 +17,7 @@ const preProcessMessage = async rawMessage => ({
       ...attachment,
       actions: await Promise.map(attachment.actions || [], async action => ({
         ...action,
-        value: await actionValueStore.set(action.value),
+        value: action.value && (await actionValueStore.set(action.value)),
       })),
     }),
   ),

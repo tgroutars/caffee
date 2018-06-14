@@ -1,7 +1,7 @@
-const ObjectStore = require('../../../../lib/redis/ObjectStore');
+const HashStore = require('../../../../lib/redis/HashStore');
 const interactions = require('./interactions');
 
-const actionValueStore = new ObjectStore('slack:action_value');
+const actionValueStore = new HashStore('slack:action_value');
 
 /**
  * Retrieve action value from Redis

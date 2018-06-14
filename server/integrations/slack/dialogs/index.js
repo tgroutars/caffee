@@ -1,8 +1,8 @@
 const SlackClient = require('@slack/client').WebClient;
 const dialogs = require('./dialogs');
-const ObjectStore = require('../../../lib/redis/ObjectStore');
+const HashStore = require('../../../lib/redis/HashStore');
 
-const callbackIdStore = new ObjectStore('slack:callback_id');
+const callbackIdStore = new HashStore('slack:callback_id');
 
 const openDialog = type => {
   const getDialog = dialogs[type];

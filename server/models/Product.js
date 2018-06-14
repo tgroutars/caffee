@@ -19,6 +19,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         field: 'owner_id',
       },
+      trelloBoardId: {
+        type: DataTypes.STRING,
+        field: 'trello_board_id',
+      },
+      trelloAccessToken: {
+        type: DataTypes.STRING,
+        field: 'trello_access_token',
+      },
+      trelloAccessTokenSecret: {
+        type: DataTypes.STRING,
+        field: 'trello_access_token_secret',
+      },
     },
     {},
   );

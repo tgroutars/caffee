@@ -15,7 +15,7 @@ const openBacklogItemDialog = async payload => {
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });
-  const { accessToken, appUserId } = workspace;
+  const { accessToken, appUserId, domain } = workspace;
 
   const { feedbackId } = action.value;
   const feedback = await Feedback.findById(feedbackId, {
@@ -24,7 +24,7 @@ const openBacklogItemDialog = async payload => {
   const { product } = feedback;
 
   if (!product.trelloAccessToken) {
-    const returnTo = `https://slack.com/app_redirect?channel=${appUserId}`;
+    const returnTo = `https://${domain}.slack.com/app_redirect?channel=${appUserId}`;
     const installURL = await getInstallURL(product.id, { returnTo });
     await postInstallTrelloMessage({ installURL })({
       accessToken,

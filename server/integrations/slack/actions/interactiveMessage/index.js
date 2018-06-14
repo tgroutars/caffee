@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 const HashStore = require('../../../../lib/redis/HashStore');
 const interactions = require('./interactions');
 
@@ -15,6 +17,12 @@ const preProcessPayload = async payload => {
     action: {
       ...action,
       value: action.value && (await actionValueStore.get(action.value)),
+      selected_options:
+        action.selected_options &&
+        (await Promise.map(action.selected_options, async option => ({
+          ...option,
+          value: option.value && (await actionValueStore.get(option.value)),
+        }))),
     },
   };
 };

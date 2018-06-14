@@ -23,6 +23,13 @@ const ProductService = (/* services */) => ({
     );
     await trigger('trello_installed', { productId, installer });
   },
+
+  async setTrelloBoard(productId, boardId) {
+    await Product.update(
+      { trelloBoardId: boardId },
+      { where: { id: productId } },
+    );
+  },
 });
 
 ProductService.key = 'Product';

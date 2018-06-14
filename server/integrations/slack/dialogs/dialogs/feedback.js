@@ -1,4 +1,4 @@
-const feedback = ({ productId, description = '' }) => {
+const feedback = ({ productId, defaultFeedback = '' }) => {
   const callbackId = {
     type: 'feedback',
     productId,
@@ -9,7 +9,7 @@ const feedback = ({ productId, description = '' }) => {
       label: 'Description',
       name: 'description',
       type: 'textarea',
-      value: description,
+      value: defaultFeedback,
       max_length: 3000, // Maximum imposed by Slack
       optional: false,
     },

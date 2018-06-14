@@ -10,13 +10,16 @@ const openFeedbackDialog = async payload => {
     action,
   } = payload;
 
-  const { productId } = action.value;
+  const { productId, defaultFeedback } = action.value;
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });
   const { accessToken } = workspace;
 
-  await openFeedbackDialogHelper({ productId })({ accessToken, triggerId });
+  await openFeedbackDialogHelper({ productId, defaultFeedback })({
+    accessToken,
+    triggerId,
+  });
 };
 
 module.exports = openFeedbackDialog;

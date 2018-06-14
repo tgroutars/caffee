@@ -1,7 +1,18 @@
-const openFeedbackDialog = require('./openFeedbackDialog');
-const openBacklogItemDialog = require('./openBacklogItemDialog');
+/* eslint-disable global-require,import/no-dynamic-require */
 
-module.exports = {
-  open_feedback_dialog: openFeedbackDialog,
-  open_backlog_item_dialog: openBacklogItemDialog,
-};
+const fs = require('fs');
+const path = require('path');
+
+const interactions = {};
+
+const basename = path.basename(module.filename);
+
+fs.readdirSync(__dirname)
+  .filter(file => file.indexOf('.') !== 0 && file !== basename)
+  .forEach(file => {
+    const interaction = require(`./${file}`);
+    const type = file.split('.')[0];
+    interactions[type] = interaction;
+  });
+
+module.exports = interactions;

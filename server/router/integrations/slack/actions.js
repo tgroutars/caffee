@@ -1,6 +1,5 @@
 const Router = require('koa-router');
 const Boom = require('boom');
-const winston = require('winston');
 
 const { handleAction } = require('../../../integrations/slack/actions');
 

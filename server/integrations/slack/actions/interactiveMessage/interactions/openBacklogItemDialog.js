@@ -1,4 +1,8 @@
-const { Feedback, SlackWorkspace } = require('../../../../../models');
+const {
+  Feedback,
+  SlackWorkspace,
+  SlackUser,
+} = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 
@@ -9,7 +13,7 @@ const openBacklogItemDialog = async payload => {
     team: { id: workspaceSlackId },
     action,
     channel: { id: channel },
-    user: { id: user },
+    user: { id: userSlackId },
   } = payload;
 
   const workspace = await SlackWorkspace.find({
@@ -23,13 +27,21 @@ const openBacklogItemDialog = async payload => {
   });
   const { product } = feedback;
 
+  const slackUser = await SlackUser.find({
+    where: { slackId: userSlackId, workspaceId: workspace.id },
+  });
+
   if (!product.trelloAccessToken) {
     const returnTo = `https://${domain}.slack.com/app_redirect?channel=${appUserId}`;
-    const installURL = await getInstallURL(product.id, { returnTo });
+    const installURL = await getInstallURL(product.id, {
+      returnTo,
+      userId: slackUser.userId,
+      workspaceId: workspace.id,
+    });
     await postInstallTrelloMessage({ installURL })({
       accessToken,
       channel,
-      user,
+      user: userSlackId,
     });
   }
 

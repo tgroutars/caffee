@@ -1,4 +1,5 @@
 const { Product } = require('../models');
+const { trigger } = require('../eventQueue/eventQueue');
 
 const ProductService = (/* services */) => ({
   async create({ name, image, ownerId }) {
@@ -9,14 +10,18 @@ const ProductService = (/* services */) => ({
     });
   },
 
-  async setTrelloTokens(productId, { accessToken, accessTokenSecret }) {
-    return Product.update(
+  async setTrelloTokens(
+    productId,
+    { accessToken, accessTokenSecret, installer },
+  ) {
+    await Product.update(
       {
         trelloAccessToken: accessToken,
         trelloAccessTokenSecret: accessTokenSecret,
       },
       { where: { id: productId } },
     );
+    await trigger('trello_installed', { productId, installer });
   },
 });
 

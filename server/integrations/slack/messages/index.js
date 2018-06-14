@@ -18,6 +18,12 @@ const preProcessMessage = async rawMessage => ({
       actions: await Promise.map(attachment.actions || [], async action => ({
         ...action,
         value: action.value && (await actionValueStore.set(action.value)),
+        options:
+          action.options &&
+          (await Promise.map(action.options, async option => ({
+            ...option,
+            value: option.value && (await actionValueStore.set(option.value)),
+          }))),
       })),
     }),
   ),
@@ -25,6 +31,10 @@ const preProcessMessage = async rawMessage => ({
 
 const getPostMessage = isEphemeral => type => {
   const getMessage = messages[type];
+  if (!getMessage) {
+    throw new Error(`Unknown message: ${type}`);
+  }
+
   const method = isEphemeral ? 'chat.postEphemeral' : 'chat.postMessage';
 
   return (...messageArgs) => {

@@ -14,15 +14,21 @@ router.get('/install/callback', async ctx => {
   }
 
   const {
-    productId,
     accessToken,
     accessTokenSecret,
+    productId,
     returnTo,
+    userId,
+    workspaceId,
   } = await getAccessToken(oauthToken, oauthVerifier);
 
   await ProductService.setTrelloTokens(productId, {
     accessToken,
     accessTokenSecret,
+    installer: {
+      userId,
+      workspaceId,
+    },
   });
 
   await ctx.redirect(returnTo);

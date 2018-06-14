@@ -58,10 +58,16 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   SlackWorkspace.associate = models => {
-    const { SlackInstall } = models;
+    const { SlackInstall, Product } = models;
     SlackWorkspace.hasMany(SlackInstall, {
       as: 'installs',
       foreignKey: 'workspaceId',
+    });
+    SlackWorkspace.belongsToMany(Product, {
+      as: 'products',
+      through: SlackInstall,
+      foreignKey: 'workspaceId',
+      otherKey: 'productId',
     });
   };
   return SlackWorkspace;

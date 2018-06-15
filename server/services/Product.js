@@ -1,5 +1,10 @@
-const { Product } = require('../models');
+const Promise = require('bluebird');
+
+const { Product, BacklogItem, Sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
+const { listCards } = require('../integrations/trello/helpers/api');
+
+const { Op } = Sequelize;
 
 const ProductService = (/* services */) => ({
   async create({ name, image, ownerId }) {
@@ -29,6 +34,27 @@ const ProductService = (/* services */) => ({
       { trelloBoardId: boardId },
       { where: { id: productId } },
     );
+    await trigger('product_trello_board_changed', { productId });
+  },
+
+  async syncTrelloBoard(product) {
+    const { trelloAccessToken, trelloBoardId } = product;
+    const cards = await listCards(trelloAccessToken, {
+      boardId: trelloBoardId,
+    });
+    const trelloRefs = cards.map(({ id }) => id);
+    await BacklogItem.destroy({
+      where: { trelloRef: { [Op.notIn]: trelloRefs } },
+    });
+    await Promise.map(cards, async ({ idList, name, desc, id }) => {
+      BacklogItem.create({
+        productId: product.id,
+        trelloRef: id,
+        trelloListRef: idList,
+        title: name,
+        description: desc,
+      });
+    });
   },
 });
 

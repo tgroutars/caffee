@@ -12,6 +12,7 @@ const caffee = async ({
   triggerId,
   channel,
   userSlackId,
+  text,
 }) => {
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
@@ -31,7 +32,7 @@ const caffee = async ({
         id: installs.map(({ productId }) => productId),
       },
     });
-    await postChooseProductMessage({ products })({
+    await postChooseProductMessage({ products, defaultFeedback: text })({
       accessToken,
       channel,
       user: userSlackId,
@@ -41,7 +42,10 @@ const caffee = async ({
 
   const install = installs[0];
   const { productId } = install;
-  await openFeedbackDialog({ productId })({ accessToken, triggerId });
+  await openFeedbackDialog({ productId, defaultFeedback: text })({
+    accessToken,
+    triggerId,
+  });
 };
 
 module.exports = caffee;

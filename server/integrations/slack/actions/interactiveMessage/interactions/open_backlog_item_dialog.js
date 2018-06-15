@@ -5,15 +5,18 @@ const {
 } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
-const { listBoards } = require('../../../../trello/helpers/api');
+const { openDialog } = require('../../../dialogs');
+const { listBoards, listLists } = require('../../../../trello/helpers/api');
 
+const openBacklogItemDialogHelper = openDialog('backlog_item');
 const postInstallTrelloMessage = postEphemeral('install_trello');
 const postChooseBoardMessage = postEphemeral('choose_board');
 
 const openBacklogItemDialog = async payload => {
   const {
-    team: { id: workspaceSlackId },
     action,
+    trigger_id: triggerId,
+    team: { id: workspaceSlackId },
     channel: { id: channel },
     user: { id: userSlackId },
   } = payload;
@@ -59,6 +62,19 @@ const openBacklogItemDialog = async payload => {
     });
     return;
   }
+
+  const lists = await listLists(product.trelloAccessToken, {
+    boardId: product.trelloBoardId,
+  });
+  await openBacklogItemDialogHelper({
+    lists,
+    feedbackId,
+    productId: product.id,
+    defaultDescription: feedback.description,
+  })({
+    accessToken,
+    triggerId,
+  });
 };
 
 module.exports = openBacklogItemDialog;

@@ -30,7 +30,26 @@ const listBoards = async accessToken => {
   }));
 };
 
+const listLists = async (accessToken, { boardId }) => {
+  const lists = await makeRequest(accessToken, {
+    url: `/boards/${boardId}/lists`,
+    method: 'GET',
+  });
+  return lists.map(({ id, name }) => ({ id, name }));
+};
+
+const createCard = async (accessToken, { listId, title, description }) => {
+  const card = await makeRequest(accessToken, {
+    url: '/cards',
+    method: 'POST',
+    data: { name: title, idList: listId, desc: description },
+  });
+  return card;
+};
+
 module.exports = {
   makeRequest,
   listBoards,
+  listLists,
+  createCard,
 };

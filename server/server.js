@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(koaBodyParser());
 
 // Routes
-app.use(router.routes());
+app.use(router.routes(), router.allowedMethods());
 
 const server = http.createServer(app.callback());
 

@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'trello_list_ref',
       },
+      trelloWebhookRef: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'trello_webhook_ref',
+      },
     },
     {
       indexes: [

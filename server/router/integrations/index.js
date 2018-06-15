@@ -5,7 +5,7 @@ const trelloRouter = require('./trello');
 
 const router = new Router();
 
-router.use('/slack', slackRouter.routes());
-router.use('/trello', trelloRouter.routes());
+router.use('/slack', slackRouter.routes(), slackRouter.allowedMethods());
+router.use('/trello', trelloRouter.routes(), trelloRouter.allowedMethods());
 
 module.exports = router;

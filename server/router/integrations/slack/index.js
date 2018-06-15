@@ -7,9 +7,13 @@ const commandsRouter = require('./commands');
 
 const router = new Router();
 
-router.use('/auth', authRouter.routes());
-router.use('/actions', actionsRouter.routes());
-router.use('/events', eventsRouter.routes());
-router.use('/commands', commandsRouter.routes());
+router.use('/auth', authRouter.routes(), authRouter.allowedMethods());
+router.use('/actions', actionsRouter.routes(), actionsRouter.allowedMethods());
+router.use('/events', eventsRouter.routes(), eventsRouter.allowedMethods());
+router.use(
+  '/commands',
+  commandsRouter.routes(),
+  commandsRouter.allowedMethods(),
+);
 
 module.exports = router;

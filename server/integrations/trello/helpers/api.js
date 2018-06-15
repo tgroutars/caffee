@@ -1,12 +1,17 @@
 const axios = require('axios');
 
-const apiKey = process.env.TRELLO_API_KEY;
+const { TRELLO_API_KEY } = process.env;
+const EXTERNAL_BASE_URL = process.env.EXTERNAL_BASE_URL || process.env.BASE_URL;
+const WEBHOOK_URL = `${EXTERNAL_BASE_URL}/integrations/trello/webhook`;
 
 const makeRequest = async (
   accessToken,
   { url, method = 'GET', data, params = {} },
 ) => {
-  const allParams = Object.assign({ token: accessToken, key: apiKey }, params);
+  const allParams = Object.assign(
+    { token: accessToken, key: TRELLO_API_KEY },
+    params,
+  );
 
   const response = await axios({
     url,
@@ -55,10 +60,28 @@ const createCard = async (accessToken, { listId, title, description }) => {
   return card;
 };
 
+const createWebhook = async (accessToken, { modelId }) => {
+  const webhook = await makeRequest(accessToken, {
+    url: '/webhooks',
+    method: 'POST',
+    data: { idModel: modelId, callbackURL: WEBHOOK_URL },
+  });
+  return webhook;
+};
+
+const destroyWebhook = async (accessToken, { webhookId }) => {
+  await makeRequest(accessToken, {
+    url: `/webhooks/${webhookId}`,
+    method: 'DELETE',
+  });
+};
+
 module.exports = {
   makeRequest,
   listBoards,
   listLists,
   createCard,
   listCards,
+  createWebhook,
+  destroyWebhook,
 };

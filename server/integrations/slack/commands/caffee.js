@@ -5,7 +5,7 @@ const { openDialog } = require('../dialogs');
 const { postEphemeral } = require('../messages');
 
 const openFeedbackDialog = openDialog('feedback');
-const sendChooseProductMessage = postEphemeral('feedback_choose_product');
+const postChooseProductMessage = postEphemeral('feedback_choose_product');
 
 const caffee = async ({
   workspaceSlackId,
@@ -31,7 +31,7 @@ const caffee = async ({
         id: installs.map(({ productId }) => productId),
       },
     });
-    await sendChooseProductMessage({ products })({
+    await postChooseProductMessage({ products })({
       accessToken,
       channel,
       user: userSlackId,

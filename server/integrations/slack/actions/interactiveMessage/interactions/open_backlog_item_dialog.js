@@ -5,8 +5,10 @@ const {
 } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
+const { listBoards } = require('../../../../trello/helpers/api');
 
 const postInstallTrelloMessage = postEphemeral('install_trello');
+const postChooseBoardMessage = postEphemeral('choose_board');
 
 const openBacklogItemDialog = async payload => {
   const {
@@ -45,8 +47,18 @@ const openBacklogItemDialog = async payload => {
     });
   }
 
-  // TODO: handle set board
-  // TODO: handle create backlog item
+  if (!product.trelloBoardId) {
+    const boards = await listBoards(product.trelloAccessToken);
+    await postChooseBoardMessage({
+      product,
+      boards,
+    })({
+      accessToken,
+      channel,
+      user: userSlackId,
+    });
+    return;
+  }
 };
 
 module.exports = openBacklogItemDialog;

@@ -48,6 +48,7 @@ const ProductService = (/* services */) => ({
       boardId: trelloBoardId,
     });
 
+    // Remove old backlog items + webhooks
     const oldBacklogItems = await BacklogItem.findAll({
       where: { productId: product.id },
     });
@@ -58,12 +59,12 @@ const ProductService = (/* services */) => ({
         });
       }
     });
-
     const newTrelloRefs = cards.map(({ id }) => id);
-    await BacklogItem.destroy({
+    await oldBacklogItems.destroy({
       where: { trelloRef: { [Op.notIn]: newTrelloRefs } },
     });
 
+    // Add new items
     await Promise.map(cards, async ({ idList, name, desc, id }) => {
       const webhook = await createWebhook(trelloAccessToken, { modelId: id });
       await BacklogItem.create({

@@ -10,7 +10,8 @@ fs.readdirSync(__dirname)
   .filter(file => file.indexOf('.') !== 0 && file !== basename)
   .forEach(file => {
     const Service = require(`./${file}`);
-    services[Service.key] = Service(services);
+    const key = file.split('.')[0];
+    services[key] = Service(services);
   });
 
 module.exports = services;

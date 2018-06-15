@@ -21,6 +21,4 @@ const SlackUserService = (/* services */) => ({
   },
 });
 
-SlackUserService.key = 'SlackUser';
-
 module.exports = SlackUserService;

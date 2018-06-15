@@ -32,6 +32,4 @@ const ProductService = (/* services */) => ({
   },
 });
 
-ProductService.key = 'Product';
-
 module.exports = ProductService;

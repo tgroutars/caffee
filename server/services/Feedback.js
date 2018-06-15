@@ -15,6 +15,4 @@ const FeedbackService = (/* services */) => ({
   },
 });
 
-FeedbackService.key = 'Feedback';
-
 module.exports = FeedbackService;

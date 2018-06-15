@@ -10,6 +10,4 @@ const SlackInstallService = (/* services */) => ({
   },
 });
 
-SlackInstallService.key = 'SlackInstall';
-
 module.exports = SlackInstallService;

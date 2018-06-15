@@ -24,6 +24,4 @@ const SlackWorkspaceService = (/* services */) => ({
   },
 });
 
-SlackWorkspaceService.key = 'SlackWorkspace';
-
 module.exports = SlackWorkspaceService;

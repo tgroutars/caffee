@@ -13,6 +13,10 @@ const FeedbackService = (/* services */) => ({
 
     return feedback;
   },
+
+  async setBacklogItem(feedbackId, { backlogItemId }) {
+    await Feedback.update({ backlogItemId }, { where: { id: feedbackId } });
+  },
 });
 
 module.exports = FeedbackService;

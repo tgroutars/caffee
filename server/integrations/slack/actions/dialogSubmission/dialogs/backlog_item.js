@@ -2,7 +2,10 @@ const trim = require('lodash/trim');
 
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 const registerBackgroundTask = require('../../../../../lib/queue/registerBackgroundTask');
-const { BacklogItem: BacklogItemService } = require('../../../../../services');
+const {
+  BacklogItem: BacklogItemService,
+  Feedback: FeedbackService,
+} = require('../../../../../services');
 
 const createBacklogItemBG = registerBackgroundTask(
   async ({ productId, title, description, feedbackId, trelloListRef }) => {
@@ -12,7 +15,11 @@ const createBacklogItemBG = registerBackgroundTask(
       productId,
       trelloListRef,
     });
-    // TODO: associate feedback to backlog item
+
+    await FeedbackService.setBacklogItem(feedbackId, {
+      backlogItemId: backlogItem.id,
+    });
+
     return backlogItem;
   },
 );

@@ -1,5 +1,6 @@
 const dialogSubmission = require('./dialogSubmission');
 const interactiveMessage = require('./interactiveMessage');
+const messageAction = require('./messageAction');
 
 const handleAction = async payload => {
   switch (payload.type) {
@@ -7,6 +8,8 @@ const handleAction = async payload => {
       return interactiveMessage(payload);
     case 'dialog_submission':
       return dialogSubmission(payload);
+    case 'message_action':
+      return messageAction(payload);
     default:
       throw new Error(`Unknown action type: ${payload.type}`);
   }

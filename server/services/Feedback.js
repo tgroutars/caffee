@@ -1,4 +1,4 @@
-const { Feedback } = require('../models');
+const { Feedback, sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
 const FeedbackService = (/* services */) => ({
@@ -16,6 +16,13 @@ const FeedbackService = (/* services */) => ({
 
   async setBacklogItem(feedbackId, { backlogItemId }) {
     await Feedback.update({ backlogItemId }, { where: { id: feedbackId } });
+  },
+
+  async archive(feedbackId, { archiveReason }) {
+    await Feedback.update(
+      { archivedAt: sequelize.fn('NOW'), archiveReason },
+      { where: { id: feedbackId } },
+    );
   },
 });
 

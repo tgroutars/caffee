@@ -25,6 +25,16 @@ module.exports = (sequelize, DataTypes) => {
       field: 'backlog_item_id',
       allowNull: true,
     },
+    archivedAt: {
+      type: DataTypes.DATE,
+      field: 'archived_at',
+      allowNull: true,
+    },
+    archiveReason: {
+      type: DataTypes.TEXT,
+      field: 'archive_reason',
+      allowNull: true,
+    },
   });
 
   /**

@@ -14,6 +14,15 @@ const newFeedback = ({ feedback, product }) => ({
           text: 'New backlog item',
           style: 'primary',
         },
+        {
+          type: 'button',
+          name: 'archive_feedback',
+          value: {
+            feedbackId: feedback.id,
+          },
+          text: 'Archive',
+          style: 'danger',
+        },
       ],
     },
   ],

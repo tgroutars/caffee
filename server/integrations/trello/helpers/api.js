@@ -22,6 +22,7 @@ const listBoards = async accessToken => {
   const boards = await makeRequest(accessToken, {
     url: '/members/me/boards',
     method: 'GET',
+    params: { filter: 'open' },
   });
   return boards.map(({ name, id }) => ({
     name,

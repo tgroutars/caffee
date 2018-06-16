@@ -12,11 +12,15 @@ const preProcessPayload = async payload => {
   const {
     actions: [action],
   } = payload;
+  const name = await actionValueStore.get(action.name);
+  if (!name) {
+    throw new Error('This action has expired');
+  }
   return {
     ...payload,
     action: {
       ...action,
-      name: action.name && (await actionValueStore.get(action.name)),
+      name,
       value: action.value && (await actionValueStore.get(action.value)),
       selected_options:
         action.selected_options &&

@@ -7,8 +7,9 @@ const newFeedback = ({ feedback, product }) => ({
       actions: [
         {
           type: 'button',
-          name: 'open_backlog_item_dialog',
-          value: {
+          value: 'open_backlog_item_dialog',
+          name: {
+            type: 'open_backlog_item_dialog',
             feedbackId: feedback.id,
           },
           text: 'New backlog item',
@@ -16,8 +17,9 @@ const newFeedback = ({ feedback, product }) => ({
         },
         {
           type: 'button',
-          name: 'archive_feedback',
-          value: {
+          value: 'archive_feedback',
+          name: {
+            type: 'archive_feedback',
             feedbackId: feedback.id,
           },
           text: 'Archive',

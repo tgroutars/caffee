@@ -26,7 +26,7 @@ const openBacklogItemDialog = async payload => {
   });
   const { accessToken, appUserId, domain } = workspace;
 
-  const { feedbackId } = action.value;
+  const { feedbackId } = action.name;
   const feedback = await Feedback.findById(feedbackId, {
     include: ['product'],
   });

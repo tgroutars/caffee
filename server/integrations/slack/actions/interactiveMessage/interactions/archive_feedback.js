@@ -10,7 +10,7 @@ const archiveFeedback = async payload => {
     action,
   } = payload;
 
-  const { feedbackId } = action.value;
+  const { feedbackId } = action.name;
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });

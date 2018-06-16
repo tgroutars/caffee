@@ -4,9 +4,10 @@ const menu = ({ productId, defaultFeedback }) => {
     {
       type: 'button',
       text: 'Send a new feedback',
-      name: 'open_feedback_dialog',
+      value: 'open_feedback_dialog',
       style: 'primary',
-      value: {
+      name: {
+        type: 'open_feedback_dialog',
         productId,
         defaultFeedback,
       },

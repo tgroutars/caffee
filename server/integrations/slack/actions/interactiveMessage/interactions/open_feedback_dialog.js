@@ -10,7 +10,7 @@ const openFeedbackDialog = async payload => {
     action,
   } = payload;
 
-  const { productId, defaultFeedback } = action.value;
+  const { productId, defaultFeedback } = action.name;
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });

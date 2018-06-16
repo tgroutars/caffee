@@ -4,8 +4,9 @@ const feedbackChooseProduct = ({ products }) => {
   const actions = products.map(product => ({
     type: 'button',
     text: product.name,
-    name: 'send_menu',
-    value: {
+    value: 'send_menu',
+    name: {
+      type: 'send_menu',
       productId: product.id,
     },
   }));

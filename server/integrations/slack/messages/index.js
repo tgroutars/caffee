@@ -18,7 +18,6 @@ const preProcessMessage = async rawMessage => ({
       actions: await Promise.map(attachment.actions || [], async action => ({
         ...action,
         name: action.name && (await actionValueStore.set(action.name)),
-        value: action.value && (await actionValueStore.set(action.value)),
         options:
           action.options &&
           (await Promise.map(action.options, async option => ({

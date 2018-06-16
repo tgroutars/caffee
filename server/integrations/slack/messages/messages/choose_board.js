@@ -4,12 +4,14 @@ const chooseBoard = ({ product, boards }) => {
     {
       type: 'select',
       text: 'Select a Trello board',
-      name: 'set_trello_board',
+      name: {
+        type: 'set_trello_board',
+        productId: product.id,
+      },
       options: boards.map(board => ({
         text: board.name,
         value: {
           boardId: board.id,
-          productId: product.id,
         },
       })),
     },

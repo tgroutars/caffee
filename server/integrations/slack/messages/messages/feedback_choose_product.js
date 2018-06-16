@@ -3,8 +3,9 @@ const feedbackChooseProduct = ({ products, defaultFeedback = '' }) => {
   const actions = products.map(product => ({
     type: 'button',
     text: product.name,
-    name: 'open_feedback_dialog',
-    value: {
+    value: 'open_feedback_dialog',
+    name: {
+      type: 'open_feedback_dialog',
       defaultFeedback,
       productId: product.id,
     },

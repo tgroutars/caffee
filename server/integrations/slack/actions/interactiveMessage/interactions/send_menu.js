@@ -11,7 +11,7 @@ const sendMenu = async payload => {
     user: { id: userSlackId },
   } = payload;
 
-  const { productId } = action.value;
+  const { productId } = action.name;
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });

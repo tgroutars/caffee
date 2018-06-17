@@ -1,14 +1,8 @@
 const Promise = require('bluebird');
 
-const { Product, BacklogItem, Sequelize } = require('../models');
+const { Product, BacklogItem } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
-const {
-  listCards,
-  destroyWebhook,
-  createWebhook,
-} = require('../integrations/trello/helpers/api');
-
-const { Op } = Sequelize;
+const { listCards } = require('../integrations/trello/helpers/api');
 
 const ProductService = (/* services */) => ({
   async create({ name, image, ownerId }) {
@@ -48,30 +42,17 @@ const ProductService = (/* services */) => ({
       boardId: trelloBoardId,
     });
 
-    // Remove old backlog items + webhooks
-    const oldBacklogItems = await BacklogItem.findAll({
+    // Remove old backlog items
+    await BacklogItem.destroy({
       where: { productId: product.id },
-    });
-    await Promise.map(oldBacklogItems, async ({ trelloWebhookRef }) => {
-      if (trelloWebhookRef) {
-        await destroyWebhook(trelloAccessToken, {
-          webhookId: trelloWebhookRef,
-        });
-      }
-    });
-    const newTrelloRefs = cards.map(({ id }) => id);
-    await oldBacklogItems.destroy({
-      where: { trelloRef: { [Op.notIn]: newTrelloRefs } },
     });
 
     // Add new items
     await Promise.map(cards, async ({ idList, name, desc, id }) => {
-      const webhook = await createWebhook(trelloAccessToken, { modelId: id });
       await BacklogItem.create({
         productId: product.id,
         trelloRef: id,
         trelloListRef: idList,
-        trelloWebhookRef: webhook.id,
         title: name,
         description: desc,
       });

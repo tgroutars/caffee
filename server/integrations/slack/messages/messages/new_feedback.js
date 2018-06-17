@@ -16,6 +16,16 @@ const newFeedback = ({ feedback, product }) => ({
           style: 'primary',
         },
         {
+          name: {
+            type: 'add_feedback_to_backlog_item',
+            feedbackId: feedback.id,
+            productId: product.id,
+          },
+          text: 'Add to existing item',
+          type: 'select',
+          data_source: 'external',
+        },
+        {
           type: 'button',
           value: 'archive_feedback',
           name: {

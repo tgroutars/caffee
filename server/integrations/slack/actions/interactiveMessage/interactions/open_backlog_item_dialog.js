@@ -48,6 +48,7 @@ const openBacklogItemDialog = async payload => {
       channel,
       user: userSlackId,
     });
+    return;
   }
 
   if (!product.trelloBoardId) {

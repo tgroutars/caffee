@@ -78,7 +78,7 @@ const BacklogItemService = (/* services */) => ({
 
     const card = await createCard(trelloAccessToken, {
       listId: trelloListRef,
-      labelIds: [tag.trelloRef],
+      labelIds: tag ? [tag.trelloRef] : [],
       title,
       description,
     });

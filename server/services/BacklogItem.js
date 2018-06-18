@@ -28,7 +28,7 @@ const BacklogItemService = (/* services */) => ({
     trelloListRef,
     trelloRef,
   }) {
-    const [backlogItem, created] = await BacklogItem.findOrdCreate({
+    const [backlogItem, created] = await BacklogItem.findOrCreate({
       where: { productId, trelloRef },
       defaults: {
         title,

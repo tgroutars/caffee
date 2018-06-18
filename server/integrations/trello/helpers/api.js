@@ -59,11 +59,19 @@ const listCards = async (accessToken, { boardId }) => {
   return cards;
 };
 
-const createCard = async (accessToken, { listId, title, description }) => {
+const createCard = async (
+  accessToken,
+  { listId, title, description, labelIds = [] },
+) => {
   const card = await makeRequest(accessToken, {
     url: '/cards',
     method: 'POST',
-    data: { name: title, idList: listId, desc: description },
+    data: {
+      name: title,
+      idList: listId,
+      desc: description,
+      idLabels: labelIds.join(','),
+    },
   });
   return card;
 };

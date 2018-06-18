@@ -5,6 +5,7 @@ const {
   BacklogItem,
   Product,
   BacklogItemTag,
+  Tag,
   sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
@@ -59,23 +60,29 @@ const BacklogItemService = (/* services */) => ({
     );
   },
 
-  async createAndSync({ title, description, productId, trelloListRef }) {
+  async createAndSync({ title, description, productId, tagId, trelloListRef }) {
     const product = await Product.findById(productId);
     const { trelloAccessToken } = product;
 
+    const tag = tagId ? await Tag.findById(tagId) : null;
+
     const card = await createCard(trelloAccessToken, {
       listId: trelloListRef,
+      labelIds: [tag.trelloRef],
       title,
       description,
     });
 
-    return this.findOrCreate({
+    const [backlogItem] = this.findOrCreate({
       title,
       description,
       productId,
       trelloListRef,
       trelloRef: card.id,
     });
+    if (tagId) {
+      await this.addTag(backlogItem.id, tagId);
+    }
   },
 
   async findOrCreate({

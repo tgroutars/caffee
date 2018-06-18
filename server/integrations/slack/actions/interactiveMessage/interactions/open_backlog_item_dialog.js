@@ -67,7 +67,9 @@ const openBacklogItemDialog = async payload => {
   const lists = await listLists(product.trelloAccessToken, {
     boardId: product.trelloBoardId,
   });
+  const tags = await product.getTags();
   await openBacklogItemDialogHelper({
+    tags,
     lists,
     feedbackId,
     productId: product.id,

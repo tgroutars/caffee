@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   Product.associate = models => {
-    const { User, ProductUser, BacklogItem } = models;
+    const { User, ProductUser, BacklogItem, Tag } = models;
 
     Product.belongsTo(User, {
       as: 'owner',
@@ -55,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
     });
     Product.hasMany(BacklogItem, {
       as: 'backlogItems',
+      foreignKey: 'productId',
+    });
+    Product.hasMany(Tag, {
+      as: 'tags',
       foreignKey: 'productId',
     });
   };

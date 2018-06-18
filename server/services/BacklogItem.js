@@ -1,10 +1,33 @@
 const pick = require('lodash/pick');
 
 const { createCard } = require('../integrations/trello/helpers/api');
-const { BacklogItem, Product, sequelize } = require('../models');
+const {
+  BacklogItem,
+  Product,
+  BacklogItemTag,
+  sequelize,
+} = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
 const BacklogItemService = (/* services */) => ({
+  async removeTag(backlogItemId, tagId) {
+    await BacklogItemTag.destroy({
+      where: {
+        backlogItemId,
+        tagId,
+      },
+    });
+  },
+
+  async addTag(backlogItemId, tagId) {
+    await BacklogItemTag.findOrCreate({
+      where: {
+        backlogItemId,
+        tagId,
+      },
+    });
+  },
+
   async update(backlogItemId, values) {
     const newValues = pick(values, ['title', 'description']);
     await BacklogItem.update(newValues, { where: { id: backlogItemId } });

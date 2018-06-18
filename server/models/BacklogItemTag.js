@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     BacklogItemTag.belongsTo(Tag, {
       as: 'tag',
-      foreignKey: 'backlogItemId',
+      foreignKey: 'tagId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });

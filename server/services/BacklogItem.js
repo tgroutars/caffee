@@ -2,7 +2,7 @@ const { createCard } = require('../integrations/trello/helpers/api');
 const { BacklogItem, Product } = require('../models');
 
 const BacklogItemService = (/* services */) => ({
-  async create({ title, description, productId, trelloListRef }) {
+  async createAndSync({ title, description, productId, trelloListRef }) {
     const product = await Product.findById(productId);
     const { trelloAccessToken } = product;
 
@@ -12,14 +12,23 @@ const BacklogItemService = (/* services */) => ({
       description,
     });
 
-    const backlogItem = await BacklogItem.create({
+    return this.create({
+      title,
+      description,
+      productId,
+      trelloListRef,
+      trelloRef: card.id,
+    });
+  },
+
+  async create({ title, description, productId, trelloListRef, trelloRef }) {
+    return BacklogItem.create({
       productId,
       title,
       description,
       trelloListRef,
-      trelloRef: card.id,
+      trelloRef,
     });
-    return backlogItem;
   },
 });
 

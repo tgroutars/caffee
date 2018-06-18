@@ -9,7 +9,7 @@ const {
 
 const createBacklogItemBG = registerBackgroundTask(
   async ({ productId, title, description, feedbackId, trelloListRef }) => {
-    const backlogItem = await BacklogItemService.create({
+    const backlogItem = await BacklogItemService.createAndSync({
       title,
       description,
       productId,

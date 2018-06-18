@@ -1,11 +1,12 @@
 const Promise = require('bluebird');
 const winston = require('winston');
 
-const { Product, BacklogItem } = require('../models');
+const { Product, BacklogItem, Tag } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 const {
   listCards,
   createWebhook,
+  listLabels,
 } = require('../integrations/trello/helpers/api');
 
 const ProductService = (/* services */) => ({
@@ -45,6 +46,9 @@ const ProductService = (/* services */) => ({
     const cards = await listCards(trelloAccessToken, {
       boardId: trelloBoardId,
     });
+    const labels = await listLabels(trelloAccessToken, {
+      boardId: trelloBoardId,
+    });
 
     try {
       await createWebhook(trelloAccessToken, { modelId: trelloBoardId });
@@ -60,16 +64,36 @@ const ProductService = (/* services */) => ({
     await BacklogItem.destroy({
       where: { productId: product.id },
     });
+    // Remove old tags
+    await Tag.destroy({ where: { productId: product.id } });
+
+    // Add new tags
+    const tags = await Promise.map(labels, async label =>
+      Tag.create({
+        productId: product.id,
+        trelloRef: label.id,
+        name: label.name,
+      }),
+    );
+    const tagsByTrelloRef = tags.reduce(
+      (res, tag) => ({
+        ...res,
+        [tag.trelloRef]: tag,
+      }),
+      {},
+    );
 
     // Add new items
-    await Promise.map(cards, async ({ idList, name, desc, id }) => {
-      await BacklogItem.create({
+    await Promise.map(cards, async ({ idList, name, desc, id, idLabels }) => {
+      const backlogItem = await BacklogItem.create({
         productId: product.id,
         trelloRef: id,
         trelloListRef: idList,
         title: name,
         description: desc,
       });
+      const itemTags = idLabels.map(trelloRef => tagsByTrelloRef[trelloRef]);
+      await backlogItem.addTags(itemTags);
     });
   },
 });

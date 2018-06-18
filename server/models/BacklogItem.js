@@ -53,13 +53,19 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   BacklogItem.associate = models => {
-    const { Product } = models;
+    const { Product, BacklogItemTag, Tag } = models;
 
     BacklogItem.belongsTo(Product, {
       as: 'product',
       foreignKey: 'productId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
+    });
+    BacklogItem.belongsToMany(Tag, {
+      as: 'tags',
+      through: BacklogItemTag,
+      foreignKey: 'backlogItemId',
+      otherKey: 'tagId',
     });
   };
 

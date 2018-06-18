@@ -93,6 +93,7 @@ const BacklogItemService = (/* services */) => ({
     if (tagId) {
       await this.addTag(backlogItem.id, tagId);
     }
+    return backlogItem;
   },
 
   async findOrCreate({

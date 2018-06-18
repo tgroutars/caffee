@@ -1,8 +1,12 @@
 const Promise = require('bluebird');
+const winston = require('winston');
 
 const { Product, BacklogItem } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
-const { listCards } = require('../integrations/trello/helpers/api');
+const {
+  listCards,
+  createWebhook,
+} = require('../integrations/trello/helpers/api');
 
 const ProductService = (/* services */) => ({
   async create({ name, image, ownerId }) {
@@ -41,6 +45,16 @@ const ProductService = (/* services */) => ({
     const cards = await listCards(trelloAccessToken, {
       boardId: trelloBoardId,
     });
+
+    try {
+      await createWebhook(trelloAccessToken, { modelId: trelloBoardId });
+    } catch (err) {
+      winston.error(
+        `Could not create board webhook for productId=${
+          product.id
+        } boardRef=${trelloBoardId}`,
+      );
+    }
 
     // Remove old backlog items
     await BacklogItem.destroy({

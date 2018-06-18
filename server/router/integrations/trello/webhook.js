@@ -1,5 +1,7 @@
 const Router = require('koa-router');
 
+const { handleWebhook } = require('../../../integrations/trello/webhooks');
+
 const router = new Router();
 
 router.head('/', async ctx => {
@@ -7,6 +9,7 @@ router.head('/', async ctx => {
 });
 
 router.post('/', async ctx => {
+  await handleWebhook(ctx.request.body);
   ctx.body = '';
 });
 

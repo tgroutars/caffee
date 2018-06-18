@@ -29,7 +29,7 @@ const optionsLoad = async rawPayload => {
   const payload = await preProcessPayload(rawPayload);
   const action = actions[payload.name.type];
   if (!action) {
-    throw new Error(`Unknown select action type: ${payload.name}`);
+    throw new Error(`Unknown select action type: ${payload.name.type}`);
   }
   const options = await action(payload);
   return { options: await postProcessOptions(options) };

@@ -2,12 +2,17 @@ const trim = require('lodash/trim');
 
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 const registerBackgroundTask = require('../../../../../lib/queue/registerBackgroundTask');
-const { findOrFetchSlackUser } = require('../../../helpers/user');
-const { Feedback: FeedbackService } = require('../../../../../services');
+const {
+  Feedback: FeedbackService,
+  SlackUser: SlackUserService,
+} = require('../../../../../services');
 
 const createFeedbackBG = registerBackgroundTask(
   async (userSlackId, workspaceSlackId, productId, { description }) => {
-    const slackUser = await findOrFetchSlackUser(userSlackId, workspaceSlackId);
+    const slackUser = await SlackUserService.findOrFetch(
+      userSlackId,
+      workspaceSlackId,
+    );
     const feedback = await FeedbackService.create({
       description,
       productId,

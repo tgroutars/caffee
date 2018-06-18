@@ -6,11 +6,21 @@ const {
   Product,
   BacklogItemTag,
   Tag,
+  BacklogItemFollow,
   sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
 const BacklogItemService = (/* services */) => ({
+  async addFollower(backlogItemId, userId) {
+    await BacklogItemFollow.findOrCreate({
+      where: {
+        backlogItemId,
+        userId,
+      },
+    });
+  },
+
   async removeTag(backlogItemId, tagId) {
     await BacklogItemTag.destroy({
       where: {

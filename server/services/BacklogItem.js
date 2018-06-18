@@ -83,7 +83,7 @@ const BacklogItemService = (/* services */) => ({
       description,
     });
 
-    const [backlogItem] = this.findOrCreate({
+    const backlogItem = await BacklogItem.create({
       title,
       description,
       productId,

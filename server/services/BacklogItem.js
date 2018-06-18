@@ -12,7 +12,7 @@ const BacklogItemService = (/* services */) => ({
       description,
     });
 
-    return this.create({
+    return this.findOrCreate({
       title,
       description,
       productId,
@@ -21,14 +21,25 @@ const BacklogItemService = (/* services */) => ({
     });
   },
 
-  async create({ title, description, productId, trelloListRef, trelloRef }) {
-    return BacklogItem.create({
-      productId,
-      title,
-      description,
-      trelloListRef,
-      trelloRef,
+  async findOrCreate({
+    title,
+    description,
+    productId,
+    trelloListRef,
+    trelloRef,
+  }) {
+    const [backlogItem, created] = await BacklogItem.findOrdCreate({
+      where: { productId, trelloRef },
+      defaults: {
+        title,
+        description,
+        trelloListRef,
+      },
     });
+    if (!created) {
+      await backlogItem.update({ title, description, trelloListRef });
+    }
+    return backlogItem;
   },
 });
 

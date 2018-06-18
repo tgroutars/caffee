@@ -10,7 +10,7 @@ const createCard = async payload => {
   });
 
   await Promise.map(products, async product => {
-    await BacklogItemService.create({
+    await BacklogItemService.findOrCreate({
       title: card.name,
       description: card.desc,
       productId: product.id,

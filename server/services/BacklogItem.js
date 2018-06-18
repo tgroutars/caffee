@@ -1,7 +1,41 @@
+const pick = require('lodash/pick');
+
 const { createCard } = require('../integrations/trello/helpers/api');
-const { BacklogItem, Product } = require('../models');
+const { BacklogItem, Product, sequelize } = require('../models');
+const { trigger } = require('../eventQueue/eventQueue');
 
 const BacklogItemService = (/* services */) => ({
+  async update(backlogItemId, values) {
+    const newValues = pick(values, ['title', 'description']);
+    await BacklogItem.update(newValues, { where: { id: backlogItemId } });
+  },
+
+  async move(backlogItemId, { oldList, newList }) {
+    await BacklogItem.update(
+      { trelloListRef: newList.id },
+      { where: { id: backlogItemId } },
+    );
+    await trigger('backlog_item_moved', {
+      backlogItemId,
+      oldList,
+      newList,
+    });
+  },
+
+  async unarchive(backlogItemId) {
+    await BacklogItem.update(
+      { archivedAt: null },
+      { where: { id: backlogItemId } },
+    );
+  },
+
+  async archive(backlogItemId) {
+    await BacklogItem.update(
+      { archivedAt: sequelize.fn('NOW') },
+      { where: { id: backlogItemId } },
+    );
+  },
+
   async createAndSync({ title, description, productId, trelloListRef }) {
     const product = await Product.findById(productId);
     const { trelloAccessToken } = product;

@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'trello_list_ref',
       },
+      archivedAt: {
+        type: DataTypes.DATE,
+        field: 'archived_at',
+      },
     },
     {
       indexes: [

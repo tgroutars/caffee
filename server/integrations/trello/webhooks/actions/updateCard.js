@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
+const { BacklogItem: BacklogItemService } = require('../../../../services');
 const { BacklogItem } = require('../../../../models');
-const { trigger } = require('../../../../eventQueue/eventQueue');
 
 const updateCard = async payload => {
   const { data } = payload.action;
@@ -14,21 +14,21 @@ const updateCard = async payload => {
   });
   await Promise.map(backlogItems, async backlogItem => {
     if (card.closed) {
-      await backlogItem.destroy();
+      await BacklogItemService.archive(backlogItem.id);
       return;
     }
-
-    const newValues = {};
+    if (old.closed && !card.closed) {
+      await BacklogItemService.unarchive(backlogItem.id);
+    }
 
     if (old.idList && old.idList !== card.idList) {
-      newValues.trelloListRef = card.idList;
-      await trigger('backlog_item_moved', {
-        backlogItemId: backlogItem.id,
+      await BacklogItemService.move(backlogItem.id, {
         oldList: data.listBefore,
         newList: data.listAfter,
       });
     }
 
+    const newValues = {};
     if (typeof old.desc !== 'undefined' && old.desc !== card.desc) {
       newValues.description = card.desc;
     }
@@ -36,7 +36,7 @@ const updateCard = async payload => {
       newValues.title = card.name;
     }
     if (Object.keys(newValues).length) {
-      await backlogItem.update(newValues);
+      await BacklogItemService.update(backlogItem.id, newValues);
     }
   });
 };

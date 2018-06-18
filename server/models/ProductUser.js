@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         field: 'user_id',
         allowNull: false,
       },
+      role: {
+        type: DataTypes.ENUM('author', 'user', 'admin'),
+        allowNull: false,
+        defaultValue: 'admin',
+      },
     },
     {
       indexes: [

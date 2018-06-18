@@ -93,6 +93,7 @@ const BacklogItemService = (/* services */) => ({
     if (tagId) {
       await this.addTag(backlogItem.id, tagId);
     }
+    await trigger('backlog_item_created', { backlogItemId: backlogItem.id });
     return backlogItem;
   },
 

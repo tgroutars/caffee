@@ -43,6 +43,14 @@ const syncSlackUser = async (userSlackId, workspaceSlackId) => {
 const findOrFetchSlackUser = async (userSlackId, workspaceSlackId) => {
   const existingSlackUser = await SlackUser.find({
     where: { slackId: userSlackId },
+    include: [
+      'user',
+      {
+        model: SlackWorkspace,
+        as: 'workspace',
+        where: { slackId: workspaceSlackId },
+      },
+    ],
   });
   if (existingSlackUser) {
     return existingSlackUser;

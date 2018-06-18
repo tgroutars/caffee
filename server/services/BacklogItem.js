@@ -6,11 +6,21 @@ const {
   Product,
   BacklogItemTag,
   Tag,
+  BacklogItemFollow,
   sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
 const BacklogItemService = (/* services */) => ({
+  async addFollower(backlogItemId, userId) {
+    await BacklogItemFollow.findOrCreate({
+      where: {
+        backlogItemId,
+        userId,
+      },
+    });
+  },
+
   async removeTag(backlogItemId, tagId) {
     await BacklogItemTag.destroy({
       where: {
@@ -68,12 +78,12 @@ const BacklogItemService = (/* services */) => ({
 
     const card = await createCard(trelloAccessToken, {
       listId: trelloListRef,
-      labelIds: [tag.trelloRef],
+      labelIds: tag ? [tag.trelloRef] : [],
       title,
       description,
     });
 
-    const [backlogItem] = this.findOrCreate({
+    const backlogItem = await BacklogItem.create({
       title,
       description,
       productId,
@@ -83,6 +93,8 @@ const BacklogItemService = (/* services */) => ({
     if (tagId) {
       await this.addTag(backlogItem.id, tagId);
     }
+    await trigger('backlog_item_created', { backlogItemId: backlogItem.id });
+    return backlogItem;
   },
 
   async findOrCreate({

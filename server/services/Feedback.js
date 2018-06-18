@@ -1,7 +1,7 @@
 const { Feedback, sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
-const FeedbackService = (/* services */) => ({
+const FeedbackService = services => ({
   async create({ description, authorId, productId }) {
     const feedback = await Feedback.create({
       authorId,
@@ -15,7 +15,9 @@ const FeedbackService = (/* services */) => ({
   },
 
   async setBacklogItem(feedbackId, { backlogItemId }) {
-    await Feedback.update({ backlogItemId }, { where: { id: feedbackId } });
+    const feedback = await Feedback.findById(feedbackId);
+    await feedback.update({ backlogItemId });
+    await services.BacklogItem.addFollower(backlogItemId, feedback.authorId);
   },
 
   async archive(feedbackId, { archiveReason }) {

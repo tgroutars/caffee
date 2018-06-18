@@ -10,6 +10,13 @@ const {
 } = require('../integrations/trello/helpers/api');
 
 const ProductService = (/* services */) => ({
+  async createTag(productId, { name, trelloRef }) {
+    return Tag.findOrCreate({
+      where: { productId, trelloRef },
+      defaults: { name },
+    });
+  },
+
   async create({ name, image, ownerId }) {
     return Product.create({
       name,

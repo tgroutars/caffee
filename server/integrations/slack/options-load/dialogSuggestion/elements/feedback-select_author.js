@@ -11,7 +11,7 @@ const addFeedbackToBacklogItem = async payload => {
   const { slackUsers } = workspace;
   return slackUsers.map(slackUser => ({
     label: slackUser.name,
-    value: { userId: slackUser.userId },
+    value: slackUser.userId,
   }));
 };
 

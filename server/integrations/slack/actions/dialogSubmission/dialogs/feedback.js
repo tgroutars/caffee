@@ -8,17 +8,24 @@ const {
 } = require('../../../../../services');
 
 const createFeedbackBG = registerBackgroundTask(
-  async (userSlackId, workspaceSlackId, productId, { description }) => {
-    const slackUser = await SlackUserService.findOrFetch(
-      userSlackId,
-      workspaceSlackId,
-    );
-    const feedback = await FeedbackService.create({
-      description,
-      productId,
-      authorId: slackUser.userId,
-    });
-    return feedback;
+  async (
+    userSlackId,
+    workspaceSlackId,
+    productId,
+    { description, authorId },
+  ) => {
+    const values = { description, productId };
+    if (authorId) {
+      values.authorId = authorId;
+    } else {
+      const slackUser = await SlackUserService.findOrFetch(
+        userSlackId,
+        workspaceSlackId,
+      );
+      values.authorId = slackUser.userId;
+    }
+
+    return FeedbackService.create(values);
   },
 );
 
@@ -30,6 +37,7 @@ const feedback = async payload => {
     team: { id: workspaceSlackId },
   } = payload;
   const { productId } = callbackId;
+  const { authorId } = submission;
   const description = trim(submission.description);
   if (!description) {
     throw new SlackDialogSubmissionError([
@@ -42,6 +50,7 @@ const feedback = async payload => {
 
   await createFeedbackBG(userSlackId, workspaceSlackId, productId, {
     description,
+    authorId,
   });
 };
 

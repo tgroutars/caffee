@@ -1,8 +1,16 @@
 const uniqBy = require('lodash/uniqBy');
 
-const { Product, SlackWorkspace } = require('../../../models');
+const {
+  Product,
+  SlackWorkspace,
+  SlackUser,
+  ProductUser,
+  Sequelize,
+} = require('../../../models');
 const { openDialog } = require('../dialogs');
 const { postEphemeral } = require('../messages');
+
+const { Op } = Sequelize;
 
 const openFeedbackDialog = openDialog('feedback');
 const postChooseProductMessage = postEphemeral('feedback_choose_product');
@@ -42,7 +50,19 @@ const caffee = async ({
 
   const install = installs[0];
   const { productId } = install;
-  await openFeedbackDialog({ productId, defaultFeedback: text })({
+  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
+  const productUser = await ProductUser.find({
+    where: {
+      userId: slackUser.userId,
+      productId,
+      role: { [Op.in]: ['user', 'admin'] },
+    },
+  });
+  await openFeedbackDialog({
+    productId,
+    defaultFeedback: text,
+    selectAuthor: !!productUser,
+  })({
     accessToken,
     triggerId,
   });

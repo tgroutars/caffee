@@ -1,8 +1,14 @@
 const SlackClient = require('@slack/client').WebClient;
+
 const dialogs = require('./dialogs');
 const HashStore = require('../../../lib/redis/HashStore');
 
 const callbackIdStore = new HashStore('slack:callback_id');
+
+const preProcessDialog = async rawDialog => ({
+  ...rawDialog,
+  callback_id: await callbackIdStore.set(rawDialog.callback_id),
+});
 
 const openDialog = type => {
   const getDialog = dialogs[type];
@@ -14,10 +20,7 @@ const openDialog = type => {
     const rawDialog = getDialog(...dialogArgs);
 
     return async ({ accessToken, triggerId }) => {
-      const dialog = {
-        ...rawDialog,
-        callback_id: await callbackIdStore.set(rawDialog.callback_id),
-      };
+      const dialog = await preProcessDialog(rawDialog);
       const slackClient = new SlackClient(accessToken);
       const dialogJSON = JSON.stringify(dialog);
       return slackClient.dialog.open({

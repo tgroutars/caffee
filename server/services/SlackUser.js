@@ -4,6 +4,10 @@ const { SlackUser, User, SlackWorkspace } = require('../models');
 const { isUser, getUserVals } = require('../integrations/slack/helpers/user');
 
 const SlackUserService = (/* services */) => ({
+  async destroy({ where }) {
+    await SlackUser.destroy({ where });
+  },
+
   async findOrCreate({ email, image, name, slackId, workspaceId }) {
     const [user] = await User.findOrCreate({
       where: { email },
@@ -18,6 +22,9 @@ const SlackUserService = (/* services */) => ({
         name,
       },
     });
+    if (!created) {
+      await slackUser.update({ slackId, image, name });
+    }
     slackUser.user = user;
 
     return [slackUser, created];

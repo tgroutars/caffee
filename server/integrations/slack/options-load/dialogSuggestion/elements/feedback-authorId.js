@@ -1,6 +1,6 @@
 const { SlackWorkspace } = require('../../../../../models');
 
-const addFeedbackToBacklogItem = async payload => {
+const feedbackAuthorId = async payload => {
   const {
     team: { id: workspaceSlackId },
   } = payload;
@@ -15,4 +15,4 @@ const addFeedbackToBacklogItem = async payload => {
   }));
 };
 
-module.exports = addFeedbackToBacklogItem;
+module.exports = feedbackAuthorId;

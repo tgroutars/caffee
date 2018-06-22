@@ -22,9 +22,11 @@ const feedback = ({
   if (selectAuthor) {
     elements.unshift({
       label: 'Author',
-      name: 'select_author',
+      name: 'authorId',
       type: 'select',
       data_source: 'external',
+      optional: true,
+      hint: 'Leave empty to add the feedback as yourself',
     });
   }
 

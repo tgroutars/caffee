@@ -1,4 +1,4 @@
-const { BacklogItem, Sequelize } = require('../../../../models');
+const { BacklogItem, Sequelize } = require('../../../../../models');
 
 const { Op } = Sequelize;
 
@@ -12,6 +12,7 @@ const addFeedbackToBacklogItem = async payload => {
       [Op.or]: { title: { [Op.iLike]: `%${value.replace('%', '\\%')}%` } },
     },
   });
+
   return backlogItems.map(item => ({
     text: item.title,
     value: { backlogItemId: item.id },

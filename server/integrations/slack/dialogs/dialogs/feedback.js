@@ -1,4 +1,8 @@
-const feedback = ({ productId, defaultFeedback = '' }) => {
+const feedback = ({
+  productId,
+  selectAuthor = false,
+  defaultFeedback = '',
+}) => {
   const callbackId = {
     type: 'feedback',
     productId,
@@ -14,6 +18,15 @@ const feedback = ({ productId, defaultFeedback = '' }) => {
       optional: false,
     },
   ];
+
+  if (selectAuthor) {
+    elements.unshift({
+      label: 'Author',
+      name: 'select_author',
+      type: 'select',
+      data_source: 'external',
+    });
+  }
 
   return {
     callback_id: callbackId,

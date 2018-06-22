@@ -1,38 +1,17 @@
-const Promise = require('bluebird');
-const HashStore = require('../../../lib/redis/HashStore');
-const actions = require('./actions');
+const interactiveMessage = require('./interactiveMessage');
+const dialogSuggestion = require('./dialogSuggestion');
 
-const actionValueStore = new HashStore('slack:action_value');
+const optionsLoad = async payload => {
+  const { type } = payload;
 
-/**
- * Retrieve action value from Redis
- */
-const preProcessPayload = async payload => {
-  const name = await actionValueStore.get(payload.name);
-  if (!name) {
-    throw new Error('This action has expired');
+  switch (type) {
+    case 'interactive_message':
+      return interactiveMessage(payload);
+    case 'dialog_suggestion':
+      return dialogSuggestion(payload);
+    default:
+      throw new Error(`Unknown options-load type ${type}`);
   }
-  return {
-    ...payload,
-    name,
-  };
-};
-
-// Store option values in Redis
-const postProcessOptions = async options =>
-  Promise.map(options, async option => ({
-    ...option,
-    value: await actionValueStore.set(option.value),
-  }));
-
-const optionsLoad = async rawPayload => {
-  const payload = await preProcessPayload(rawPayload);
-  const action = actions[payload.name.type];
-  if (!action) {
-    throw new Error(`Unknown select action type: ${payload.name.type}`);
-  }
-  const options = await action(payload);
-  return { options: await postProcessOptions(options) };
 };
 
 module.exports = optionsLoad;

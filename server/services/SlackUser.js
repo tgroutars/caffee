@@ -53,7 +53,7 @@ const SlackUserService = (/* services */) => ({
     return slackUser;
   },
 
-  async findOrFetchSlackUser(userSlackId, workspaceSlackId) {
+  async findOrFetch(userSlackId, workspaceSlackId) {
     const existingSlackUser = await SlackUser.find({
       where: { slackId: userSlackId },
       include: [

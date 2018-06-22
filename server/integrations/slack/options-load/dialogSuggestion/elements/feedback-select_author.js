@@ -1,0 +1,18 @@
+const { SlackWorkspace } = require('../../../../../models');
+
+const addFeedbackToBacklogItem = async payload => {
+  const {
+    team: { id: workspaceSlackId },
+  } = payload;
+  const workspace = await SlackWorkspace.find({
+    where: { slackId: workspaceSlackId },
+    include: ['slackUsers'],
+  });
+  const { slackUsers } = workspace;
+  return slackUsers.map(slackUser => ({
+    label: slackUser.name,
+    value: { userId: slackUser.userId },
+  }));
+};
+
+module.exports = addFeedbackToBacklogItem;

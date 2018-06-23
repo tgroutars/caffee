@@ -40,7 +40,7 @@ const listLists = async (accessToken, { boardId }) => {
     url: `/boards/${boardId}/lists`,
     method: 'GET',
   });
-  return lists.map(({ id, name }) => ({ id, name }));
+  return lists;
 };
 
 const listLabels = async (accessToken, { boardId }) => {

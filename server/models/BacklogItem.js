@@ -26,10 +26,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'trello_ref',
       },
-      trelloListRef: {
+      stageId: {
         type: DataTypes.STRING,
         allowNull: false,
-        field: 'trello_list_ref',
+        field: 'stage_id',
       },
       archivedAt: {
         type: DataTypes.DATE,
@@ -53,7 +53,14 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   BacklogItem.associate = models => {
-    const { Product, BacklogItemTag, Tag, User, BacklogItemFollow } = models;
+    const {
+      Product,
+      BacklogItemTag,
+      Tag,
+      User,
+      BacklogItemFollow,
+      BacklogStage,
+    } = models;
 
     BacklogItem.belongsTo(Product, {
       as: 'product',
@@ -72,6 +79,12 @@ module.exports = (sequelize, DataTypes) => {
       through: BacklogItemFollow,
       foreignKey: 'backlogItemId',
       otherKey: 'userId',
+    });
+    BacklogItem.belongsTo(BacklogStage, {
+      as: 'stage',
+      foreignKey: 'stageId',
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
     });
   };
 

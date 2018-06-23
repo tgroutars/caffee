@@ -5,53 +5,64 @@ const { getCardURL } = require('../../integrations/trello/helpers/cards');
 const {
   BacklogItem,
   SlackUser,
-  Product,
+  SlackInstall,
   User,
+  ProductUser,
   Sequelize,
 } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 
 const { Op } = Sequelize;
 
+const postNewBacklogItemMessage = postMessage('new_backlog_item');
+
 const backlogItemCreated = async ({ backlogItemId }) => {
   const backlogItem = await BacklogItem.findById(backlogItemId, {
-    include: [
-      {
-        model: Product,
-        as: 'product',
-        include: [
-          {
-            model: User,
-            as: 'users',
-            through: { where: { role: { [Op.in]: ['user', 'admin'] } } },
-            include: [
-              { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
-            ],
-          },
-        ],
-      },
-    ],
+    include: ['product'],
   });
   const { product } = backlogItem;
-  const { users } = product;
-
-  const postNewBacklogItemMessage = postMessage('new_backlog_item')({
+  const productUsers = await ProductUser.findAll({
+    where: { productId: product.id, role: { [Op.in]: ['user', 'admin'] } },
+    include: [{ model: User, as: 'user' }],
+  });
+  const users = productUsers.map(({ user }) => user);
+  const postPrivateNewBacklogItemMessage = postNewBacklogItemMessage({
     backlogItem,
     product,
     trelloURL: getCardURL(backlogItem),
   });
-
   await Promise.map(users, async user => {
-    const { slackUsers } = user;
+    const slackUsers = await SlackUser.findAll({
+      where: { userId: user.id },
+      include: ['workspace'],
+    });
     await Promise.map(slackUsers, async slackUser => {
       const { workspace, slackId } = slackUser;
       const { accessToken } = workspace;
       try {
-        await postNewBacklogItemMessage({ accessToken, channel: slackId });
+        await postPrivateNewBacklogItemMessage({
+          accessToken,
+          channel: slackId,
+        });
       } catch (err) {
         winston.error(err);
       }
     });
+  });
+
+  const postPublicNewBacklogItemMessage = postNewBacklogItemMessage({
+    backlogItem,
+    product,
+  });
+  const slackInstalls = await SlackInstall.findAll({
+    where: { productId: product.id, channel: { [Op.ne]: null } },
+    include: ['workspace'],
+  });
+
+  await Promise.map(slackInstalls, async slackInstall => {
+    const { workspace, channel } = slackInstall;
+    const { accessToken } = workspace;
+    await postPublicNewBacklogItemMessage({ accessToken, channel });
   });
 };
 

@@ -1,11 +1,13 @@
 const feedback = ({
   productId,
+  defaultAuthorId,
   selectAuthor = false,
   defaultFeedback = '',
 }) => {
   const callbackId = {
     type: 'feedback',
     productId,
+    defaultAuthorId,
   };
 
   const elements = [

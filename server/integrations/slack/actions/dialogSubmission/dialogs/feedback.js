@@ -2,31 +2,11 @@ const trim = require('lodash/trim');
 
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 const registerBackgroundTask = require('../../../../../lib/queue/registerBackgroundTask');
-const {
-  Feedback: FeedbackService,
-  SlackUser: SlackUserService,
-} = require('../../../../../services');
+const { Feedback: FeedbackService } = require('../../../../../services');
 
 const createFeedbackBG = registerBackgroundTask(
-  async (
-    userSlackId,
-    workspaceSlackId,
-    productId,
-    { description, authorId },
-  ) => {
-    const values = { description, productId };
-    if (authorId) {
-      values.authorId = authorId;
-    } else {
-      const slackUser = await SlackUserService.findOrFetch(
-        userSlackId,
-        workspaceSlackId,
-      );
-      values.authorId = slackUser.userId;
-    }
-
-    return FeedbackService.create(values);
-  },
+  async (userSlackId, workspaceSlackId, productId, { description, authorId }) =>
+    FeedbackService.create({ description, productId, authorId }),
 );
 
 const feedback = async payload => {
@@ -36,8 +16,8 @@ const feedback = async payload => {
     user: { id: userSlackId },
     team: { id: workspaceSlackId },
   } = payload;
-  const { productId } = callbackId;
-  const { authorId } = submission;
+  const { productId, defaultAuthorId } = callbackId;
+  const authorId = submission.authorId || defaultAuthorId;
   const description = trim(submission.description);
   if (!description) {
     throw new SlackDialogSubmissionError([

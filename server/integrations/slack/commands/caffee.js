@@ -62,6 +62,7 @@ const caffee = async ({
     productId,
     defaultFeedback: text,
     selectAuthor: !!productUser,
+    defaultAuthorId: slackUser.userId,
   })({
     accessToken,
     triggerId,

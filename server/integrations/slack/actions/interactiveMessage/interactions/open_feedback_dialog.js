@@ -46,6 +46,7 @@ const openFeedbackDialog = async payload => {
     productId,
     defaultFeedback,
     selectAuthor: !!productUser,
+    defaultAuthorId: slackUser.userId,
   })({
     accessToken,
     triggerId,

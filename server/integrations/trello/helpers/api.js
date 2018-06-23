@@ -43,6 +43,14 @@ const listLists = async (accessToken, { boardId }) => {
   return lists;
 };
 
+const fetchList = async (accessToken, { listId }) => {
+  const list = await makeRequest(accessToken, {
+    url: `/lists/${listId}`,
+    method: 'GET',
+  });
+  return list;
+};
+
 const listLabels = async (accessToken, { boardId }) => {
   const cards = await makeRequest(accessToken, {
     url: `/boards/${boardId}/labels`,
@@ -101,4 +109,5 @@ module.exports = {
   listLabels,
   createWebhook,
   destroyWebhook,
+  fetchList,
 };

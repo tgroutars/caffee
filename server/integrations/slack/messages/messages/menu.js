@@ -1,6 +1,6 @@
 const menu = ({
   productId,
-  defaultFeedback,
+  defaultText,
   defaultAuthorId,
   defaultAuthorName,
 }) => {
@@ -13,9 +13,9 @@ const menu = ({
       style: 'primary',
       name: {
         productId,
-        defaultFeedback,
         defaultAuthorId,
         defaultAuthorName,
+        defaultFeedback: defaultText,
         type: 'open_feedback_dialog',
       },
     },

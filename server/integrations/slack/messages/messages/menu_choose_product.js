@@ -1,6 +1,6 @@
 const menuChooseProduct = ({
   products,
-  defaultFeedback,
+  defaultText,
   defaultAuthorId,
   defaultAuthorName,
 }) => {
@@ -11,7 +11,7 @@ const menuChooseProduct = ({
     text: product.name,
     value: 'send_menu',
     name: {
-      defaultFeedback,
+      defaultText,
       defaultAuthorId,
       defaultAuthorName,
       type: 'send_menu',

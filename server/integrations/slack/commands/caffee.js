@@ -29,7 +29,7 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
 
     await postChooseProductMessage({
       products,
-      defaultFeedback: text,
+      defaultText: text,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel, user: userSlackId });
     return;
@@ -40,7 +40,7 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
 
   await postMenuMessage({
     productId,
-    defaultFeedback: text,
+    defaultText: text,
     defaultAuthorId: slackUser.userId,
   })({
     accessToken,

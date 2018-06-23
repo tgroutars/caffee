@@ -11,6 +11,10 @@ const BacklogStageService = (/* services */) => ({
 
     return stage;
   },
+
+  async destroy({ where }) {
+    return BacklogStage.destroy({ where });
+  },
 });
 
 module.exports = BacklogStageService;

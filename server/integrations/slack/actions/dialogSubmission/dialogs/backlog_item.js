@@ -8,19 +8,12 @@ const {
 } = require('../../../../../services');
 
 const createBacklogItemBG = registerBackgroundTask(
-  async ({
-    productId,
-    title,
-    description,
-    tagId,
-    feedbackId,
-    trelloListRef,
-  }) => {
+  async ({ productId, title, description, tagId, feedbackId, stageId }) => {
     const backlogItem = await BacklogItemService.createAndSync({
       title,
       description,
       productId,
-      trelloListRef,
+      stageId,
       tagId,
     });
 
@@ -35,7 +28,7 @@ const createBacklogItemBG = registerBackgroundTask(
 const backlogItem = async payload => {
   const { submission, callback_id: callbackId } = payload;
   const { productId, feedbackId } = callbackId;
-  const { trelloListRef, tagId } = submission;
+  const { stageId, tagId } = submission;
   const title = trim(submission.title);
   const description = trim(submission.description);
   if (!title) {
@@ -53,7 +46,7 @@ const backlogItem = async payload => {
     description,
     tagId,
     feedbackId,
-    trelloListRef,
+    stageId,
   });
 };
 

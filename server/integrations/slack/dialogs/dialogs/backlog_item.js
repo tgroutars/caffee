@@ -2,7 +2,7 @@ const backlogItem = ({
   tags,
   productId,
   feedbackId,
-  lists,
+  backlogStages,
   defaultDescription = '',
   defaultTitle,
 }) => {
@@ -15,10 +15,10 @@ const backlogItem = ({
   const elements = [
     {
       label: 'List',
-      name: 'trelloListRef',
+      name: 'stageId',
       type: 'select',
-      value: lists[0].id,
-      options: lists.map(({ id, name }) => ({
+      value: backlogStages[0].id,
+      options: backlogStages.map(({ id, name }) => ({
         label: name,
         value: id,
       })),

@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 const {
   Feedback,
   SlackWorkspace,
@@ -6,7 +8,7 @@ const {
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 const { openDialog } = require('../../../dialogs');
-const { listBoards, listLists } = require('../../../../trello/helpers/api');
+const { listBoards } = require('../../../../trello/helpers/api');
 
 const openBacklogItemDialogHelper = openDialog('backlog_item');
 const postInstallTrelloMessage = postEphemeral('install_trello');
@@ -31,12 +33,13 @@ const openBacklogItemDialog = async payload => {
     include: ['product'],
   });
   const { product } = feedback;
+  const { trelloAccessToken, trelloBoardId } = product;
 
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId, workspaceId: workspace.id },
   });
 
-  if (!product.trelloAccessToken) {
+  if (!trelloAccessToken) {
     const returnTo = `https://${domain}.slack.com/app_redirect?channel=${appUserId}`;
     const installURL = await getInstallURL(product.id, {
       returnTo,
@@ -51,8 +54,12 @@ const openBacklogItemDialog = async payload => {
     return;
   }
 
-  if (!product.trelloBoardId) {
-    const boards = await listBoards(product.trelloAccessToken);
+  // TODO: load boards from external url
+  // => cleaner
+  // => Respond faster
+  // => Can include more boards if too many
+  if (!trelloBoardId) {
+    const boards = await listBoards(trelloAccessToken);
     await postChooseBoardMessage({
       product,
       boards,
@@ -64,14 +71,15 @@ const openBacklogItemDialog = async payload => {
     return;
   }
 
-  const lists = await listLists(product.trelloAccessToken, {
-    boardId: product.trelloBoardId,
-  });
-  const tags = await product.getTags();
+  const [tags, backlogStages] = await Promise.all([
+    product.getTags(),
+    product.getBacklogStages({ order: [['position', 'asc']] }),
+  ]);
+
   await openBacklogItemDialogHelper({
     tags,
-    lists,
     feedbackId,
+    backlogStages,
     productId: product.id,
     defaultDescription: feedback.description,
   })({

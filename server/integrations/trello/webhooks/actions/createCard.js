@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 
-const { Product } = require('../../../../models');
+const { Product, BacklogStage } = require('../../../../models');
 const { BacklogItem: BacklogItemService } = require('../../../../services');
 
 const createCard = async payload => {
@@ -10,11 +10,14 @@ const createCard = async payload => {
   });
 
   await Promise.map(products, async product => {
+    const stage = await BacklogStage.find({
+      where: { productId: product.id, trelloRef: list.id },
+    });
     await BacklogItemService.findOrCreate({
       title: card.name,
       description: card.desc,
       productId: product.id,
-      trelloListRef: list.id,
+      stageId: stage.id,
       trelloRef: card.id,
     });
   });

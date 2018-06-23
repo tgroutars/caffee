@@ -1,4 +1,5 @@
 const pick = require('lodash/pick');
+const Promise = require('bluebird');
 
 const { createCard } = require('../integrations/trello/helpers/api');
 const {
@@ -7,6 +8,7 @@ const {
   BacklogItemTag,
   Tag,
   BacklogItemFollow,
+  BacklogStage,
   sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
@@ -45,14 +47,18 @@ const BacklogItemService = (/* services */) => ({
   },
 
   async move(backlogItemId, { oldList, newList }) {
+    const [oldStage, newStage] = Promise.all([
+      BacklogStage.find({ where: { trelloRef: oldList.id } }),
+      BacklogStage.find({ where: { trelloRef: newList.id } }),
+    ]);
     await BacklogItem.update(
-      { trelloListRef: newList.id },
+      { stageId: newStage.id },
       { where: { id: backlogItemId } },
     );
     await trigger('backlog_item_moved', {
       backlogItemId,
-      oldList,
-      newList,
+      oldStage,
+      newStage,
     });
   },
 
@@ -70,14 +76,15 @@ const BacklogItemService = (/* services */) => ({
     );
   },
 
-  async createAndSync({ title, description, productId, tagId, trelloListRef }) {
+  async createAndSync({ title, description, productId, tagId, stageId }) {
     const product = await Product.findById(productId);
     const { trelloAccessToken } = product;
 
     const tag = tagId ? await Tag.findById(tagId) : null;
+    const stage = await BacklogStage.findById(stageId);
 
     const card = await createCard(trelloAccessToken, {
-      listId: trelloListRef,
+      listId: stage.trelloRef,
       labelIds: tag ? [tag.trelloRef] : [],
       title,
       description,
@@ -87,7 +94,7 @@ const BacklogItemService = (/* services */) => ({
       title,
       description,
       productId,
-      trelloListRef,
+      stageId,
       trelloRef: card.id,
     });
     if (tagId) {
@@ -97,23 +104,17 @@ const BacklogItemService = (/* services */) => ({
     return backlogItem;
   },
 
-  async findOrCreate({
-    title,
-    description,
-    productId,
-    trelloListRef,
-    trelloRef,
-  }) {
+  async findOrCreate({ title, description, productId, stageId, trelloRef }) {
     const [backlogItem, created] = await BacklogItem.findOrCreate({
       where: { productId, trelloRef },
       defaults: {
         title,
         description,
-        trelloListRef,
+        stageId,
       },
     });
     if (!created) {
-      await backlogItem.update({ title, description, trelloListRef });
+      await backlogItem.update({ title, description, stageId });
     }
     return backlogItem;
   },

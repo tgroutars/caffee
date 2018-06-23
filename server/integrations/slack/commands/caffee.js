@@ -1,27 +1,12 @@
 const uniqBy = require('lodash/uniqBy');
 
-const {
-  Product,
-  SlackWorkspace,
-  SlackUser,
-  ProductUser,
-  Sequelize,
-} = require('../../../models');
-const { openDialog } = require('../dialogs');
+const { Product, SlackWorkspace, SlackUser } = require('../../../models');
 const { postEphemeral } = require('../messages');
 
-const { Op } = Sequelize;
+const postChooseProductMessage = postEphemeral('menu_choose_product');
+const postMenuMessage = postEphemeral('menu');
 
-const openFeedbackDialog = openDialog('feedback');
-const postChooseProductMessage = postEphemeral('feedback_choose_product');
-
-const caffee = async ({
-  workspaceSlackId,
-  triggerId,
-  channel,
-  userSlackId,
-  text,
-}) => {
+const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
     include: ['installs'],
@@ -46,31 +31,21 @@ const caffee = async ({
       products,
       defaultFeedback: text,
       defaultAuthorId: slackUser.userId,
-    })({
-      accessToken,
-      channel,
-      user: userSlackId,
-    });
+    })({ accessToken, channel, user: userSlackId });
     return;
   }
 
   const install = installs[0];
   const { productId } = install;
-  const productUser = await ProductUser.find({
-    where: {
-      userId: slackUser.userId,
-      productId,
-      role: { [Op.in]: ['user', 'admin'] },
-    },
-  });
-  await openFeedbackDialog({
+
+  await postMenuMessage({
     productId,
     defaultFeedback: text,
-    selectAuthor: !!productUser,
     defaultAuthorId: slackUser.userId,
   })({
     accessToken,
-    triggerId,
+    channel,
+    user: userSlackId,
   });
 };
 

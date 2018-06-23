@@ -1,17 +1,39 @@
 const Promise = require('bluebird');
+const winston = require('winston');
 
 const { getCardURL } = require('../../integrations/trello/helpers/cards');
-const { BacklogItem, SlackUser } = require('../../models');
+const {
+  BacklogItem,
+  SlackUser,
+  Product,
+  User,
+  Sequelize,
+} = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
+
+const { Op } = Sequelize;
 
 const backlogItemCreated = async ({ backlogItemId }) => {
   const backlogItem = await BacklogItem.findById(backlogItemId, {
-    include: ['product'],
+    include: [
+      {
+        model: Product,
+        as: 'product',
+        include: [
+          {
+            model: User,
+            as: 'users',
+            through: { where: { role: { [Op.in]: ['user', 'admin'] } } },
+            include: [
+              { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
+            ],
+          },
+        ],
+      },
+    ],
   });
   const { product } = backlogItem;
-  const users = await product.getUsers({
-    include: [{ model: SlackUser, as: 'slackUsers', include: ['workspace'] }],
-  });
+  const { users } = product;
 
   const postNewBacklogItemMessage = postMessage('new_backlog_item')({
     backlogItem,
@@ -24,7 +46,11 @@ const backlogItemCreated = async ({ backlogItemId }) => {
     await Promise.map(slackUsers, async slackUser => {
       const { workspace, slackId } = slackUser;
       const { accessToken } = workspace;
-      await postNewBacklogItemMessage({ accessToken, channel: slackId });
+      try {
+        await postNewBacklogItemMessage({ accessToken, channel: slackId });
+      } catch (err) {
+        winston.error(err);
+      }
     });
   });
 };

@@ -47,7 +47,7 @@ const BacklogItemService = (/* services */) => ({
   },
 
   async move(backlogItemId, { oldList, newList }) {
-    const [oldStage, newStage] = Promise.all([
+    const [oldStage, newStage] = await Promise.all([
       BacklogStage.find({ where: { trelloRef: oldList.id } }),
       BacklogStage.find({ where: { trelloRef: newList.id } }),
     ]);
@@ -57,8 +57,8 @@ const BacklogItemService = (/* services */) => ({
     );
     await trigger('backlog_item_moved', {
       backlogItemId,
-      oldStage,
-      newStage,
+      oldStageId: oldStage.id,
+      newStageId: newStage.id,
     });
   },
 

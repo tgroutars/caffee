@@ -1,3 +1,5 @@
+const pick = require('lodash/pick');
+
 const { BacklogStage } = require('../models');
 
 const BacklogStageService = (/* services */) => ({
@@ -14,6 +16,11 @@ const BacklogStageService = (/* services */) => ({
 
   async destroy({ where }) {
     return BacklogStage.destroy({ where });
+  },
+
+  async update(values, { where }) {
+    const newValues = pick(values, ['name', 'position']);
+    return BacklogStage.update(newValues, { where });
   },
 });
 

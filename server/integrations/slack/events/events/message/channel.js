@@ -1,4 +1,4 @@
-const { SlackWorkspace } = require('../../../../../models');
+const { SlackWorkspace, SlackUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
@@ -7,7 +7,7 @@ const postMenuMessage = postEphemeral('menu');
 const channelMessage = async payload => {
   const {
     team_id: workspaceSlackId,
-    event: { text, channel, user },
+    event: { text, channel, user: userSlackId },
   } = payload;
 
   const workspace = await SlackWorkspace.find({
@@ -24,19 +24,27 @@ const channelMessage = async payload => {
   if (!products.length) {
     return;
   }
+
+  const slackUser = await SlackUser.find({
+    where: { slackId: userSlackId, workspaceId: workspace.id },
+  });
+  const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
+  const defaultFeedback = text.replace(re, ' ');
+
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
-    })({ accessToken, channel });
+      defaultFeedback,
+      defaultAuthorId: slackUser.userId,
+    })({ accessToken, channel, user: userSlackId });
     return;
   }
 
-  const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
-  const defaultFeedback = text.replace(re, ' ');
   await postMenuMessage({
     defaultFeedback,
+    defaultAuthorId: slackUser.userId,
     productId: products[0].id,
-  })({ accessToken, channel, user });
+  })({ accessToken, channel, user: userSlackId });
 };
 
 module.exports = channelMessage;

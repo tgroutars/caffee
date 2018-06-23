@@ -1,4 +1,9 @@
-const feedbackChooseProduct = ({ products }) => {
+const menuChooseProduct = ({
+  products,
+  defaultFeedback,
+  defaultAuthorId,
+  defaultAuthorName,
+}) => {
   const pretext = 'You have several products installed on this workspace';
   const text = 'Which product are you interested in?';
   const actions = products.map(product => ({
@@ -6,6 +11,9 @@ const feedbackChooseProduct = ({ products }) => {
     text: product.name,
     value: 'send_menu',
     name: {
+      defaultFeedback,
+      defaultAuthorId,
+      defaultAuthorName,
       type: 'send_menu',
       productId: product.id,
     },
@@ -22,4 +30,4 @@ const feedbackChooseProduct = ({ products }) => {
   };
 };
 
-module.exports = feedbackChooseProduct;
+module.exports = menuChooseProduct;

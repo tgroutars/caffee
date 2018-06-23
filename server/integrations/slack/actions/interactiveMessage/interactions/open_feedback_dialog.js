@@ -18,7 +18,12 @@ const openFeedbackDialog = async payload => {
     action,
   } = payload;
 
-  const { productId, defaultFeedback } = action.name;
+  const {
+    productId,
+    defaultFeedback,
+    defaultAuthorName,
+    defaultAuthorId,
+  } = action.name;
 
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId },
@@ -45,8 +50,9 @@ const openFeedbackDialog = async payload => {
   await openFeedbackDialogHelper({
     productId,
     defaultFeedback,
+    defaultAuthorId,
+    defaultAuthorName,
     selectAuthor: !!productUser,
-    defaultAuthorId: slackUser.userId,
   })({
     accessToken,
     triggerId,

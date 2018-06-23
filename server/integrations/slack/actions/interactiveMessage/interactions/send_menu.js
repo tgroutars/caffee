@@ -11,13 +11,23 @@ const sendMenu = async payload => {
     user: { id: userSlackId },
   } = payload;
 
-  const { productId } = action.name;
+  const {
+    productId,
+    defaultFeedback,
+    defaultAuthorId,
+    defaultAuthorName,
+  } = action.name;
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });
   const { accessToken } = workspace;
 
-  await postMenuMessage({ productId })({
+  await postMenuMessage({
+    productId,
+    defaultFeedback,
+    defaultAuthorId,
+    defaultAuthorName,
+  })({
     accessToken,
     channel,
     user: userSlackId,

@@ -5,17 +5,11 @@ const registerBackgroundTask = require('../../../../../lib/queue/registerBackgro
 const { Feedback: FeedbackService } = require('../../../../../services');
 
 const createFeedbackBG = registerBackgroundTask(
-  async (userSlackId, workspaceSlackId, productId, { description, authorId }) =>
-    FeedbackService.create({ description, productId, authorId }),
+  FeedbackService.create.bind(FeedbackService),
 );
 
 const feedback = async payload => {
-  const {
-    submission,
-    callback_id: callbackId,
-    user: { id: userSlackId },
-    team: { id: workspaceSlackId },
-  } = payload;
+  const { submission, callback_id: callbackId } = payload;
   const { productId, defaultAuthorId } = callbackId;
   const authorId = submission.authorId || defaultAuthorId;
   const description = trim(submission.description);
@@ -27,10 +21,13 @@ const feedback = async payload => {
       },
     ]);
   }
-
-  await createFeedbackBG(userSlackId, workspaceSlackId, productId, {
+  if (!authorId) {
+    throw new Error('Missing authorId in feedback submission');
+  }
+  await createFeedbackBG({
     description,
     authorId,
+    productId,
   });
 };
 

@@ -1,4 +1,4 @@
-const { SlackWorkspace } = require('../../../../../models');
+const { SlackWorkspace, SlackUser } = require('../../../../../models');
 const { postMessage } = require('../../../messages');
 
 const postMenuChooseProductMessage = postMessage('menu_choose_product');
@@ -7,28 +7,34 @@ const postMenuMessage = postMessage('menu');
 const appHomeMessage = async payload => {
   const {
     team_id: workspaceSlackId,
-    event: { user, text, channel },
+    event: { user: userSlackId, text, channel },
   } = payload;
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
     include: ['products'],
   });
   const { accessToken, products, appUserId } = workspace;
-  if (user === appUserId) {
+  if (userSlackId === appUserId) {
     return;
   }
 
   if (!products.length) {
     return;
   }
+
+  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
+
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
+      defaultFeedback: text,
+      defaultAuthorId: slackUser.userId,
     })({ accessToken, channel });
     return;
   }
   await postMenuMessage({
     defaultFeedback: text,
+    defaultAuthorId: slackUser.userId,
     productId: products[0].id,
   })({ accessToken, channel });
 };

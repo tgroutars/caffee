@@ -34,13 +34,19 @@ const caffee = async ({
     return;
   }
 
+  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
   if (installs.length > 1) {
     const products = await Product.findAll({
       where: {
         id: installs.map(({ productId }) => productId),
       },
     });
-    await postChooseProductMessage({ products, defaultFeedback: text })({
+
+    await postChooseProductMessage({
+      products,
+      defaultFeedback: text,
+      defaultAuthorId: slackUser.userId,
+    })({
       accessToken,
       channel,
       user: userSlackId,
@@ -50,7 +56,6 @@ const caffee = async ({
 
   const install = installs[0];
   const { productId } = install;
-  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
   const productUser = await ProductUser.find({
     where: {
       userId: slackUser.userId,

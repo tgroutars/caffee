@@ -1,6 +1,7 @@
 const feedback = ({
   productId,
   defaultAuthorId,
+  defaultAuthorName = null,
   selectAuthor = false,
   defaultFeedback = '',
 }) => {
@@ -22,13 +23,16 @@ const feedback = ({
   ];
 
   if (selectAuthor) {
+    const hint = defaultAuthorName
+      ? `If empty, the feedback will be attributed to ${defaultAuthorName}`
+      : 'If empty, the feedback will be attributed to you';
     elements.unshift({
+      hint,
       label: 'Author',
       name: 'authorId',
       type: 'select',
       data_source: 'external',
       optional: true,
-      hint: 'Leave empty to add the feedback as yourself',
     });
   }
 

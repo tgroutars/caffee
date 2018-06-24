@@ -24,16 +24,20 @@ const backlogItem = ({
       })),
       optional: false,
     },
-    {
-      label: 'Label',
-      name: 'tagId',
-      type: 'select',
-      options: tags.map(({ id, name }) => ({
-        label: name,
-        value: id,
-      })),
-      optional: true,
-    },
+    ...(tags.length
+      ? [
+          {
+            label: 'Label',
+            name: 'tagId',
+            type: 'select',
+            options: tags.map(({ id, name }) => ({
+              label: name,
+              value: id,
+            })),
+            optional: true,
+          },
+        ]
+      : []),
     {
       label: 'Title',
       name: 'title',

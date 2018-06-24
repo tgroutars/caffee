@@ -17,7 +17,7 @@ const backlogItem = ({
       label: 'List',
       name: 'stageId',
       type: 'select',
-      value: backlogStages[0].id,
+      value: backlogStages.length && backlogStages[0].id,
       options: backlogStages.map(({ id, name }) => ({
         label: name,
         value: id,

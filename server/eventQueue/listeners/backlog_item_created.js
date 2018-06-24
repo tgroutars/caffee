@@ -29,6 +29,7 @@ const backlogItemCreated = async ({ backlogItemId }) => {
   const postPrivateNewBacklogItemMessage = postNewBacklogItemMessage({
     backlogItem,
     product,
+    suggestFollowers: true,
     trelloURL: getCardURL(backlogItem),
   });
   await Promise.map(users, async user => {

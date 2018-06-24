@@ -1,5 +1,21 @@
-const newBacklogItem = ({ backlogItem, product, trelloURL }) => {
+const newBacklogItem = ({
+  backlogItem,
+  product,
+  trelloURL,
+  suggestFollowers = false,
+}) => {
   const actions = [];
+  if (suggestFollowers) {
+    actions.push({
+      type: 'select',
+      data_source: 'external',
+      name: {
+        type: 'backlog_item_suggest_follower',
+        backlogItemId: backlogItem.id,
+      },
+      text: 'Suggest followers',
+    });
+  }
   if (trelloURL) {
     actions.push({
       type: 'button',
@@ -8,13 +24,14 @@ const newBacklogItem = ({ backlogItem, product, trelloURL }) => {
     });
   }
   return {
-    text: `New backlog item for ${product.name}`,
+    text: `*_New backlog item for ${product.name}_*`,
     attachments: [
       {
+        color: '#0079bf',
         actions,
         title: backlogItem.title,
         text: backlogItem.description,
-        callback_id: 'new_feedback',
+        callback_id: 'new_backlog_item',
       },
     ],
   };

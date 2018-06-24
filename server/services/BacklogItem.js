@@ -15,7 +15,7 @@ const { trigger } = require('../eventQueue/eventQueue');
 
 const BacklogItemService = (/* services */) => ({
   async addFollower(backlogItemId, userId) {
-    await BacklogItemFollow.findOrCreate({
+    return BacklogItemFollow.findOrCreate({
       where: {
         backlogItemId,
         userId,

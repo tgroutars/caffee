@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       field: 'author_id',
       allowNull: false,
     },
+    createdById: {
+      type: DataTypes.UUID,
+      field: 'created_by_id',
+      allowNull: false,
+    },
     backlogItemId: {
       type: DataTypes.UUID,
       field: 'backlog_item_id',
@@ -45,6 +50,12 @@ module.exports = (sequelize, DataTypes) => {
     Feedback.belongsTo(User, {
       as: 'author',
       foreignKey: 'authorId',
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    });
+    Feedback.belongsTo(User, {
+      as: 'createdBy',
+      foreignKey: 'createdById',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });

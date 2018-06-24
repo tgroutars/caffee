@@ -15,7 +15,7 @@ const feedbackCreated = async ({ feedbackId }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: ['product'],
   });
-  const { product } = feedback;
+  const { product, createdById, authorId } = feedback;
 
   const productUsersToNotify = await ProductUser.findAll({
     where: { productId: product.id, role: { [Op.in]: ['user', 'admin'] } },
@@ -39,6 +39,24 @@ const feedbackCreated = async ({ feedbackId }) => {
       await postNewFeedback({ accessToken, channel: slackUser.slackId });
     });
   });
+  if (authorId !== createdById) {
+    const [author, createdBy] = await Promise.all([
+      User.findById(authorId, {
+        include: [
+          { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
+        ],
+      }),
+      User.findById(createdById),
+    ]);
+    await Promise.map(author.slackUsers, async slackUser => {
+      const { workspace } = slackUser;
+      const { accessToken } = workspace;
+      await postMessage('feedback_created_by')({ createdBy, feedback })({
+        accessToken,
+        channel: slackUser.slackId,
+      });
+    });
+  }
 };
 
 module.exports = feedbackCreated;

@@ -27,6 +27,7 @@ const FeedbackService = services => ({
       { archivedAt: sequelize.fn('NOW'), archiveReason },
       { where: { id: feedbackId } },
     );
+    await trigger('feedback_archived', { feedbackId });
   },
 });
 

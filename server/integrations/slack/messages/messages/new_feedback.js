@@ -3,6 +3,7 @@ const newFeedback = ({ feedback, product }) => ({
   attachments: [
     {
       text: feedback.description,
+      color: '#f2d600',
       callback_id: 'new_feedback',
       actions: [
         {

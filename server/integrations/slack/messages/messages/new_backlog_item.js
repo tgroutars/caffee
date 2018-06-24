@@ -27,6 +27,7 @@ const newBacklogItem = ({
     text: `*_New backlog item for ${product.name}_*`,
     attachments: [
       {
+        color: '#0079bf',
         actions,
         title: backlogItem.title,
         text: backlogItem.description,

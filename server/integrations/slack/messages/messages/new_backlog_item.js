@@ -14,7 +14,7 @@ const newBacklogItem = ({ backlogItem, product, trelloURL }) => {
         actions,
         title: backlogItem.title,
         text: backlogItem.description,
-        callback_id: 'new_feedback',
+        callback_id: 'new_backlog_item',
       },
     ],
   };

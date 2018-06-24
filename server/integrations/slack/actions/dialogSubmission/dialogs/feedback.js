@@ -32,11 +32,6 @@ const feedback = async payload => {
   if (!authorId) {
     throw new Error('Missing authorId in feedback submission');
   }
-  await createFeedbackBG({
-    description,
-    authorId,
-    productId,
-  });
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId },
     include: [
@@ -46,6 +41,12 @@ const feedback = async payload => {
         where: { slackId: workspaceSlackId },
       },
     ],
+  });
+  await createFeedbackBG({
+    description,
+    authorId,
+    productId,
+    createdById: slackUser.userId,
   });
   const { workspace } = slackUser;
   const { accessToken } = workspace;

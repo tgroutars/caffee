@@ -8,7 +8,7 @@ const newBacklogItem = ({ backlogItem, product, trelloURL }) => {
     });
   }
   return {
-    text: `New backlog item for ${product.name}`,
+    text: `*_New backlog item for ${product.name}_*`,
     attachments: [
       {
         actions,

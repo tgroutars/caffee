@@ -1,5 +1,5 @@
 const backlogItemMoved = ({ backlogItem, oldStage, newStage }) => ({
-  text: `A backlog item has moved`,
+  text: `*_A backlog item has moved_*`,
   attachments: [
     {
       text: backlogItem.title,

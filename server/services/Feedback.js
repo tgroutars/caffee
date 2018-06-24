@@ -18,6 +18,7 @@ const FeedbackService = services => ({
     const feedback = await Feedback.findById(feedbackId);
     await feedback.update({ backlogItemId });
     await services.BacklogItem.addFollower(backlogItemId, feedback.authorId);
+    await trigger('feedback_processed', { feedbackId });
   },
 
   async archive(feedbackId, { archiveReason }) {

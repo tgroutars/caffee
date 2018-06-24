@@ -17,9 +17,11 @@ const createBacklogItemBG = registerBackgroundTask(
       tagId,
     });
 
-    await FeedbackService.setBacklogItem(feedbackId, {
-      backlogItemId: backlogItem.id,
-    });
+    if (feedbackId) {
+      await FeedbackService.setBacklogItem(feedbackId, {
+        backlogItemId: backlogItem.id,
+      });
+    }
 
     return backlogItem;
   },

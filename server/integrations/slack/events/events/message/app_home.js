@@ -27,13 +27,13 @@ const appHomeMessage = async payload => {
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
-      defaultFeedback: text,
+      defaultText: text,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel });
     return;
   }
   await postMenuMessage({
-    defaultFeedback: text,
+    defaultText: text,
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
   })({ accessToken, channel });

@@ -1,6 +1,6 @@
 const menu = ({
   productId,
-  defaultFeedback,
+  defaultText,
   defaultAuthorId,
   defaultAuthorName,
 }) => {
@@ -10,13 +10,22 @@ const menu = ({
       type: 'button',
       text: 'Send a new feedback',
       value: 'open_feedback_dialog',
-      style: 'primary',
       name: {
         productId,
-        defaultFeedback,
         defaultAuthorId,
         defaultAuthorName,
+        defaultFeedback: defaultText,
         type: 'open_feedback_dialog',
+      },
+    },
+    {
+      type: 'button',
+      text: 'Create a new backlog item',
+      value: 'open_backlog_item_dialog',
+      name: {
+        productId,
+        defaultDescription: defaultText,
+        type: 'open_backlog_item_dialog',
       },
     },
   ];

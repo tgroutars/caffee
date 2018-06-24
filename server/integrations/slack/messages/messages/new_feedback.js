@@ -11,6 +11,7 @@ const newFeedback = ({ feedback, product }) => ({
           name: {
             type: 'open_backlog_item_dialog',
             feedbackId: feedback.id,
+            defaultDescription: feedback.description,
           },
           text: 'New backlog item',
           style: 'primary',

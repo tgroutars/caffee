@@ -13,7 +13,7 @@ const sendMenu = async payload => {
 
   const {
     productId,
-    defaultFeedback,
+    defaultText,
     defaultAuthorId,
     defaultAuthorName,
   } = action.name;
@@ -24,7 +24,7 @@ const sendMenu = async payload => {
 
   await postMenuMessage({
     productId,
-    defaultFeedback,
+    defaultText,
     defaultAuthorId,
     defaultAuthorName,
   })({

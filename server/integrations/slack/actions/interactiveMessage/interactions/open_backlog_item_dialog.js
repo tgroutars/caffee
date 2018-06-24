@@ -4,6 +4,7 @@ const {
   Feedback,
   SlackWorkspace,
   SlackUser,
+  Product,
 } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
@@ -28,11 +29,18 @@ const openBacklogItemDialog = async payload => {
   });
   const { accessToken, appUserId, domain } = workspace;
 
-  const { feedbackId } = action.name;
-  const feedback = await Feedback.findById(feedbackId, {
-    include: ['product'],
-  });
-  const { product } = feedback;
+  let feedback;
+  let product;
+  const { feedbackId, productId, defaultDescription } = action.name;
+  if (feedbackId) {
+    feedback = await Feedback.findById(feedbackId, {
+      include: ['product'],
+    });
+    ({ product } = feedback);
+  } else {
+    product = await Product.findById(productId);
+  }
+
   const { trelloAccessToken, trelloBoardId } = product;
 
   const slackUser = await SlackUser.find({
@@ -81,7 +89,7 @@ const openBacklogItemDialog = async payload => {
     feedbackId,
     backlogStages,
     productId: product.id,
-    defaultDescription: feedback.description,
+    defaultDescription,
   })({
     accessToken,
     triggerId,

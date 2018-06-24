@@ -11,7 +11,7 @@ const message = async payload => {
       await appHome(payload);
       break;
     case 'channel':
-    case 'groups':
+    case 'group':
       await channel(payload);
       break;
     default:

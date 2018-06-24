@@ -29,19 +29,19 @@ const channelMessage = async payload => {
     where: { slackId: userSlackId, workspaceId: workspace.id },
   });
   const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
-  const defaultFeedback = text.replace(re, ' ');
+  const defaultText = text.replace(re, ' ');
 
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
-      defaultFeedback,
+      defaultText,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel, user: userSlackId });
     return;
   }
 
   await postMenuMessage({
-    defaultFeedback,
+    defaultText,
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
   })({ accessToken, channel, user: userSlackId });

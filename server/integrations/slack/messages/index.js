@@ -51,6 +51,7 @@ const getPostMessage = isEphemeral => type => {
   };
 };
 
+// FIXME: sucks for naming returned functions
 const postMessage = getPostMessage(false);
 const postEphemeral = getPostMessage(true);
 

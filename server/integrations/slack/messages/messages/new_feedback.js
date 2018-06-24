@@ -1,5 +1,5 @@
 const newFeedback = ({ feedback, product }) => ({
-  text: `New feedback on ${product.name}`,
+  text: `*_New feedback on ${product.name}_*`,
   attachments: [
     {
       text: feedback.description,

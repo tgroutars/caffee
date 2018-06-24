@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'restrict',
       foreignKey: 'ownerId',
     });
+    Product.hasMany(ProductUser, {
+      as: 'productUsers',
+      foreignKey: 'productId',
+    });
     Product.belongsToMany(User, {
       as: 'users',
       through: ProductUser,

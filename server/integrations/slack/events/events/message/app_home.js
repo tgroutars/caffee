@@ -1,5 +1,7 @@
-const { SlackUser } = require('../../../../../models');
+const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postMessage } = require('../../../messages');
+
+const { Op } = Sequelize;
 
 const postMenuChooseProductMessage = postMessage('menu_choose_product');
 const postMenuMessage = postMessage('menu');
@@ -29,10 +31,22 @@ const appHomeMessage = async (payload, { workspace }) => {
     })({ accessToken, channel });
     return;
   }
+
+  const product = products[0];
+
+  const productUser = await ProductUser.find({
+    where: {
+      userId: slackUser.userId,
+      productId: product.id,
+      role: { [Op.in]: ['user', 'admin'] },
+    },
+  });
+
   await postMenuMessage({
     defaultText: text,
     defaultAuthorId: slackUser.userId,
-    productId: products[0].id,
+    productId: product.id,
+    createBacklogItem: !!productUser,
   })({ accessToken, channel });
 };
 

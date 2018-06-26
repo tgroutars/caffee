@@ -3,6 +3,7 @@ const menu = ({
   defaultText,
   defaultAuthorId,
   defaultAuthorName,
+  createBacklogItem = false,
 }) => {
   const pretext = 'Hi there :wave: What do you want to do?';
   const actions = [
@@ -18,7 +19,9 @@ const menu = ({
         type: 'open_feedback_dialog',
       },
     },
-    {
+  ];
+  if (createBacklogItem) {
+    actions.push({
       type: 'button',
       text: 'Create a new backlog item',
       value: 'open_backlog_item_dialog',
@@ -27,8 +30,8 @@ const menu = ({
         defaultDescription: defaultText,
         type: 'open_backlog_item_dialog',
       },
-    },
-  ];
+    });
+  }
   return {
     attachments: [
       {

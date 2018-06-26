@@ -1,5 +1,7 @@
-const { SlackUser } = require('../../../../../models');
+const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
+
+const { Op } = Sequelize;
 
 const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
@@ -9,7 +11,9 @@ const channelMessage = async (payload, { workspace }) => {
     event: { text, channel, user: userSlackId },
   } = payload;
 
-  const { products, accessToken, appUserId } = workspace;
+  const { accessToken, appUserId } = workspace;
+
+  const products = await workspace.getProducts();
 
   const appMention = `<@${appUserId}>`;
   if (!text.includes(appMention)) {
@@ -35,10 +39,21 @@ const channelMessage = async (payload, { workspace }) => {
     return;
   }
 
+  const product = products[0];
+
+  const productUser = await ProductUser.find({
+    where: {
+      userId: slackUser.userId,
+      productId: product.id,
+      role: { [Op.in]: ['user', 'admin'] },
+    },
+  });
+
   await postMenuMessage({
     defaultText,
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
+    createBacklogItem: !!productUser,
   })({ accessToken, channel, user: userSlackId });
 };
 

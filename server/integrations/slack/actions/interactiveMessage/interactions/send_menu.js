@@ -1,4 +1,7 @@
 const { postEphemeral } = require('../../../messages');
+const { ProductUser, Sequelize } = require('../../../../../models');
+
+const { Op } = Sequelize;
 
 const postMenuMessage = postEphemeral('menu');
 
@@ -17,11 +20,20 @@ const sendMenu = async (payload, { workspace, slackUser }) => {
 
   const { accessToken } = workspace;
 
+  const productUser = await ProductUser.find({
+    where: {
+      userId: slackUser.userId,
+      productId,
+      role: { [Op.in]: ['user', 'admin'] },
+    },
+  });
+
   await postMenuMessage({
     productId,
     defaultText,
     defaultAuthorId,
     defaultAuthorName,
+    createBacklogItem: !!productUser,
   })({
     accessToken,
     channel,

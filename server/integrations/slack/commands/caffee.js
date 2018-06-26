@@ -1,7 +1,14 @@
 const uniqBy = require('lodash/uniqBy');
 
-const { Product, SlackWorkspace } = require('../../../models');
+const {
+  Product,
+  SlackWorkspace,
+  ProductUser,
+  Sequelize,
+} = require('../../../models');
 const { postEphemeral } = require('../messages');
+
+const { Op } = Sequelize;
 
 const postChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
@@ -43,10 +50,19 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
   const install = installs[0];
   const { productId } = install;
 
+  const productUser = await ProductUser.find({
+    where: {
+      userId: slackUser.userId,
+      productId,
+      role: { [Op.in]: ['user', 'admin'] },
+    },
+  });
+
   await postMenuMessage({
     productId,
     defaultText: text,
     defaultAuthorId: slackUser.userId,
+    createBacklogItem: !!productUser,
   })({
     accessToken,
     channel,

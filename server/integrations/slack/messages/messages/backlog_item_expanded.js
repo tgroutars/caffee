@@ -1,6 +1,13 @@
 const getBacklogItemAttachment = require('../attachments/backlog_item');
 
-module.exports = ({ backlogItem }) => ({
-  text: 'coucou',
-  attachments: [getBacklogItemAttachment({ backlogItem, showMore: true })],
+module.exports = ({ backlogItem, followers, stage }) => ({
+  attachments: [
+    getBacklogItemAttachment({
+      backlogItem,
+      followers,
+      stage,
+      showShowMore: false,
+      showDescription: true,
+    }),
+  ],
 });

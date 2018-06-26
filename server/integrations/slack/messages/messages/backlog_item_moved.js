@@ -7,13 +7,10 @@ const backlogItemMoved = ({
   isFollowing = false,
 }) => {
   const attachments = [
-    {
-      ...getBacklogItemAttachment({ backlogItem }),
-      fields: [
-        { title: 'From', value: oldStage.name, short: true },
-        { title: 'To', value: newStage.name, short: true },
-      ],
-    },
+    getBacklogItemAttachment({
+      backlogItem,
+      moved: { oldStage, newStage },
+    }),
   ];
   return {
     attachments,

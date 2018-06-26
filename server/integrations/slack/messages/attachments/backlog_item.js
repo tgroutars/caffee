@@ -2,7 +2,11 @@ module.exports = ({
   backlogItem,
   suggestFollowers = false,
   trelloURL = null,
-  showMore = false,
+  showDescription = false,
+  showShowMore = true,
+  followers = null,
+  stage = null,
+  moved = null,
 }) => {
   const actions = [
     {
@@ -33,7 +37,7 @@ module.exports = ({
       url: trelloURL,
     });
   }
-  if (!showMore) {
+  if (showShowMore) {
     actions.push({
       type: 'button',
       value: 'backlog_item_show_more',
@@ -41,11 +45,32 @@ module.exports = ({
       text: 'Show more',
     });
   }
+  const followersList =
+    followers && followers.map(user => user.name).join(', ');
+  const footer =
+    followersList &&
+    `:eyes:  Following (${followers.length}): ${followersList}`;
+
+  const fields = [];
+  if (moved) {
+    fields.push({ title: 'From', value: moved.oldStage.name, short: true });
+    fields.push({ title: 'To', value: moved.newStage.name, short: true });
+  }
+  if (stage) {
+    fields.push({
+      title: 'Stage',
+      value: stage.name,
+      short: true,
+    });
+  }
+
   return {
     actions,
+    footer,
+    fields,
     color: '#0079bf',
     title: backlogItem.title,
-    text: showMore ? backlogItem.description : undefined,
+    text: showDescription ? backlogItem.description : undefined,
     callback_id: 'backlog_item',
   };
 };

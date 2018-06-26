@@ -9,6 +9,9 @@ const teamJoin = async payload => {
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
   });
+  if (!workspace) {
+    return;
+  }
   const slackClient = new SlackClient(workspace.accessToken);
   const { user: userInfo } = await slackClient.users.info({
     user: userSlackId,

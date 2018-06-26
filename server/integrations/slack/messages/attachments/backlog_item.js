@@ -33,6 +33,14 @@ module.exports = ({
       url: trelloURL,
     });
   }
+  if (!showMore) {
+    actions.push({
+      type: 'button',
+      value: 'backlog_item_show_more',
+      name: { type: 'backlog_item_show_more', backlogItemId: backlogItem.id },
+      text: 'Show more',
+    });
+  }
   return {
     actions,
     color: '#0079bf',

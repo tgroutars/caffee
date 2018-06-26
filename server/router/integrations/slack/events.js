@@ -18,7 +18,13 @@ const verifyToken = async (ctx, next) => {
 router.use(verifyToken);
 
 router.post('/', async ctx => {
-  await handleEvent(ctx.request.body);
+  const { body } = ctx.request;
+  const { type, challenge } = body;
+  if (type === 'url_verification') {
+    ctx.body = challenge;
+    return;
+  }
+  await handleEvent(body);
   ctx.body = '';
 });
 

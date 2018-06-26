@@ -16,7 +16,7 @@ setInterval(() => {
       job.remove();
     });
   });
-}, 1 * 60 * 1000);
+}, 60 * 60 * 1000);
 
 if (process.env.NODE_ENV === 'development') {
   kue.app.listen(4000);

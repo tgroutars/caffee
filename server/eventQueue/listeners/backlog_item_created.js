@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 const winston = require('winston');
 
-const { getCardURL } = require('../../integrations/trello/helpers/cards');
 const {
   BacklogItem,
   SlackUser,
@@ -30,7 +29,7 @@ const backlogItemCreated = async ({ backlogItemId }) => {
     backlogItem,
     product,
     suggestFollowers: true,
-    trelloURL: getCardURL(backlogItem),
+    openCard: true,
   });
   await Promise.map(users, async user => {
     const slackUsers = await SlackUser.findAll({

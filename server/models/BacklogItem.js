@@ -35,6 +35,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         field: 'archived_at',
       },
+      trelloCardURL: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `https://trello.com/c/${this.trelloRef}`;
+        },
+      },
     },
     {
       indexes: [

@@ -1,7 +1,7 @@
 module.exports = ({
   backlogItem,
   suggestFollowers = false,
-  trelloURL = null,
+  openCard = null,
   showDescription = false,
   showShowMore = true,
   followers = null,
@@ -30,11 +30,11 @@ module.exports = ({
       text: 'Suggest followers',
     });
   }
-  if (trelloURL) {
+  if (openCard) {
     actions.push({
       type: 'button',
       text: 'Open Card in Trello',
-      url: trelloURL,
+      url: backlogItem.trelloCardURL,
     });
   }
   if (showShowMore) {
@@ -49,7 +49,7 @@ module.exports = ({
     followers && followers.map(user => user.name).join(', ');
   const footer =
     followersList &&
-    `:eyes:  Following (${followers.length}): ${followersList}`;
+    `:eyes:  Followers (${followers.length}): ${followersList}`;
 
   const fields = [];
   if (moved) {

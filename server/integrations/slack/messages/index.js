@@ -51,6 +51,26 @@ const getPostMessage = isEphemeral => type => {
   };
 };
 
+const updateMessage = type => {
+  const getMessage = messages[type];
+  if (!getMessage) {
+    throw new Error(`Unknown message: ${type}`);
+  }
+
+  return (...messageArgs) => {
+    const rawMessage = getMessage(...messageArgs);
+    return async ({ accessToken, channel, ts }) => {
+      const message = await preProcessMessage(rawMessage);
+      const slackClient = new SlackClient(accessToken);
+      await slackClient.chat.update({
+        ...message,
+        channel,
+        ts,
+      });
+    };
+  };
+};
+
 // FIXME: sucks for naming returned functions
 const postMessage = getPostMessage(false);
 const postEphemeral = getPostMessage(true);
@@ -58,4 +78,5 @@ const postEphemeral = getPostMessage(true);
 module.exports = {
   postMessage,
   postEphemeral,
+  updateMessage,
 };

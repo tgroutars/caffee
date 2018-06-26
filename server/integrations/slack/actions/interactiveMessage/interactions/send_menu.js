@@ -1,14 +1,11 @@
-const { SlackWorkspace } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const postMenuMessage = postEphemeral('menu');
 
-const sendMenu = async payload => {
+const sendMenu = async (payload, { workspace, slackUser }) => {
   const {
-    team: { id: workspaceSlackId },
     action,
     channel: { id: channel },
-    user: { id: userSlackId },
   } = payload;
 
   const {
@@ -17,9 +14,7 @@ const sendMenu = async payload => {
     defaultAuthorId,
     defaultAuthorName,
   } = action.name;
-  const workspace = await SlackWorkspace.find({
-    where: { slackId: workspaceSlackId },
-  });
+
   const { accessToken } = workspace;
 
   await postMenuMessage({
@@ -30,7 +25,7 @@ const sendMenu = async payload => {
   })({
     accessToken,
     channel,
-    user: userSlackId,
+    user: slackUser.slackId,
   });
 };
 

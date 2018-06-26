@@ -1,23 +1,17 @@
-const Promise = require('bluebird');
-
 const { postEphemeral } = require('../../../messages');
-const { BacklogItem, SlackWorkspace } = require('../../../../../models');
+const { BacklogItem } = require('../../../../../models');
 
-module.exports = async payload => {
+module.exports = async (payload, { workspace, slackUser }) => {
   const {
-    team: { id: workspaceSlackId },
-    user: { id: userSlackId },
     channel: { id: channel },
     action,
   } = payload;
 
   const { backlogItemId } = action.name;
-  const [backlogItem, workspace] = await Promise.all([
-    BacklogItem.findById(backlogItemId, { include: ['followers', 'stage'] }),
-    SlackWorkspace.find({
-      where: { slackId: workspaceSlackId },
-    }),
-  ]);
+  const backlogItem = await BacklogItem.findById(backlogItemId, {
+    include: ['followers', 'stage'],
+  });
+
   const { followers, stage } = backlogItem;
   const { accessToken } = workspace;
   await postEphemeral('backlog_item_expanded')({
@@ -27,6 +21,6 @@ module.exports = async payload => {
   })({
     accessToken,
     channel,
-    user: userSlackId,
+    user: slackUser.slackId,
   });
 };

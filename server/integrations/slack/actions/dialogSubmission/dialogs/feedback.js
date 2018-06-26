@@ -3,17 +3,15 @@ const trim = require('lodash/trim');
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 const registerBackgroundTask = require('../../../../../lib/queue/registerBackgroundTask');
 const { Feedback: FeedbackService } = require('../../../../../services');
-const { SlackWorkspace, SlackUser, User } = require('../../../../../models');
+const { User } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const createFeedbackBG = registerBackgroundTask(
   FeedbackService.create.bind(FeedbackService),
 );
 
-const feedback = async payload => {
+const feedback = async (payload, { slackUser, workspace }) => {
   const {
-    team: { id: workspaceSlackId },
-    user: { id: userSlackId },
     channel: { id: channel },
     submission,
     callback_id: callbackId,
@@ -32,30 +30,21 @@ const feedback = async payload => {
   if (!authorId) {
     throw new Error('Missing authorId in feedback submission');
   }
-  const slackUser = await SlackUser.find({
-    where: { slackId: userSlackId },
-    include: [
-      {
-        model: SlackWorkspace,
-        as: 'workspace',
-        where: { slackId: workspaceSlackId },
-      },
-    ],
-  });
+
   await createFeedbackBG({
     description,
     authorId,
     productId,
     createdById: slackUser.userId,
   });
-  const { workspace } = slackUser;
+
   const { accessToken } = workspace;
   const isAuthor = slackUser.userId === authorId;
   const author = await User.findById(authorId);
   await postEphemeral('feedback_thanks')({ isAuthor, author })({
     accessToken,
     channel,
-    user: userSlackId,
+    user: slackUser.slackId,
   });
 };
 

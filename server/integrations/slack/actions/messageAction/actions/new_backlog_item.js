@@ -1,11 +1,6 @@
 const Promise = require('bluebird');
 
-const {
-  SlackWorkspace,
-  SlackUser,
-  ProductUser,
-  Sequelize,
-} = require('../../../../../models');
+const { ProductUser, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
@@ -19,27 +14,13 @@ const postForbiddenMessage = postEphemeral('forbidden');
 const postInstallTrelloMessage = postEphemeral('install_trello');
 const postChooseBoardMessage = postEphemeral('choose_board');
 
-const newBacklogItem = async payload => {
+const newBacklogItem = async (payload, { workspace, slackUser }) => {
   const {
-    team: { id: workspaceSlackId, domain },
-    user: { id: userSlackId },
+    team: { domain },
     channel: { id: channel },
     message: { text },
     trigger_id: triggerId,
   } = payload;
-
-  const slackUser = await SlackUser.find({
-    where: { slackId: userSlackId },
-    include: [
-      'user',
-      {
-        model: SlackWorkspace,
-        as: 'workspace',
-        where: { slackId: workspaceSlackId },
-      },
-    ],
-  });
-  const { workspace, user } = slackUser;
 
   const [products, adminProducts] = await Promise.all([
     workspace.getProducts(),
@@ -48,7 +29,10 @@ const newBacklogItem = async payload => {
         {
           model: ProductUser,
           as: 'productUsers',
-          where: { userId: user.id, role: { [Op.in]: ['user', 'admin'] } },
+          where: {
+            userId: slackUser.userId,
+            role: { [Op.in]: ['user', 'admin'] },
+          },
         },
       ],
     }),
@@ -61,7 +45,11 @@ const newBacklogItem = async payload => {
   const { accessToken } = workspace;
 
   if (!adminProducts.length) {
-    await postForbiddenMessage()({ accessToken, channel, user: userSlackId });
+    await postForbiddenMessage()({
+      accessToken,
+      channel,
+      user: slackUser.slackId,
+    });
     return;
   }
 
@@ -72,7 +60,7 @@ const newBacklogItem = async payload => {
     })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.slackId,
     });
     return;
   }
@@ -90,7 +78,7 @@ const newBacklogItem = async payload => {
     await postInstallTrelloMessage({ installURL })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.slackId,
     });
     return;
   }
@@ -107,7 +95,7 @@ const newBacklogItem = async payload => {
     })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.slackId,
     });
     return;
   }

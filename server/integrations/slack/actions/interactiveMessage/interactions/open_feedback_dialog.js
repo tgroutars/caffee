@@ -1,22 +1,12 @@
-const {
-  SlackWorkspace,
-  ProductUser,
-  SlackUser,
-  Sequelize,
-} = require('../../../../../models');
+const { ProductUser, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 
 const { Op } = Sequelize;
 
 const openFeedbackDialogHelper = openDialog('feedback');
 
-const openFeedbackDialog = async payload => {
-  const {
-    team: { id: workspaceSlackId },
-    user: { id: userSlackId },
-    trigger_id: triggerId,
-    action,
-  } = payload;
+const openFeedbackDialog = async (payload, { workspace, slackUser }) => {
+  const { trigger_id: triggerId, action } = payload;
 
   const {
     productId,
@@ -25,19 +15,6 @@ const openFeedbackDialog = async payload => {
     defaultAuthorId,
   } = action.name;
 
-  const slackUser = await SlackUser.find({
-    where: { slackId: userSlackId },
-    include: [
-      {
-        model: SlackWorkspace,
-        as: 'workspace',
-        where: { slackId: workspaceSlackId },
-      },
-    ],
-  });
-  const workspace = await SlackWorkspace.find({
-    where: { slackId: workspaceSlackId },
-  });
   const { accessToken } = workspace;
 
   const productUser = await ProductUser.find({

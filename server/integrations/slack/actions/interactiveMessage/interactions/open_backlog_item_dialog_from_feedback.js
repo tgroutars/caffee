@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
-const { Product } = require('../../../../../models');
-const { postEphemeral } = require('../../../messages');
+const { Feedback } = require('../../../../../models');
+const { postEphemeral, updateMessage } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 const { openDialog } = require('../../../dialogs');
 const { listBoards } = require('../../../../trello/helpers/api');
@@ -15,15 +15,19 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
     action,
     trigger_id: triggerId,
     channel: { id: channel },
+    original_message: originalMessage,
   } = payload;
 
   const { accessToken, appUserId, domain } = workspace;
 
-  const { productId, defaultDescription } = action.name;
-  const product = await Product.findById(productId);
-
+  const { feedbackId, defaultDescription } = action.name;
+  const feedback = await Feedback.findById(feedbackId, {
+    include: ['product'],
+  });
+  const { product } = feedback;
   const { trelloAccessToken, trelloBoardId } = product;
 
+  // TODO: Extract this in some helper
   if (!trelloAccessToken) {
     const returnTo = `https://${domain}.slack.com/app_redirect?channel=${appUserId}`;
     const installURL = await getInstallURL(product.id, {
@@ -56,20 +60,40 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
     return;
   }
 
-  const [tags, backlogStages] = await Promise.all([
-    product.getTags(),
-    product.getBacklogStages({ order: [['position', 'asc']] }),
-  ]);
+  if (feedback.backlogItemId || feedback.archivedAt) {
+    await postEphemeral('feedback_already_processed')({ feedback })({
+      accessToken,
+      channel,
+      user: slackUser.slackId,
+    });
+    const backlogItem = await feedback.getBacklogItem();
+    await updateMessage('new_feedback')({
+      feedback,
+      backlogItem,
+      product,
+      backlogItemOptions: { openCard: true },
+    })({
+      accessToken,
+      channel,
+      ts: originalMessage.ts,
+    });
+  } else {
+    const [tags, backlogStages] = await Promise.all([
+      product.getTags(),
+      product.getBacklogStages({ order: [['position', 'asc']] }),
+    ]);
 
-  await openBacklogItemDialogHelper({
-    tags,
-    backlogStages,
-    productId: product.id,
-    defaultDescription,
-  })({
-    accessToken,
-    triggerId,
-  });
+    await openBacklogItemDialogHelper({
+      tags,
+      feedbackId,
+      backlogStages,
+      productId: product.id,
+      defaultDescription,
+    })({
+      accessToken,
+      triggerId,
+    });
+  }
 };
 
 module.exports = openBacklogItemDialog;

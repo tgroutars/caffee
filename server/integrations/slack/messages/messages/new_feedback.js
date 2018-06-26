@@ -14,7 +14,7 @@ const newFeedback = ({
         type: 'button',
         value: 'open_backlog_item_dialog',
         name: {
-          type: 'open_backlog_item_dialog',
+          type: 'open_backlog_item_dialog_from_feedback',
           feedbackId: feedback.id,
           defaultDescription: feedback.description,
         },

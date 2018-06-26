@@ -2,12 +2,11 @@ const { Feedback: FeedbackService } = require('../../../../../services');
 const { Feedback } = require('../../../../../models');
 const { updateMessage, postEphemeral } = require('../../../messages');
 
-const addFeedbackToBacklogItem = async (payload, { workspace }) => {
+const addFeedbackToBacklogItem = async (payload, { workspace, slackUser }) => {
   const {
     action,
     original_message: originalMessage,
     channel: { id: channel },
-    user: { id: userSlackId },
   } = payload;
   const {
     selected_options: [
@@ -24,7 +23,7 @@ const addFeedbackToBacklogItem = async (payload, { workspace }) => {
     await postEphemeral('feedback_already_processed')({ feedback })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.slackId,
     });
   } else {
     await FeedbackService.setBacklogItem(feedbackId, { backlogItemId });

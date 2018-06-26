@@ -1,6 +1,6 @@
 const uniqBy = require('lodash/uniqBy');
 
-const { Product, SlackWorkspace, SlackUser } = require('../../../models');
+const { Product, SlackWorkspace } = require('../../../models');
 const { postEphemeral } = require('../messages');
 
 const postChooseProductMessage = postEphemeral('menu_choose_product');
@@ -11,6 +11,9 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
     where: { slackId: workspaceSlackId },
     include: ['installs'],
   });
+  if (!workspace) {
+    return;
+  }
   const { accessToken } = workspace;
 
   const installs = uniqBy(workspace.installs, ({ productId }) => productId);
@@ -19,7 +22,9 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
     return;
   }
 
-  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
+  const [slackUser] = await workspace.getSlackUsers({
+    where: { slackId: userSlackId },
+  });
   if (installs.length > 1) {
     const products = await Product.findAll({
       where: {

@@ -1,11 +1,4 @@
-const Promise = require('bluebird');
-
-const {
-  SlackWorkspace,
-  SlackUser,
-  ProductUser,
-  Sequelize,
-} = require('../../../../../models');
+const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
 
@@ -14,33 +7,22 @@ const { Op } = Sequelize;
 const openFeedbackDialog = openDialog('feedback');
 const postChooseProductMessage = postEphemeral('feedback_choose_product');
 
-const newFeedback = async payload => {
+const newFeedback = async (payload, { workspace, slackUser }) => {
   const {
-    team: { id: workspaceSlackId },
-    user: { id: userSlackId },
     channel: { id: channel },
     message: { text, user: messageUserSlackId },
     trigger_id: triggerId,
   } = payload;
 
-  const workspace = await SlackWorkspace.find({
-    where: { slackId: workspaceSlackId },
-    include: ['products'],
-  });
-  const { accessToken, products } = workspace;
-
+  const products = await workspace.getProducts();
   if (!products.length) {
     return;
   }
 
-  const [messageSlackUser, slackUser] = await Promise.all([
-    SlackUser.find({
-      where: { slackId: messageUserSlackId },
-    }),
-    SlackUser.find({
-      where: { slackId: userSlackId },
-    }),
-  ]);
+  const { accessToken } = workspace;
+  const messageSlackUser = await SlackUser.find({
+    where: { slackId: messageUserSlackId },
+  });
 
   const defaultAuthorId = messageSlackUser
     ? messageSlackUser.userId
@@ -59,7 +41,7 @@ const newFeedback = async payload => {
     })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.id,
     });
     return;
   }

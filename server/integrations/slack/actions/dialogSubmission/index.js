@@ -12,7 +12,7 @@ const preProcessPayload = async payload => ({
   callback_id: await callbackIdStore.get(payload.callback_id),
 });
 
-const dialogSubmission = async rawPayload => {
+const dialogSubmission = async (rawPayload, state) => {
   const payload = await preProcessPayload(rawPayload);
   const { type } = payload.callback_id;
   const dialog = dialogs[type];
@@ -21,7 +21,7 @@ const dialogSubmission = async rawPayload => {
   }
 
   try {
-    await dialog(payload);
+    await dialog(payload, state);
   } catch (err) {
     if (err instanceof SlackDialogSubmissionError) {
       return { errors: err.errors };

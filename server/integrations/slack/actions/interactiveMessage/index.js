@@ -31,7 +31,7 @@ const preProcessPayload = async payload => {
   };
 };
 
-const interactiveMessage = async rawPayload => {
+const interactiveMessage = async (rawPayload, state) => {
   const payload = await preProcessPayload(rawPayload);
   const { action } = payload;
   const { type } = action.name;
@@ -40,7 +40,7 @@ const interactiveMessage = async rawPayload => {
     throw new Error(`Unknow interaction: ${type}`);
   }
 
-  await interaction(payload);
+  await interaction(payload, state);
 };
 
 module.exports = interactiveMessage;

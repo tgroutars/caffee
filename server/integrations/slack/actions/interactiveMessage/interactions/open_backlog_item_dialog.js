@@ -1,11 +1,6 @@
 const Promise = require('bluebird');
 
-const {
-  Feedback,
-  SlackWorkspace,
-  SlackUser,
-  Product,
-} = require('../../../../../models');
+const { Feedback, Product } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 const { openDialog } = require('../../../dialogs');
@@ -15,18 +10,13 @@ const openBacklogItemDialogHelper = openDialog('backlog_item');
 const postInstallTrelloMessage = postEphemeral('install_trello');
 const postChooseBoardMessage = postEphemeral('choose_board');
 
-const openBacklogItemDialog = async payload => {
+const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
   const {
     action,
     trigger_id: triggerId,
-    team: { id: workspaceSlackId },
     channel: { id: channel },
-    user: { id: userSlackId },
   } = payload;
 
-  const workspace = await SlackWorkspace.find({
-    where: { slackId: workspaceSlackId },
-  });
   const { accessToken, appUserId, domain } = workspace;
 
   let feedback;
@@ -43,10 +33,6 @@ const openBacklogItemDialog = async payload => {
 
   const { trelloAccessToken, trelloBoardId } = product;
 
-  const slackUser = await SlackUser.find({
-    where: { slackId: userSlackId, workspaceId: workspace.id },
-  });
-
   if (!trelloAccessToken) {
     const returnTo = `https://${domain}.slack.com/app_redirect?channel=${appUserId}`;
     const installURL = await getInstallURL(product.id, {
@@ -57,7 +43,7 @@ const openBacklogItemDialog = async payload => {
     await postInstallTrelloMessage({ installURL })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.slackId,
     });
     return;
   }
@@ -74,7 +60,7 @@ const openBacklogItemDialog = async payload => {
     })({
       accessToken,
       channel,
-      user: userSlackId,
+      user: slackUser.slackId,
     });
     return;
   }

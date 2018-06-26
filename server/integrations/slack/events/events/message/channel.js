@@ -1,19 +1,14 @@
-const { SlackWorkspace, SlackUser } = require('../../../../../models');
+const { SlackUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
 
-const channelMessage = async payload => {
+const channelMessage = async (payload, { workspace }) => {
   const {
-    team_id: workspaceSlackId,
     event: { text, channel, user: userSlackId },
   } = payload;
 
-  const workspace = await SlackWorkspace.find({
-    where: { slackId: workspaceSlackId },
-    include: ['products'],
-  });
   const { products, accessToken, appUserId } = workspace;
 
   const appMention = `<@${appUserId}>`;

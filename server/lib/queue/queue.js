@@ -13,9 +13,7 @@ const queue = kue.createQueue({
 setInterval(() => {
   kue.Job.rangeByState('failed', 0, 1000, 1, (err, jobs) => {
     jobs.forEach(job => {
-      if (job.created_at < Date.now() - 7 * 24 * 60 * 60 * 1000) {
-        job.remove();
-      }
+      job.remove();
     });
   });
 }, 1 * 60 * 1000);

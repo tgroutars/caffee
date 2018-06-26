@@ -1,9 +1,14 @@
+const getBacklogItemAttachment = require('../attachments/backlog_item');
+
 const newBacklogItem = ({
   backlogItem,
   product,
   trelloURL,
   suggestFollowers = false,
 }) => {
+  const attachments = [
+    getBacklogItemAttachment({ backlogItem, trelloURL, suggestFollowers }),
+  ];
   const actions = [];
   if (suggestFollowers) {
     actions.push({
@@ -24,16 +29,8 @@ const newBacklogItem = ({
     });
   }
   return {
+    attachments,
     text: `*_New backlog item for ${product.name}_*`,
-    attachments: [
-      {
-        color: '#0079bf',
-        actions,
-        title: backlogItem.title,
-        text: backlogItem.description,
-        callback_id: 'new_backlog_item',
-      },
-    ],
   };
 };
 

@@ -13,6 +13,9 @@ const appHomeMessage = async payload => {
     where: { slackId: workspaceSlackId },
     include: ['products'],
   });
+  if (!workspace) {
+    return;
+  }
   const { accessToken, products, appUserId } = workspace;
   if (userSlackId === appUserId) {
     return;

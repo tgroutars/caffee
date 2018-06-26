@@ -14,6 +14,9 @@ const channelMessage = async payload => {
     where: { slackId: workspaceSlackId },
     include: ['products'],
   });
+  if (!workspace) {
+    return;
+  }
   const { products, accessToken, appUserId } = workspace;
 
   const appMention = `<@${appUserId}>`;

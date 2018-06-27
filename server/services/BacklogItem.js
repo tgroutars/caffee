@@ -23,6 +23,15 @@ const BacklogItemService = (/* services */) => ({
     });
   },
 
+  async removeFollower(backlogItemId, userId) {
+    return BacklogItemFollow.destroy({
+      where: {
+        backlogItemId,
+        userId,
+      },
+    });
+  },
+
   async removeTag(backlogItemId, tagId) {
     await BacklogItemTag.destroy({
       where: {

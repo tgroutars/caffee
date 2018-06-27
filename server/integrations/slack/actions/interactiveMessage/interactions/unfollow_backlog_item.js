@@ -10,21 +10,11 @@ module.exports = async (payload, { workspace, slackUser }) => {
   const { backlogItemId } = action.name;
   const backlogItem = await BacklogItem.findById(backlogItemId);
   const { accessToken } = workspace;
-  const [, created] = await BacklogItemService.addFollower(
-    backlogItemId,
-    slackUser.userId,
-  );
-  if (created) {
-    await postEphemeral('backlog_item_follow_thanks')({ backlogItem })({
-      accessToken,
-      channel,
-      user: slackUser.slackId,
-    });
-  } else {
-    await postEphemeral('backlog_item_already_followed')({ backlogItem })({
-      accessToken,
-      channel,
-      user: slackUser.slackId,
-    });
-  }
+  await BacklogItemService.removeFollower(backlogItemId, slackUser.userId);
+
+  await postEphemeral('backlog_item_unfollowed')({ backlogItem })({
+    accessToken,
+    channel,
+    user: slackUser.slackId,
+  });
 };

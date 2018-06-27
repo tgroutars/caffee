@@ -1,5 +1,6 @@
 module.exports = ({
   backlogItem,
+  follow = true,
   suggestFollowers = false,
   openCard = null,
   showDescription = false,
@@ -8,8 +9,9 @@ module.exports = ({
   stage = null,
   moved = null,
 }) => {
-  const actions = [
-    {
+  const actions = [];
+  if (follow) {
+    actions.push({
       type: 'button',
       value: 'follow_backlog_item',
       name: {
@@ -17,8 +19,8 @@ module.exports = ({
         backlogItemId: backlogItem.id,
       },
       text: 'Follow',
-    },
-  ];
+    });
+  }
   if (suggestFollowers) {
     actions.push({
       type: 'select',

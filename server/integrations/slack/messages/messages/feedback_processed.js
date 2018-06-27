@@ -1,15 +1,19 @@
+const getBacklogItemAttachment = require('../attachments/backlog_item');
+
 module.exports = ({ feedback, backlogItem }) => ({
-  text: '*_Your feedback has been associated to a backlog item_*',
+  text: '*_Your feedback has been associated to a item in the roadmap_*',
   attachments: [
     {
-      title: backlogItem.title,
-      text: backlogItem.description,
-      color: '#0079bf',
-    },
-    {
-      pretext: '*_Your feedback_*',
       text: feedback.description,
       color: '#f2d600',
+    },
+    {
+      ...getBacklogItemAttachment({
+        backlogItem,
+        showShowMore: true,
+        follow: false,
+      }),
+      pretext: `*_Associated backlog item:_*`,
     },
   ],
 });

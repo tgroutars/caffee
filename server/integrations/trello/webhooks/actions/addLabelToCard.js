@@ -11,7 +11,7 @@ const addLabelToCard = async payload => {
   });
   const tag = await Tag.find({ where: { trelloRef: label.id } });
   await Promise.map(backlogItems, async backlogItem => {
-    await BacklogItemService.addTag(backlogItem.id, tag.id);
+    await BacklogItemService.addTags(backlogItem.id, [tag.id]);
   });
 };
 

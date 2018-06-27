@@ -41,12 +41,14 @@ const BacklogItemService = (/* services */) => ({
     });
   },
 
-  async addTag(backlogItemId, tagId) {
-    await BacklogItemTag.findOrCreate({
-      where: {
-        backlogItemId,
-        tagId,
-      },
+  async addTags(backlogItemId, tagIds) {
+    await Promise.map(tagIds, async tagId => {
+      await BacklogItemTag.findOrCreate({
+        where: {
+          backlogItemId,
+          tagId,
+        },
+      });
     });
   },
 
@@ -105,7 +107,7 @@ const BacklogItemService = (/* services */) => ({
       productId,
       stageId,
       trelloRef: card.id,
-      tagIds: [tagId],
+      tagIds: tag && [tag.id],
     });
     return backlogItem;
   },
@@ -127,7 +129,7 @@ const BacklogItemService = (/* services */) => ({
       },
     });
     if (tagIds) {
-      await this.addTag(backlogItem.id, tagIds);
+      await this.addTags(backlogItem.id, tagIds);
     }
 
     if (created) {

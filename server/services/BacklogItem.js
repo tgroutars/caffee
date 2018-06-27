@@ -99,21 +99,25 @@ const BacklogItemService = (/* services */) => ({
       description,
     });
 
-    const backlogItem = await BacklogItem.create({
+    const [backlogItem] = await this.findOrCreate({
       title,
       description,
       productId,
       stageId,
       trelloRef: card.id,
+      tagIds: [tagId],
     });
-    if (tagId) {
-      await this.addTag(backlogItem.id, tagId);
-    }
-    await trigger('backlog_item_created', { backlogItemId: backlogItem.id });
     return backlogItem;
   },
 
-  async findOrCreate({ title, description, productId, stageId, trelloRef }) {
+  async findOrCreate({
+    title,
+    description,
+    productId,
+    stageId,
+    trelloRef,
+    tagIds,
+  }) {
     const [backlogItem, created] = await BacklogItem.findOrCreate({
       where: { productId, trelloRef },
       defaults: {
@@ -122,6 +126,14 @@ const BacklogItemService = (/* services */) => ({
         stageId,
       },
     });
+    if (tagIds) {
+      await this.addTag(backlogItem.id, tagIds);
+    }
+
+    if (created) {
+      await trigger('backlog_item_created', { backlogItemId: backlogItem.id });
+    }
+
     if (!created) {
       await backlogItem.update({ title, description, stageId });
     }

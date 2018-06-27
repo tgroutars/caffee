@@ -1,5 +1,5 @@
 module.exports = ({ feedback }) => ({
-  text: `*_The product team has archived your feedback_*`,
+  text: `*_The product team has archived your feedback :no_entry_sign:_*`,
   attachments: [
     {
       color: '#f2d600',

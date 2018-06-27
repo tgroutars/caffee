@@ -36,7 +36,10 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
       ts: originalMessage.ts,
     });
   } else {
-    await openArchiveReasonDialog({ feedbackId })({
+    await openArchiveReasonDialog({
+      feedbackId,
+      feedbackMessageRef: { channel, ts: originalMessage.ts },
+    })({
       accessToken,
       triggerId,
     });

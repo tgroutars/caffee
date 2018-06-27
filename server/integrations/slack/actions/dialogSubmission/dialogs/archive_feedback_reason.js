@@ -1,12 +1,30 @@
 const trim = require('lodash/trim');
 
+const { updateMessage } = require('../../../messages');
 const { Feedback: FeedbackService } = require('../../../../../services');
+const { Feedback } = require('../../../../../models');
 
-const archiveFeedbackReason = async payload => {
+const archiveFeedbackReason = async (payload, { workspace }) => {
   const { submission, callback_id: callbackId } = payload;
-  const { feedbackId } = callbackId;
+  const { feedbackId, feedbackMessageRef } = callbackId;
+
   const archiveReason = trim(submission.archiveReason);
   await FeedbackService.archive(feedbackId, { archiveReason });
+
+  if (feedbackMessageRef) {
+    const feedback = await Feedback.findById(feedbackId, {
+      include: ['product'],
+    });
+    const { product } = feedback;
+    await updateMessage('new_feedback')({
+      feedback,
+      product,
+    })({
+      accessToken: workspace.accessToken,
+      channel: feedbackMessageRef.channel,
+      ts: feedbackMessageRef.ts,
+    });
+  }
 };
 
 module.exports = archiveFeedbackReason;

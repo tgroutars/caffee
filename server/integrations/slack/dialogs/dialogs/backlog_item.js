@@ -5,11 +5,13 @@ const backlogItem = ({
   backlogStages,
   defaultDescription = '',
   defaultTitle,
+  feedbackMessageRef,
 }) => {
   const callbackId = {
     type: 'backlog_item',
     productId,
     feedbackId,
+    feedbackMessageRef,
   };
 
   const elements = [

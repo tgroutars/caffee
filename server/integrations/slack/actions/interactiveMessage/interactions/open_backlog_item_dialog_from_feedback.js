@@ -89,6 +89,7 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
       backlogStages,
       productId: product.id,
       defaultDescription,
+      feedbackMessageRef: { channel, ts: originalMessage.ts },
     })({
       accessToken,
       triggerId,

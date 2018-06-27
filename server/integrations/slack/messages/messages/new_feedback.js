@@ -57,7 +57,7 @@ const newFeedback = ({
   if (backlogItem) {
     attachments.push({
       ...getBacklogItemAttachment({ backlogItem, ...backlogItemOptions }),
-      pretext: '*_Associated backlog item_*',
+      pretext: '*_Associated backlog item:_*',
     });
   }
   return {

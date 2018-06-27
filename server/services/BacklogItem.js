@@ -101,7 +101,7 @@ const BacklogItemService = (/* services */) => ({
       description,
     });
 
-    const [backlogItem] = await this.findOrCreate({
+    return this.findOrCreate({
       title,
       description,
       productId,
@@ -109,7 +109,6 @@ const BacklogItemService = (/* services */) => ({
       trelloRef: card.id,
       tagIds: tag && [tag.id],
     });
-    return backlogItem;
   },
 
   async findOrCreate({

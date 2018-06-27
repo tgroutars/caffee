@@ -10,6 +10,7 @@ const backlogItemMoved = ({
     getBacklogItemAttachment({
       backlogItem,
       moved: { oldStage, newStage },
+      follow: !isFollowing,
     }),
   ];
   return {

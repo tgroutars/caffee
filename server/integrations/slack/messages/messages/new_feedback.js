@@ -48,7 +48,9 @@ const newFeedback = ({
       text: feedback.description,
       color: '#f2d600',
       callback_id: 'new_feedback',
-      footer: archivedAt ? 'This feedback was archived' : undefined,
+      footer: archivedAt
+        ? ':no_entry_sign: This feedback has been archived'
+        : undefined,
       actions,
     },
   ];

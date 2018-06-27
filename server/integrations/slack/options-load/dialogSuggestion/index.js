@@ -14,6 +14,9 @@ const preProcessPayload = async payload => ({
 const optionsLoad = async rawPayload => {
   const payload = await preProcessPayload(rawPayload);
   const { name, callback_id: callbackId } = payload;
+  if (!callbackId) {
+    return { options: [] };
+  }
   const type = `${callbackId.type}-${name}`;
   const action = elements[type];
   if (!action) {

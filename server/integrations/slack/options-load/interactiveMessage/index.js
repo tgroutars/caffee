@@ -9,9 +9,6 @@ const actionValueStore = new HashStore('slack:action_value');
  */
 const preProcessPayload = async payload => {
   const name = await actionValueStore.get(payload.name);
-  if (!name) {
-    throw new Error('This action has expired');
-  }
   return {
     ...payload,
     name,
@@ -29,6 +26,9 @@ const optionsLoad = async rawPayload => {
   const payload = await preProcessPayload(rawPayload);
 
   const { name } = payload;
+  if (!name) {
+    return { options: [] };
+  }
   const type = typeof name === 'string' ? name : name.type;
   const action = actions[type];
   if (!action) {

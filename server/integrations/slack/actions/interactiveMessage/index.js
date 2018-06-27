@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 
 const HashStore = require('../../../../lib/redis/HashStore');
 const interactions = require('./interactions');
+const { postEphemeral } = require('../../messages');
 
 const actionValueStore = new HashStore('slack:action_value');
 
@@ -13,9 +14,6 @@ const preProcessPayload = async payload => {
     actions: [action],
   } = payload;
   const name = await actionValueStore.get(action.name);
-  if (!name) {
-    throw new Error('This action has expired');
-  }
   return {
     ...payload,
     action: {
@@ -34,6 +32,17 @@ const preProcessPayload = async payload => {
 const interactiveMessage = async (rawPayload, state) => {
   const payload = await preProcessPayload(rawPayload);
   const { action } = payload;
+  if (!action.name) {
+    const { workspace, slackUser } = state;
+    const {
+      channel: { id: channel },
+    } = payload;
+    await postEphemeral('action_expired')()({
+      channel,
+      user: slackUser.slackId,
+      accessToken: workspace.accessToken,
+    });
+  }
   const { type } = action.name;
   const interaction = interactions[type];
   if (typeof interaction !== 'function') {

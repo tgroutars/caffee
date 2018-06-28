@@ -11,6 +11,7 @@ const addFeedbackToBacklogItem = async payload => {
   const backlogItems = await BacklogItem.findAll({
     where: {
       productId,
+      archivedAt: null,
       [Op.or]: {
         title: { [Op.iLike]: searchString },
         description: { [Op.iLike]: searchString },

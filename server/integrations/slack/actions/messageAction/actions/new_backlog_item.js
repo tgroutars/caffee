@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 
+const getTitleDescription = require('../../../../../lib/getTitleDescription');
 const { ProductUser, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
@@ -44,6 +45,8 @@ const newBacklogItem = async (payload, { workspace, slackUser }) => {
 
   const { accessToken } = workspace;
 
+  const { title, description } = getTitleDescription(text);
+
   if (!adminProducts.length) {
     await postForbiddenMessage()({
       accessToken,
@@ -56,7 +59,8 @@ const newBacklogItem = async (payload, { workspace, slackUser }) => {
   if (products.length > 1) {
     await postChooseProductMessage({
       products: adminProducts,
-      defaultDescription: text,
+      defaultTitle: title,
+      defaultDescription: description,
     })({
       accessToken,
       channel,
@@ -108,7 +112,8 @@ const newBacklogItem = async (payload, { workspace, slackUser }) => {
     tags,
     backlogStages,
     productId: product.id,
-    defaultDescription: text,
+    defaultTitle: title,
+    defaultDescription: description,
   })({
     accessToken,
     triggerId,

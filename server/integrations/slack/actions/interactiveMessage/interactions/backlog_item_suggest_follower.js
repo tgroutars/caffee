@@ -3,8 +3,14 @@ const Promise = require('bluebird');
 const { User, BacklogItem, SlackUser } = require('../../../../../models');
 const { postMessage } = require('../../../messages');
 
-const backlogItemSuggestFollower = async payload => {
-  const { action } = payload;
+const backlogItemSuggestFollower = async (
+  payload,
+  { slackUser, workspace },
+) => {
+  const {
+    action,
+    channel: { id: channel },
+  } = payload;
   const {
     selected_options: [
       {
@@ -19,12 +25,26 @@ const backlogItemSuggestFollower = async payload => {
     }),
     BacklogItem.findById(backlogItemId),
   ]);
-  await Promise.map(user.slackUsers, async slackUser => {
-    const { workspace, slackId: userSlackId } = slackUser;
+  const isFollower = await user.hasFollowedBacklogItem(backlogItem);
+  if (isFollower) {
     const { accessToken } = workspace;
+    await postMessage('backlog_item_already_followed_by')({
+      userName: user.name,
+    })({
+      accessToken,
+      user: slackUser.slackId,
+      channel,
+    });
+    return;
+  }
+  await Promise.map(user.slackUsers, async userSlackUser => {
+    const {
+      workspace: { accessToken },
+    } = userSlackUser;
+
     await postMessage('backlog_item_suggest_follow')({ backlogItem })({
       accessToken,
-      channel: userSlackId,
+      channel: userSlackUser.slackId,
     });
   });
 };

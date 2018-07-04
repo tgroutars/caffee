@@ -40,7 +40,13 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   User.associate = models => {
-    const { SlackUser, Product, ProductUser } = models;
+    const {
+      SlackUser,
+      Product,
+      ProductUser,
+      BacklogItemFollow,
+      BacklogItem,
+    } = models;
     User.hasMany(SlackUser, {
       as: 'slackUsers',
       foreignKey: 'userId',
@@ -50,6 +56,16 @@ module.exports = (sequelize, DataTypes) => {
       through: ProductUser,
       foreignKey: 'userId',
       otherKey: 'productId',
+    });
+    User.hasMany(BacklogItemFollow, {
+      as: 'follows',
+      foreignKey: 'userId',
+    });
+    User.belongsToMany(BacklogItem, {
+      as: 'followedBacklogItems',
+      through: BacklogItemFollow,
+      foreignKey: 'userId',
+      otherKey: 'backlogItemId',
     });
   };
 

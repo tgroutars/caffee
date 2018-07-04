@@ -1,5 +1,6 @@
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
+const getTitleDescription = require('../../../../../lib/getTitleDescription');
 
 const { Op } = Sequelize;
 
@@ -30,10 +31,14 @@ const channelMessage = async (payload, { workspace }) => {
   const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
   const defaultText = text.replace(re, ' ');
 
+  const { title, description } = getTitleDescription(defaultText);
+
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
-      defaultText,
+      defaultFeedback: defaultText,
+      defaultBacklogItemTitle: title,
+      defaultBacklogItemDescription: description,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel, user: userSlackId });
     return;
@@ -50,7 +55,9 @@ const channelMessage = async (payload, { workspace }) => {
   });
 
   await postMenuMessage({
-    defaultText,
+    defaultFeedback: defaultText,
+    defaultBacklogItemTitle: title,
+    defaultBacklogItemDescription: description,
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
     createBacklogItem: !!productUser,

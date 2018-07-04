@@ -4,7 +4,7 @@ const backlogItem = ({
   feedbackId,
   backlogStages,
   defaultDescription = '',
-  defaultTitle,
+  defaultTitle = '',
   feedbackMessageRef,
 }) => {
   const callbackId = {

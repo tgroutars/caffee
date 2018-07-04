@@ -1,6 +1,8 @@
 const menuChooseProduct = ({
   products,
-  defaultText,
+  defaulFeedback,
+  defaultBacklogItemTitle,
+  defaultBacklogItemDescription,
   defaultAuthorId,
   defaultAuthorName,
 }) => {
@@ -11,7 +13,9 @@ const menuChooseProduct = ({
     text: product.name,
     value: 'send_menu',
     name: {
-      defaultText,
+      defaulFeedback,
+      defaultBacklogItemTitle,
+      defaultBacklogItemDescription,
       defaultAuthorId,
       defaultAuthorName,
       type: 'send_menu',

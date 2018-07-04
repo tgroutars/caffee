@@ -77,24 +77,24 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
       channel,
       ts: originalMessage.ts,
     });
-  } else {
-    const [tags, backlogStages] = await Promise.all([
-      product.getTags(),
-      product.getBacklogStages({ order: [['position', 'asc']] }),
-    ]);
-
-    await openBacklogItemDialogHelper({
-      tags,
-      feedbackId,
-      backlogStages,
-      productId: product.id,
-      defaultDescription,
-      feedbackMessageRef: { channel, ts: originalMessage.ts },
-    })({
-      accessToken,
-      triggerId,
-    });
+    return;
   }
+  const [tags, backlogStages] = await Promise.all([
+    product.getTags(),
+    product.getBacklogStages({ order: [['position', 'asc']] }),
+  ]);
+
+  await openBacklogItemDialogHelper({
+    tags,
+    feedbackId,
+    backlogStages,
+    productId: product.id,
+    defaultDescription,
+    feedbackMessageRef: { channel, ts: originalMessage.ts },
+  })({
+    accessToken,
+    triggerId,
+  });
 };
 
 module.exports = openBacklogItemDialog;

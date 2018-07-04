@@ -13,7 +13,9 @@ const sendMenu = async (payload, { workspace, slackUser }) => {
 
   const {
     productId,
-    defaultText,
+    defaultFeedback,
+    defaultBacklogItemTitle,
+    defaultBacklogItemDescription,
     defaultAuthorId,
     defaultAuthorName,
   } = action.name;
@@ -30,7 +32,9 @@ const sendMenu = async (payload, { workspace, slackUser }) => {
 
   await postMenuMessage({
     productId,
-    defaultText,
+    defaultFeedback,
+    defaultBacklogItemTitle,
+    defaultBacklogItemDescription,
     defaultAuthorId,
     defaultAuthorName,
     createBacklogItem: !!productUser,

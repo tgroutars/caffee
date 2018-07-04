@@ -1,6 +1,8 @@
 const menu = ({
   productId,
-  defaultText,
+  defaultFeedback,
+  defaultBacklogItemTitle,
+  defaultBacklogItemDescription,
   defaultAuthorId,
   defaultAuthorName,
   createBacklogItem = false,
@@ -14,7 +16,8 @@ const menu = ({
       value: 'open_backlog_item_dialog',
       name: {
         productId,
-        defaultDescription: defaultText,
+        defaultDescription: defaultBacklogItemDescription,
+        defaultTitle: defaultBacklogItemTitle,
         type: 'open_backlog_item_dialog',
       },
     });
@@ -27,7 +30,7 @@ const menu = ({
       productId,
       defaultAuthorId,
       defaultAuthorName,
-      defaultFeedback: defaultText,
+      defaultFeedback,
       type: 'open_feedback_dialog',
     },
   });

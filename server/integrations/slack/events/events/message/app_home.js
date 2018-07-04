@@ -1,5 +1,6 @@
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postMessage } = require('../../../messages');
+const getTitleDescription = require('../../../../../lib/getTitleDescription');
 
 const { Op } = Sequelize;
 
@@ -21,12 +22,16 @@ const appHomeMessage = async (payload, { workspace }) => {
     return;
   }
 
+  const { title, description } = getTitleDescription(text);
+
   const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
 
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
-      defaultText: text,
+      defaultFeedback: text,
+      defaultBacklogItemTitle: title,
+      defaultBacklogItemDescription: description,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel });
     return;
@@ -43,7 +48,9 @@ const appHomeMessage = async (payload, { workspace }) => {
   });
 
   await postMenuMessage({
-    defaultText: text,
+    defaultFeedback: text,
+    defaultBacklogItemTitle: title,
+    defaultBacklogItemDescription: description,
     defaultAuthorId: slackUser.userId,
     productId: product.id,
     createBacklogItem: !!productUser,

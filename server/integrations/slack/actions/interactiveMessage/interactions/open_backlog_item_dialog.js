@@ -19,7 +19,8 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
 
   const { accessToken, appUserId, domain } = workspace;
 
-  const { productId, defaultDescription } = action.name;
+  const { productId, defaultTitle, defaultDescription } = action.name;
+
   const product = await Product.findById(productId);
 
   const { trelloAccessToken, trelloBoardId } = product;
@@ -65,6 +66,7 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
     tags,
     backlogStages,
     productId: product.id,
+    defaultTitle,
     defaultDescription,
   })({
     accessToken,

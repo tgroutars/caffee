@@ -1,10 +1,15 @@
-const backlogItemChooseProduct = ({ products, defaultDescription = '' }) => {
+const backlogItemChooseProduct = ({
+  products,
+  defaultTitle = '',
+  defaultDescription = '',
+}) => {
   const pretext = 'In which backlog do you want to send this?';
   const actions = products.map(product => ({
     type: 'button',
     text: product.name,
     value: 'open_backlog_item_dialog',
     name: {
+      defaultTitle,
       defaultDescription,
       type: 'open_backlog_item_dialog',
       productId: product.id,

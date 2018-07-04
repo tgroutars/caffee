@@ -30,6 +30,7 @@ const backlogItemCreated = async ({ backlogItemId }) => {
     product,
     suggestFollowers: true,
     openCard: true,
+    follow: false,
   });
   await Promise.map(users, async user => {
     const slackUsers = await SlackUser.findAll({

@@ -5,9 +5,15 @@ const newBacklogItem = ({
   product,
   openCard,
   suggestFollowers = false,
+  follow = true,
 }) => {
   const attachments = [
-    getBacklogItemAttachment({ backlogItem, openCard, suggestFollowers }),
+    getBacklogItemAttachment({
+      backlogItem,
+      openCard,
+      suggestFollowers,
+      follow,
+    }),
   ];
   return {
     attachments,

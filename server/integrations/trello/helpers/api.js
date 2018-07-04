@@ -23,6 +23,12 @@ const makeRequest = async (
   return response.data;
 };
 
+const fetchBoard = async (accessToken, { boardId }) =>
+  makeRequest(accessToken, {
+    url: `/boards/${boardId}`,
+    method: 'GET',
+  });
+
 const listBoards = async accessToken => {
   const boards = await makeRequest(accessToken, {
     url: '/members/me/boards',
@@ -120,4 +126,5 @@ module.exports = {
   createWebhook,
   destroyWebhook,
   fetchList,
+  fetchBoard,
 };

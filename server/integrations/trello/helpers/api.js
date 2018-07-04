@@ -84,6 +84,15 @@ const createCard = async (
   return card;
 };
 
+const addComment = async (accessToken, { cardId, text }) => {
+  const comment = await makeRequest(accessToken, {
+    url: `/cards/${cardId}/actions/comments`,
+    method: 'POST',
+    data: { text },
+  });
+  return comment;
+};
+
 const createWebhook = async (accessToken, { modelId }) => {
   const webhook = await makeRequest(accessToken, {
     url: '/webhooks',
@@ -105,6 +114,7 @@ module.exports = {
   listBoards,
   listLists,
   createCard,
+  addComment,
   listCards,
   listLabels,
   createWebhook,

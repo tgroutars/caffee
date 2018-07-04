@@ -1,3 +1,5 @@
+const SlackClient = require('@slack/client').WebClient;
+
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
@@ -9,7 +11,7 @@ const postMenuMessage = postEphemeral('menu');
 
 const channelMessage = async (payload, { workspace }) => {
   const {
-    event: { text, channel, user: userSlackId },
+    event: { text, channel, thread_ts: threadTS, user: userSlackId },
   } = payload;
 
   const { accessToken, appUserId } = workspace;
@@ -24,11 +26,26 @@ const channelMessage = async (payload, { workspace }) => {
     return;
   }
 
+  let defaultText;
+  if (threadTS) {
+    const slackClient = new SlackClient(accessToken);
+    const {
+      messages: [message],
+    } = await slackClient.conversations.history({
+      channel,
+      latest: threadTS,
+      limit: 2,
+      inclusive: true,
+    });
+    defaultText = message.text;
+  } else {
+    const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
+    defaultText = text.replace(re, ' ');
+  }
+
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId, workspaceId: workspace.id },
   });
-  const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
-  const defaultText = text.replace(re, ' ');
 
   const { title, description } = getTitleDescription(defaultText);
 

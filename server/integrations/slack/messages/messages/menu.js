@@ -6,20 +6,7 @@ const menu = ({
   createBacklogItem = false,
 }) => {
   const pretext = 'Hi there :wave: What do you want to do?';
-  const actions = [
-    {
-      type: 'button',
-      text: 'Send a new feedback',
-      value: 'open_feedback_dialog',
-      name: {
-        productId,
-        defaultAuthorId,
-        defaultAuthorName,
-        defaultFeedback: defaultText,
-        type: 'open_feedback_dialog',
-      },
-    },
-  ];
+  const actions = [];
   if (createBacklogItem) {
     actions.push({
       type: 'button',
@@ -32,6 +19,18 @@ const menu = ({
       },
     });
   }
+  actions.push({
+    type: 'button',
+    text: 'Send a new feedback',
+    value: 'open_feedback_dialog',
+    name: {
+      productId,
+      defaultAuthorId,
+      defaultAuthorName,
+      defaultFeedback: defaultText,
+      type: 'open_feedback_dialog',
+    },
+  });
   return {
     attachments: [
       {

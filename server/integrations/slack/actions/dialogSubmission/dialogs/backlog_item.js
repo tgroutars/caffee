@@ -7,7 +7,7 @@ const {
   Feedback: FeedbackService,
 } = require('../../../../../services');
 const { Feedback, SlackWorkspace } = require('../../../../../models');
-const { updateMessage } = require('../../../messages');
+const { updateMessage, postEphemeral } = require('../../../messages');
 
 const createBacklogItemBG = registerBackgroundTask(
   async ({
@@ -19,6 +19,8 @@ const createBacklogItemBG = registerBackgroundTask(
     stageId,
     feedbackMessageRef,
     workspaceId,
+    channel,
+    userSlackId,
   }) => {
     const backlogItem = await BacklogItemService.createAndSync({
       title,
@@ -28,35 +30,48 @@ const createBacklogItemBG = registerBackgroundTask(
       tagId,
     });
 
+    const product = await backlogItem.getProduct();
+    const workspace = await SlackWorkspace.findById(workspaceId);
+    const { accessToken } = workspace;
+
     if (feedbackId) {
       await FeedbackService.setBacklogItem(feedbackId, {
         backlogItemId: backlogItem.id,
       });
     }
     if (feedbackMessageRef) {
-      const feedback = await Feedback.findById(feedbackId, {
-        include: ['product'],
-      });
-      const workspace = await SlackWorkspace.findById(workspaceId);
-      const { product } = feedback;
+      const feedback = await Feedback.findById(feedbackId);
       await updateMessage('new_feedback')({
         feedback,
         backlogItem,
         product,
         backlogItemOptions: { openCard: true },
       })({
-        accessToken: workspace.accessToken,
+        accessToken,
         channel: feedbackMessageRef.channel,
         ts: feedbackMessageRef.ts,
       });
     }
+
+    await postEphemeral('new_backlog_item')({
+      backlogItem,
+      product,
+      openCard: true,
+      suggestFollowers: true,
+      follow: false,
+    })({ accessToken, channel, user: userSlackId });
 
     return backlogItem;
   },
 );
 
 const backlogItem = async (payload, { workspace }) => {
-  const { submission, callback_id: callbackId } = payload;
+  const {
+    submission,
+    callback_id: callbackId,
+    channel: { id: channel },
+    user: { id: userSlackId },
+  } = payload;
   const { productId, feedbackId, feedbackMessageRef } = callbackId;
   const { stageId, tagId } = submission;
   const title = trim(submission.title);
@@ -77,6 +92,8 @@ const backlogItem = async (payload, { workspace }) => {
     tagId,
     feedbackId,
     stageId,
+    channel,
+    userSlackId,
     feedbackMessageRef,
     workspaceId: workspace.id,
   });

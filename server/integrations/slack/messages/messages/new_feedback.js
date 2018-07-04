@@ -4,6 +4,7 @@ const newFeedback = ({
   feedback,
   product,
   backlogItem,
+  author,
   backlogItemOptions = {},
 }) => {
   const { archivedAt } = feedback;
@@ -61,7 +62,7 @@ const newFeedback = ({
     });
   }
   return {
-    text: `*_New feedback on ${product.name}_*`,
+    text: `*_${author.name} added a new feedback on ${product.name}_*`,
     attachments,
   };
 };

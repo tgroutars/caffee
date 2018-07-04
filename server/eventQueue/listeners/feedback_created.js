@@ -13,9 +13,9 @@ const { Op } = Sequelize;
 
 const feedbackCreated = async ({ feedbackId }) => {
   const feedback = await Feedback.findById(feedbackId, {
-    include: ['product'],
+    include: ['product', 'author'],
   });
-  const { product, createdById, authorId } = feedback;
+  const { product, createdById, author } = feedback;
 
   const productUsersToNotify = await ProductUser.findAll({
     where: { productId: product.id, role: { [Op.in]: ['user', 'admin'] } },
@@ -30,7 +30,11 @@ const feedbackCreated = async ({ feedbackId }) => {
     ],
   });
   const usersToNotify = productUsersToNotify.map(({ user }) => user);
-  const postNewFeedback = postMessage('new_feedback')({ feedback, product });
+  const postNewFeedback = postMessage('new_feedback')({
+    feedback,
+    product,
+    author,
+  });
 
   await Promise.map(usersToNotify, async ({ slackUsers }) => {
     await Promise.map(slackUsers, async slackUser => {
@@ -39,16 +43,12 @@ const feedbackCreated = async ({ feedbackId }) => {
       await postNewFeedback({ accessToken, channel: slackUser.slackId });
     });
   });
-  if (authorId !== createdById) {
-    const [author, createdBy] = await Promise.all([
-      User.findById(authorId, {
-        include: [
-          { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
-        ],
-      }),
+  if (author.id !== createdById) {
+    const [authorSlackUsers, createdBy] = await Promise.all([
+      author.getSlackUsers({ include: ['workspace'] }),
       User.findById(createdById),
     ]);
-    await Promise.map(author.slackUsers, async slackUser => {
+    await Promise.map(authorSlackUsers, async slackUser => {
       const { workspace } = slackUser;
       const { accessToken } = workspace;
       await postMessage('feedback_created_by')({ createdBy, feedback })({

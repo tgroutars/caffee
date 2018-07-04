@@ -15,7 +15,7 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
   const { accessToken } = workspace;
 
   const feedback = await Feedback.findById(feedbackId, {
-    include: ['product', 'backlogItem'],
+    include: ['product', 'backlogItem', 'author'],
   });
 
   if (feedback.backlogItemId || feedback.archivedAt) {
@@ -24,11 +24,12 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
       channel,
       user: slackUser.slackId,
     });
-    const { backlogItem, product } = feedback;
+    const { backlogItem, product, author } = feedback;
     await updateMessage('new_feedback')({
       feedback,
       backlogItem,
       product,
+      author,
       backlogItemOptions: { openCard: true },
     })({
       accessToken,

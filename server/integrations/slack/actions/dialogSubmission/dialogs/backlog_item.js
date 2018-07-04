@@ -40,11 +40,15 @@ const createBacklogItemBG = registerBackgroundTask(
       });
     }
     if (feedbackMessageRef) {
-      const feedback = await Feedback.findById(feedbackId);
+      const feedback = await Feedback.findById(feedbackId, {
+        include: ['author'],
+      });
+      const { author } = feedback;
       await updateMessage('new_feedback')({
         feedback,
         backlogItem,
         product,
+        author,
         backlogItemOptions: { openCard: true },
       })({
         accessToken,

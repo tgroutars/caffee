@@ -13,12 +13,13 @@ const archiveFeedbackReason = async (payload, { workspace }) => {
 
   if (feedbackMessageRef) {
     const feedback = await Feedback.findById(feedbackId, {
-      include: ['product'],
+      include: ['product', 'author'],
     });
-    const { product } = feedback;
+    const { product, author } = feedback;
     await updateMessage('new_feedback')({
       feedback,
       product,
+      author,
     })({
       accessToken: workspace.accessToken,
       channel: feedbackMessageRef.channel,

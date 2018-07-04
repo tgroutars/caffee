@@ -22,9 +22,9 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
 
   const { feedbackId, defaultDescription } = action.name;
   const feedback = await Feedback.findById(feedbackId, {
-    include: ['product'],
+    include: ['product', 'author'],
   });
-  const { product } = feedback;
+  const { product, author } = feedback;
   const { trelloAccessToken, trelloBoardId } = product;
 
   // TODO: Extract this in some helper
@@ -71,6 +71,7 @@ const openBacklogItemDialog = async (payload, { workspace, slackUser }) => {
       feedback,
       backlogItem,
       product,
+      author,
       backlogItemOptions: { openCard: true },
     })({
       accessToken,

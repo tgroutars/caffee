@@ -14,13 +14,12 @@ const channelMessage = async (payload, { workspace }) => {
 
   const { accessToken, appUserId } = workspace;
 
-  const products = await workspace.getProducts();
-
   const appMention = `<@${appUserId}>`;
   if (!text.includes(appMention)) {
     return;
   }
 
+  const products = await workspace.getProducts();
   if (!products.length) {
     return;
   }

@@ -1,5 +1,12 @@
+const defaults = require('lodash/defaults');
+
 module.exports = ({ roadmapItems, product, page = 0, pageCount = 0 }) => {
   const isLastPage = page >= pageCount;
+  const defaultNavName = {
+    page,
+    productId: product.id,
+    type: 'navigate_roadmap',
+  };
 
   const attachments = roadmapItems.map(roadmapItem => {
     const { followers, stage } = roadmapItem;
@@ -32,11 +39,7 @@ module.exports = ({ roadmapItems, product, page = 0, pageCount = 0 }) => {
       type: 'button',
       text: 'Previous',
       value: 'navigate_roadmap',
-      name: {
-        page: page - 1,
-        productId: product.id,
-        type: 'navigate_roadmap',
-      },
+      name: defaults({ page: page - 1 }, defaultNavName),
     });
   }
   if (!isLastPage) {
@@ -44,11 +47,7 @@ module.exports = ({ roadmapItems, product, page = 0, pageCount = 0 }) => {
       type: 'button',
       text: 'Next',
       value: 'navigate_roadmap',
-      name: {
-        page: page + 1,
-        productId: product.id,
-        type: 'navigate_roadmap',
-      },
+      name: defaults({ page: page + 1 }, defaultNavName),
     });
   }
 

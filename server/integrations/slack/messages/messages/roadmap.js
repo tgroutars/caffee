@@ -1,5 +1,7 @@
 const defaults = require('lodash/defaults');
 
+const getRoadmapItemAttachment = require('../attachments/roadmap_item');
+
 module.exports = ({
   roadmapItems,
   product,
@@ -16,26 +18,13 @@ module.exports = ({
     type: 'navigate_roadmap',
   };
 
-  const attachments = roadmapItems.map(roadmapItem => {
-    const { followers, stage } = roadmapItem;
-    const followerCount = followers.length;
-    const footer = followerCount
-      ? `:eyes: Following (${followerCount}): ${followers
-          .map(follower => follower.name)
-          .join(', ')}`
-      : ':eyes: No Follower';
-    return {
-      text: `${roadmapItem.title}`,
-      fields: [
-        {
-          title: 'Status',
-          value: stage.name,
-          short: true,
-        },
-      ],
-      footer,
-    };
-  });
+  const attachments = roadmapItems.map(roadmapItem =>
+    getRoadmapItemAttachment({
+      product,
+      roadmapItem,
+      followers: roadmapItem.followers,
+    }),
+  );
 
   const navAttachment = {
     title: `Navigate (${page + 1}/${pageCount})`,

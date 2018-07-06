@@ -47,11 +47,16 @@ module.exports = ({
       text: 'Show more',
     });
   }
-  const followersList =
-    followers && followers.map(user => user.name).join(', ');
-  const footer =
-    followersList &&
-    `:eyes:  Followers (${followers.length}): ${followersList}`;
+
+  let footer = '';
+  if (followers) {
+    const followerCount = followers && followers.length;
+    footer = followerCount
+      ? `:eyes: Following (${followerCount}): ${followers
+          .map(follower => follower.name)
+          .join(', ')}`
+      : ':eyes: No Follower';
+  }
 
   const fields = [];
   if (moved) {

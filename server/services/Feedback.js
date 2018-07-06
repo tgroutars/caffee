@@ -22,12 +22,12 @@ const FeedbackService = services => ({
     await trigger('feedback_processed', { feedbackId });
   },
 
-  async archive(feedbackId, { archiveReason }) {
+  async archive(feedbackId, { archiveReason, archivedById }) {
     await Feedback.update(
       { archivedAt: sequelize.fn('NOW'), archiveReason },
       { where: { id: feedbackId } },
     );
-    await trigger('feedback_archived', { feedbackId });
+    await trigger('feedback_archived', { feedbackId, archivedById });
   },
 });
 

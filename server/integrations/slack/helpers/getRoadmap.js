@@ -18,13 +18,11 @@ const getRoadmap = async (productId, { nbItems = 5, page = 0 } = {}) => {
     where: { productId },
   });
 
-  const isLastPage = roadmapItemCount <= offset + roadmapItems.length;
   const pageCount = ceil(roadmapItemCount / nbItems);
   await Promise.map(roadmapItems, async roadmapItem => {
     roadmapItem.followers = await roadmapItem.getFollowers();
   });
   return {
-    isLastPage,
     pageCount,
     roadmapItems,
     roadmapItemCount,

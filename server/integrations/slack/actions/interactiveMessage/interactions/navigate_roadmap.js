@@ -10,14 +10,12 @@ module.exports = async (payload, { workspace }) => {
 
   const { productId, page = 0 } = action.name;
 
-  const { isLastPage, pageCount, roadmapItems, product } = await getRoadmap(
-    productId,
-    { page },
-  );
+  const { pageCount, roadmapItems, product } = await getRoadmap(productId, {
+    page,
+  });
 
   const { accessToken } = workspace;
   await updateMessage('roadmap')({
-    isLastPage,
     page,
     pageCount,
     product,

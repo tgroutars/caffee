@@ -1,10 +1,6 @@
-module.exports = ({
-  roadmapItems,
-  product,
-  page = 0,
-  isLastPage = false,
-  pageCount = 0,
-}) => {
+module.exports = ({ roadmapItems, product, page = 0, pageCount = 0 }) => {
+  const isLastPage = page >= pageCount;
+
   const attachments = roadmapItems.map(roadmapItem => {
     const { followers, stage } = roadmapItem;
     const followerCount = followers.length;

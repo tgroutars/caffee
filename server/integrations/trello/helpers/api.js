@@ -67,7 +67,7 @@ const listLabels = async (accessToken, { boardId }) => {
 
 const listCards = async (accessToken, { boardId }) => {
   const cards = await makeRequest(accessToken, {
-    url: `/boards/${boardId}/cards`,
+    url: `/boards/${boardId}/cards/all`,
     method: 'GET',
   });
   return cards;

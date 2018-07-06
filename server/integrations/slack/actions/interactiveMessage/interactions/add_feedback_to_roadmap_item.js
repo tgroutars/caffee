@@ -16,9 +16,7 @@ const addFeedbackToRoadmapItem = async (payload, { workspace, slackUser }) => {
     ],
     name: { feedbackId },
   } = action;
-  const feedback = await Feedback.findById(feedbackId, {
-    include: ['roadmapItem', 'product', 'author'],
-  });
+  const feedback = await Feedback.findById(feedbackId);
   const { accessToken } = workspace;
 
   if (feedback.roadmapItemId || feedback.archivedAt) {
@@ -34,6 +32,9 @@ const addFeedbackToRoadmapItem = async (payload, { workspace, slackUser }) => {
     });
   }
 
+  await feedback.reload({
+    include: ['roadmapItem', 'product', 'author'],
+  });
   const { roadmapItem, product, author } = feedback;
   const { ts } = originalMessage;
 

@@ -28,7 +28,10 @@ const addFeedbackToBacklogItem = async (payload, { workspace, slackUser }) => {
       user: slackUser.slackId,
     });
   } else {
-    await FeedbackService.setBacklogItem(feedbackId, { backlogItemId });
+    await FeedbackService.setBacklogItem(feedbackId, {
+      backlogItemId,
+      processedById: slackUser.userId,
+    });
   }
 
   const { backlogItem, product, author } = feedback;

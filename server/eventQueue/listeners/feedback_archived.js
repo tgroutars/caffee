@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const { Feedback, User, SlackUser } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 
-const feedbackArchived = async ({ feedbackId }) => {
+const feedbackArchived = async ({ feedbackId, archivedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [
       {
@@ -15,10 +15,12 @@ const feedbackArchived = async ({ feedbackId }) => {
       },
     ],
   });
+  const archivedBy = await User.findById(archivedById);
   const { author } = feedback;
   const { slackUsers } = author;
   const postFeedbackArchivedMessage = postMessage('feedback_archived')({
     feedback,
+    archivedBy,
   });
 
   await Promise.map(slackUsers, async slackUser => {

@@ -6,7 +6,11 @@ const {
   BacklogItem: BacklogItemService,
   Feedback: FeedbackService,
 } = require('../../../../../services');
-const { Feedback, SlackWorkspace } = require('../../../../../models');
+const {
+  Feedback,
+  SlackWorkspace,
+  SlackUser,
+} = require('../../../../../models');
 const { updateMessage, postEphemeral } = require('../../../messages');
 
 const createBacklogItemBG = registerBackgroundTask(
@@ -29,6 +33,7 @@ const createBacklogItemBG = registerBackgroundTask(
       stageId,
       tagId,
     });
+    const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
 
     const product = await backlogItem.getProduct();
     const workspace = await SlackWorkspace.findById(workspaceId);
@@ -37,6 +42,7 @@ const createBacklogItemBG = registerBackgroundTask(
     if (feedbackId) {
       await FeedbackService.setBacklogItem(feedbackId, {
         backlogItemId: backlogItem.id,
+        processedById: slackUser.userId,
       });
     }
     if (feedbackMessageRef) {

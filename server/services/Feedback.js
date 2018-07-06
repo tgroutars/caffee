@@ -15,19 +15,19 @@ const FeedbackService = services => ({
     return feedback;
   },
 
-  async setBacklogItem(feedbackId, { backlogItemId }) {
+  async setBacklogItem(feedbackId, { backlogItemId, processedById }) {
     const feedback = await Feedback.findById(feedbackId);
     await feedback.update({ backlogItemId });
     await services.BacklogItem.addFollower(backlogItemId, feedback.authorId);
-    await trigger('feedback_processed', { feedbackId });
+    await trigger('feedback_processed', { feedbackId, processedById });
   },
 
-  async archive(feedbackId, { archiveReason }) {
+  async archive(feedbackId, { archiveReason, archivedById }) {
     await Feedback.update(
       { archivedAt: sequelize.fn('NOW'), archiveReason },
       { where: { id: feedbackId } },
     );
-    await trigger('feedback_archived', { feedbackId });
+    await trigger('feedback_archived', { feedbackId, archivedById });
   },
 });
 

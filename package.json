@@ -9,6 +9,7 @@
     "dev": "npm run dev-server",
     "format": "npm run prettier && npm run lint:fix",
     "lint:fix": "eslint --ext .js,.jsx --fix server",
+    "lint:strict": "eslint --max-warnings=0 --ext .js,.jsx server",
     "lint": "eslint --ext .js,.jsx server",
     "migration:create": "sequelize migration:create",
     "prettier": "prettier --write \"server/**/*.js\"",

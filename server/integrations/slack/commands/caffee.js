@@ -65,7 +65,7 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
 
   await postMenuMessage({
     productId,
-    defaulFeedback: text,
+    defaultFeedback: text,
     defaultRoadmapItemTitle: title,
     defaultRoadmapItemDescription: description,
     defaultAuthorId: slackUser.userId,

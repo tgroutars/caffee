@@ -4,9 +4,12 @@ const { postMessage } = require('../../../messages');
 module.exports = async (payload, { workspace, slackUser }) => {
   const { action } = payload;
   const { productId, page = 0 } = action.name;
-  const { pageCount, roadmapItems, product } = await getRoadmap(productId, {
-    page,
-  });
+  const { pageCount, roadmapItems, product, stages } = await getRoadmap(
+    productId,
+    {
+      page,
+    },
+  );
 
   const { accessToken } = workspace;
   await postMessage('roadmap')({
@@ -14,6 +17,7 @@ module.exports = async (payload, { workspace, slackUser }) => {
     roadmapItems,
     page,
     pageCount,
+    stages,
   })({
     accessToken,
     channel: slackUser.slackId,

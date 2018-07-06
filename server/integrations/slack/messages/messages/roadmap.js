@@ -1,9 +1,17 @@
 const defaults = require('lodash/defaults');
 
-module.exports = ({ roadmapItems, product, page = 0, pageCount = 0 }) => {
-  const isLastPage = page >= pageCount;
+module.exports = ({
+  roadmapItems,
+  product,
+  stages,
+  stageId,
+  page = 0,
+  pageCount = 0,
+}) => {
+  const isLastPage = page + 1 >= pageCount;
   const defaultNavName = {
     page,
+    stageId,
     productId: product.id,
     type: 'navigate_roadmap',
   };
@@ -50,6 +58,18 @@ module.exports = ({ roadmapItems, product, page = 0, pageCount = 0 }) => {
       name: defaults({ page: page + 1 }, defaultNavName),
     });
   }
+
+  navAttachment.actions.push({
+    type: 'select',
+    text: 'Status',
+    name: defaults({ page: 0 }, defaultNavName),
+    options: stages.map(stage => ({
+      text: stage.name,
+      value: {
+        stageId: stage.id,
+      },
+    })),
+  });
 
   attachments.push(navAttachment);
   return {

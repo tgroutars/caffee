@@ -1,23 +1,34 @@
 const Promise = require('bluebird');
 const ceil = require('lodash/ceil');
 
-const { Product, RoadmapItem, Sequelize } = require('../../../models');
+const {
+  Product,
+  RoadmapItem,
+  RoadmapStage,
+  Sequelize,
+} = require('../../../models');
 
-const getRoadmap = async (productId, { nbItems = 5, page = 0 } = {}) => {
+// TODO: Promise.all
+const getRoadmap = async (
+  productId,
+  { nbItems = 5, page = 0, stageId } = {},
+) => {
   const product = await Product.findById(productId);
 
   const offset = page * 5;
+  const where = { productId };
+  if (stageId) {
+    where.stageId = stageId;
+  }
   const roadmapItems = await RoadmapItem.findAll({
-    where: { productId },
+    where,
     include: ['stage'],
     order: [[Sequelize.literal('stage.position'), 'ASC']],
     limit: nbItems,
     offset,
   });
-  const roadmapItemCount = await RoadmapItem.count({
-    where: { productId },
-  });
-
+  const roadmapItemCount = await RoadmapItem.count({ where });
+  const stages = await RoadmapStage.findAll({ where: { productId } });
   const pageCount = ceil(roadmapItemCount / nbItems);
   await Promise.map(roadmapItems, async roadmapItem => {
     roadmapItem.followers = await roadmapItem.getFollowers();
@@ -27,6 +38,7 @@ const getRoadmap = async (productId, { nbItems = 5, page = 0 } = {}) => {
     roadmapItems,
     roadmapItemCount,
     product,
+    stages,
   };
 };
 

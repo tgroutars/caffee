@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
-const { BacklogItem: BacklogItemService } = require('../../../../services');
-const { BacklogItem } = require('../../../../models');
+const { RoadmapItem: RoadmapItemService } = require('../../../../services');
+const { RoadmapItem } = require('../../../../models');
 
 const updateCard = async payload => {
   const { data } = payload.action;
@@ -9,20 +9,20 @@ const updateCard = async payload => {
 
   // TODO: Create item in case the board is associated to a product
   // but the item does not exist
-  const backlogItems = await BacklogItem.findAll({
+  const roadmapItems = await RoadmapItem.findAll({
     where: { trelloRef: card.id },
   });
-  await Promise.map(backlogItems, async backlogItem => {
+  await Promise.map(roadmapItems, async roadmapItem => {
     if (card.closed) {
-      await BacklogItemService.archive(backlogItem.id);
+      await RoadmapItemService.archive(roadmapItem.id);
       return;
     }
     if (old.closed && !card.closed) {
-      await BacklogItemService.unarchive(backlogItem.id);
+      await RoadmapItemService.unarchive(roadmapItem.id);
     }
 
     if (old.idList && old.idList !== card.idList) {
-      await BacklogItemService.move(backlogItem.id, {
+      await RoadmapItemService.move(roadmapItem.id, {
         oldList: data.listBefore,
         newList: data.listAfter,
       });
@@ -36,7 +36,7 @@ const updateCard = async payload => {
       newValues.title = card.name;
     }
     if (Object.keys(newValues).length) {
-      await BacklogItemService.update(backlogItem.id, newValues);
+      await RoadmapItemService.update(roadmapItem.id, newValues);
     }
   });
 };

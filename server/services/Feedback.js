@@ -15,10 +15,10 @@ const FeedbackService = services => ({
     return feedback;
   },
 
-  async setBacklogItem(feedbackId, { backlogItemId, processedById }) {
+  async setRoadmapItem(feedbackId, { roadmapItemId, processedById }) {
     const feedback = await Feedback.findById(feedbackId);
-    await feedback.update({ backlogItemId });
-    await services.BacklogItem.addFollower(backlogItemId, feedback.authorId);
+    await feedback.update({ roadmapItemId });
+    await services.RoadmapItem.addFollower(roadmapItemId, feedback.authorId);
     await trigger('feedback_processed', { feedbackId, processedById });
   },
 

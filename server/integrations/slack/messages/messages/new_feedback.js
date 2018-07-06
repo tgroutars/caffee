@@ -1,30 +1,30 @@
-const getBacklogItemAttachment = require('../attachments/backlog_item');
+const getRoadmapItemAttachment = require('../attachments/roadmap_item');
 
 const newFeedback = ({
   feedback,
   product,
-  backlogItem,
+  roadmapItem,
   author,
-  backlogItemOptions = {},
+  roadmapItemOptions = {},
 }) => {
   const { archivedAt } = feedback;
   let actions;
-  if (!feedback.archivedAt && !backlogItem) {
+  if (!feedback.archivedAt && !roadmapItem) {
     actions = [
       {
         type: 'button',
-        value: 'open_backlog_item_dialog',
+        value: 'open_roadmap_item_dialog',
         name: {
-          type: 'open_backlog_item_dialog_from_feedback',
+          type: 'open_roadmap_item_dialog_from_feedback',
           feedbackId: feedback.id,
           defaultDescription: feedback.description,
         },
-        text: 'New backlog item',
+        text: 'New roadmap item',
         style: 'primary',
       },
       {
         name: {
-          type: 'add_feedback_to_backlog_item',
+          type: 'add_feedback_to_roadmap_item',
           feedbackId: feedback.id,
           productId: product.id,
         },
@@ -55,10 +55,10 @@ const newFeedback = ({
       actions,
     },
   ];
-  if (backlogItem) {
+  if (roadmapItem) {
     attachments.push({
-      ...getBacklogItemAttachment({ backlogItem, ...backlogItemOptions }),
-      pretext: '*_Associated backlog item:_*',
+      ...getRoadmapItemAttachment({ roadmapItem, ...roadmapItemOptions }),
+      pretext: '*_Associated roadmap item:_*',
     });
   }
   return {

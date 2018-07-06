@@ -53,8 +53,8 @@ const channelMessage = async (payload, { workspace }) => {
     await postMenuChooseProductMessage({
       products,
       defaultFeedback: defaultText,
-      defaultBacklogItemTitle: title,
-      defaultBacklogItemDescription: description,
+      defaultRoadmapItemTitle: title,
+      defaultRoadmapItemDescription: description,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel, user: userSlackId });
     return;
@@ -72,11 +72,11 @@ const channelMessage = async (payload, { workspace }) => {
 
   await postMenuMessage({
     defaultFeedback: defaultText,
-    defaultBacklogItemTitle: title,
-    defaultBacklogItemDescription: description,
+    defaultRoadmapItemTitle: title,
+    defaultRoadmapItemDescription: description,
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
-    createBacklogItem: !!productUser,
+    createRoadmapItem: !!productUser,
   })({ accessToken, channel, user: userSlackId });
 };
 

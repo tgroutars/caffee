@@ -1,24 +1,24 @@
 const menu = ({
   productId,
   defaultFeedback,
-  defaultBacklogItemTitle,
-  defaultBacklogItemDescription,
+  defaultRoadmapItemTitle,
+  defaultRoadmapItemDescription,
   defaultAuthorId,
   defaultAuthorName,
-  createBacklogItem = false,
+  createRoadmapItem = false,
 }) => {
   const pretext = 'Hi there :wave: What do you want to do?';
   const actions = [];
-  if (createBacklogItem) {
+  if (createRoadmapItem) {
     actions.push({
       type: 'button',
-      text: 'Create a new backlog item',
-      value: 'open_backlog_item_dialog',
+      text: 'Create a new roadmap item',
+      value: 'open_roadmap_item_dialog',
       name: {
         productId,
-        defaultDescription: defaultBacklogItemDescription,
-        defaultTitle: defaultBacklogItemTitle,
-        type: 'open_backlog_item_dialog',
+        defaultDescription: defaultRoadmapItemDescription,
+        defaultTitle: defaultRoadmapItemTitle,
+        type: 'open_roadmap_item_dialog',
       },
     });
   }

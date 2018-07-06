@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const winston = require('winston');
 
-const { Product, BacklogItem, Tag, BacklogStage } = require('../models');
+const { Product, RoadmapItem, Tag, RoadmapStage } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 const {
   listCards,
@@ -78,14 +78,14 @@ const ProductService = (/* services */) => ({
     // Change product name
     await product.update({ name: board.name });
 
-    // Remove old backlog items
-    await BacklogItem.destroy({
+    // Remove old roadmap items
+    await RoadmapItem.destroy({
       where: { productId: product.id },
     });
     // Remove old tags
     await Tag.destroy({ where: { productId: product.id } });
     // Remove old stages
-    await BacklogStage.destroy({ where: { productId: product.id } });
+    await RoadmapStage.destroy({ where: { productId: product.id } });
 
     // Add new tags
     const tags = await Promise.map(labels, async label =>
@@ -105,7 +105,7 @@ const ProductService = (/* services */) => ({
 
     // Add new stages
     const stages = await Promise.map(lists, async list =>
-      BacklogStage.create({
+      RoadmapStage.create({
         productId: product.id,
         name: list.name,
         trelloRef: list.id,
@@ -123,7 +123,7 @@ const ProductService = (/* services */) => ({
     // Add new items
     await Promise.map(cards, async ({ idList, name, desc, id, idLabels }) => {
       const stage = stagesByTrelloRef[idList];
-      const backlogItem = await BacklogItem.create({
+      const roadmapItem = await RoadmapItem.create({
         productId: product.id,
         trelloRef: id,
         stageId: stage.id,
@@ -131,7 +131,7 @@ const ProductService = (/* services */) => ({
         description: desc,
       });
       const itemTags = idLabels.map(trelloRef => tagsByTrelloRef[trelloRef]);
-      await backlogItem.addTags(itemTags);
+      await roadmapItem.addTags(itemTags);
     });
   },
 });

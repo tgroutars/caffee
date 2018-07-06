@@ -1,10 +1,10 @@
-const { BacklogStage: BacklogStageService } = require('../../../../services');
+const { RoadmapStage: RoadmapStageService } = require('../../../../services');
 
 const updateList = async payload => {
   const { old, list } = payload.action.data;
 
   if (old.closed === false && list.closed) {
-    await BacklogStageService.destroy({ where: { trelloRef: list.id } });
+    await RoadmapStageService.destroy({ where: { trelloRef: list.id } });
     return;
   }
 
@@ -16,7 +16,7 @@ const updateList = async payload => {
     values.position = list.pos;
   }
   if (Object.keys(values).length) {
-    await BacklogStageService.update(values, { where: { trelloRef: list.id } });
+    await RoadmapStageService.update(values, { where: { trelloRef: list.id } });
   }
 };
 

@@ -14,6 +14,9 @@ const backlogItemSuggestFollower = async payload => {
   const searchString = `%${value.replace('%', '\\%')}%`;
 
   const backlogItem = await BacklogItem.findById(backlogItemId);
+  if (!backlogItem) {
+    return [];
+  }
   const { productId } = backlogItem;
 
   const productUsers = await ProductUser.findAll({

@@ -1,8 +1,8 @@
 const menuChooseProduct = ({
   products,
   defaulFeedback,
-  defaultBacklogItemTitle,
-  defaultBacklogItemDescription,
+  defaultRoadmapItemTitle,
+  defaultRoadmapItemDescription,
   defaultAuthorId,
   defaultAuthorName,
 }) => {
@@ -14,8 +14,8 @@ const menuChooseProduct = ({
     value: 'send_menu',
     name: {
       defaulFeedback,
-      defaultBacklogItemTitle,
-      defaultBacklogItemDescription,
+      defaultRoadmapItemTitle,
+      defaultRoadmapItemDescription,
       defaultAuthorId,
       defaultAuthorName,
       type: 'send_menu',

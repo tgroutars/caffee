@@ -1,17 +1,17 @@
 const Promise = require('bluebird');
 
-const { Tag, BacklogItem } = require('../../../../models');
-const { BacklogItem: BacklogItemService } = require('../../../../services');
+const { Tag, RoadmapItem } = require('../../../../models');
+const { RoadmapItem: RoadmapItemService } = require('../../../../services');
 
 const removeLabelFromCard = async payload => {
   const { card, label } = payload.action.data;
 
-  const backlogItems = await BacklogItem.findAll({
+  const roadmapItems = await RoadmapItem.findAll({
     where: { trelloRef: card.id },
   });
   const tag = await Tag.find({ where: { trelloRef: label.id } });
-  await Promise.map(backlogItems, async backlogItem => {
-    await BacklogItemService.removeTag(backlogItem.id, tag.id);
+  await Promise.map(roadmapItems, async roadmapItem => {
+    await RoadmapItemService.removeTag(roadmapItem.id, tag.id);
   });
 };
 

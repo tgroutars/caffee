@@ -1,12 +1,12 @@
 const Promise = require('bluebird');
 
-const { BacklogStage: BacklogStageService } = require('../../../../services');
+const { RoadmapStage: RoadmapStageService } = require('../../../../services');
 const { Product } = require('../../../../models');
 const { fetchList } = require('../../helpers/api');
 
 const syncList = async (product, listId) => {
   const list = await fetchList(product.trelloAccessToken, { listId });
-  return BacklogStageService.create({
+  return RoadmapStageService.create({
     productId: product.id,
     position: list.pos,
     name: list.name,

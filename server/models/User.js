@@ -44,8 +44,8 @@ module.exports = (sequelize, DataTypes) => {
       SlackUser,
       Product,
       ProductUser,
-      BacklogItemFollow,
-      BacklogItem,
+      RoadmapItemFollow,
+      RoadmapItem,
     } = models;
     User.hasMany(SlackUser, {
       as: 'slackUsers',
@@ -57,15 +57,15 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       otherKey: 'productId',
     });
-    User.hasMany(BacklogItemFollow, {
+    User.hasMany(RoadmapItemFollow, {
       as: 'follows',
       foreignKey: 'userId',
     });
-    User.belongsToMany(BacklogItem, {
-      as: 'followedBacklogItems',
-      through: BacklogItemFollow,
+    User.belongsToMany(RoadmapItem, {
+      as: 'followedRoadmapItems',
+      through: RoadmapItemFollow,
       foreignKey: 'userId',
-      otherKey: 'backlogItemId',
+      otherKey: 'roadmapItemId',
     });
   };
 

@@ -1,8 +1,8 @@
-const { BacklogItem } = require('../../../../models');
+const { RoadmapItem } = require('../../../../models');
 
 const deleteCard = async payload => {
   const { card } = payload.action.data;
-  await BacklogItem.destroy({ where: { trelloRef: card.id } });
+  await RoadmapItem.destroy({ where: { trelloRef: card.id } });
 };
 
 module.exports = deleteCard;

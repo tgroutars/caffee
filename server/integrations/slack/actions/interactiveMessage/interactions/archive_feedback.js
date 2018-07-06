@@ -15,22 +15,22 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
   const { accessToken } = workspace;
 
   const feedback = await Feedback.findById(feedbackId, {
-    include: ['product', 'backlogItem', 'author'],
+    include: ['product', 'roadmapItem', 'author'],
   });
 
-  if (feedback.backlogItemId || feedback.archivedAt) {
+  if (feedback.roadmapItemId || feedback.archivedAt) {
     await postEphemeral('feedback_already_processed')({ feedback })({
       accessToken,
       channel,
       user: slackUser.slackId,
     });
-    const { backlogItem, product, author } = feedback;
+    const { roadmapItem, product, author } = feedback;
     await updateMessage('new_feedback')({
       feedback,
-      backlogItem,
+      roadmapItem,
       product,
       author,
-      backlogItemOptions: { openCard: true },
+      roadmapItemOptions: { openCard: true },
     })({
       accessToken,
       channel,

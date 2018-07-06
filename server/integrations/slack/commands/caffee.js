@@ -45,8 +45,8 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
     await postChooseProductMessage({
       products,
       defaulFeedback: text,
-      defaultBacklogItemTitle: title,
-      defaultBacklogItemDescription: description,
+      defaultRoadmapItemTitle: title,
+      defaultRoadmapItemDescription: description,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel, user: userSlackId });
     return;
@@ -66,10 +66,10 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
   await postMenuMessage({
     productId,
     defaulFeedback: text,
-    defaultBacklogItemTitle: title,
-    defaultBacklogItemDescription: description,
+    defaultRoadmapItemTitle: title,
+    defaultRoadmapItemDescription: description,
     defaultAuthorId: slackUser.userId,
-    createBacklogItem: !!productUser,
+    createRoadmapItem: !!productUser,
   })({
     accessToken,
     channel,

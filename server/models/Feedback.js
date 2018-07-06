@@ -25,9 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       field: 'created_by_id',
       allowNull: false,
     },
-    backlogItemId: {
+    roadmapItemId: {
       type: DataTypes.UUID,
-      field: 'backlog_item_id',
+      field: 'roadmap_item_id',
       allowNull: true,
     },
     archivedAt: {
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   Feedback.associate = models => {
-    const { Product, User, BacklogItem } = models;
+    const { Product, User, RoadmapItem } = models;
     Feedback.belongsTo(User, {
       as: 'author',
       foreignKey: 'authorId',
@@ -65,9 +65,9 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });
-    Feedback.belongsTo(BacklogItem, {
-      as: 'backlogItem',
-      foreignKey: 'backlogItemId',
+    Feedback.belongsTo(RoadmapItem, {
+      as: 'roadmapItem',
+      foreignKey: 'roadmapItemId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });

@@ -7,7 +7,7 @@ const { addComment } = require('../../integrations/trello/helpers/api');
 const feedbackProcessed = async ({ feedbackId, processedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [
-      'backlogItem',
+      'roadmapItem',
       'product',
       {
         model: User,
@@ -18,12 +18,12 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
       },
     ],
   });
-  const { backlogItem, author } = feedback;
+  const { roadmapItem, author } = feedback;
   const { slackUsers } = author;
   const processedBy = await User.findById(processedById);
   const postFeedbackProcessedMessage = postMessage('feedback_processed')({
     feedback,
-    backlogItem,
+    roadmapItem,
     processedBy,
   });
 
@@ -33,13 +33,13 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
     await postFeedbackProcessedMessage({ accessToken, channel: userSlackId });
   });
 
-  if (backlogItem) {
+  if (roadmapItem) {
     const { product } = feedback;
     const text = `**_New feedback from_** ${author.name}**_:_**\n\n${
       feedback.description
     }`;
     await addComment(product.trelloAccessToken, {
-      cardId: backlogItem.trelloRef,
+      cardId: roadmapItem.trelloRef,
       text,
     });
   }

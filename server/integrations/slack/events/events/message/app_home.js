@@ -30,8 +30,8 @@ const appHomeMessage = async (payload, { workspace }) => {
     await postMenuChooseProductMessage({
       products,
       defaultFeedback: text,
-      defaultBacklogItemTitle: title,
-      defaultBacklogItemDescription: description,
+      defaultRoadmapItemTitle: title,
+      defaultRoadmapItemDescription: description,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel });
     return;
@@ -49,11 +49,11 @@ const appHomeMessage = async (payload, { workspace }) => {
 
   await postMenuMessage({
     defaultFeedback: text,
-    defaultBacklogItemTitle: title,
-    defaultBacklogItemDescription: description,
+    defaultRoadmapItemTitle: title,
+    defaultRoadmapItemDescription: description,
     defaultAuthorId: slackUser.userId,
     productId: product.id,
-    createBacklogItem: !!productUser,
+    createRoadmapItem: !!productUser,
   })({ accessToken, channel });
 };
 

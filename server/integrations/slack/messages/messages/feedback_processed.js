@@ -1,8 +1,9 @@
 const getBacklogItemAttachment = require('../attachments/backlog_item');
 
-module.exports = ({ feedback, backlogItem }) => ({
-  text:
-    '*_Your feedback has been associated to a item in the roadmap :thumbsup:_*',
+module.exports = ({ feedback, backlogItem, processedBy }) => ({
+  text: `*_${
+    processedBy ? processedBy.name : 'The product team'
+  } has associated your feedback to a item in the roadmap :thumbsup:_*`,
   attachments: [
     {
       text: feedback.description,

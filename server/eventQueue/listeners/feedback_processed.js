@@ -4,7 +4,7 @@ const { Feedback, User, SlackUser } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 const { addComment } = require('../../integrations/trello/helpers/api');
 
-const feedbackProcessed = async ({ feedbackId }) => {
+const feedbackProcessed = async ({ feedbackId, processedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [
       'backlogItem',
@@ -20,9 +20,11 @@ const feedbackProcessed = async ({ feedbackId }) => {
   });
   const { backlogItem, author } = feedback;
   const { slackUsers } = author;
+  const processedBy = await User.findById(processedById);
   const postFeedbackProcessedMessage = postMessage('feedback_processed')({
     feedback,
     backlogItem,
+    processedBy,
   });
 
   await Promise.map(slackUsers, async slackUser => {

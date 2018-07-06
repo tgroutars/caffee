@@ -28,9 +28,6 @@ module.exports = (sequelize, DataTypes) => {
           name: 'user_email_index',
           fields: ['email'],
           unique: true,
-          where: {
-            deleted_at: null,
-          },
         },
       ],
     },

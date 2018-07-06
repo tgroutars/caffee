@@ -28,9 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         {
           fields: ['product_id', 'trello_ref'],
           unique: true,
-          where: {
-            deleted_at: null,
-          },
         },
       ],
     },

@@ -46,7 +46,7 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
   // => Can include more boards if too many
   if (!trelloBoardId) {
     const boards = await listBoards(trelloAccessToken);
-    console.log(boards);
+
     await postChooseBoardMessage({
       product,
       boards,

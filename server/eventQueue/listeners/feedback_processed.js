@@ -35,7 +35,7 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
 
   if (roadmapItem) {
     const { product } = feedback;
-    const text = `**_New feedback from_** ${author.name}**_:_**\n\n${
+    const text = `**_New feedback from ${author.name}:_**\n\n${
       feedback.description
     }`;
     await addComment(product.trelloAccessToken, {

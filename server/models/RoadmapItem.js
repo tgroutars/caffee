@@ -41,6 +41,12 @@ module.exports = (sequelize, DataTypes) => {
           return `https://trello.com/c/${this.trelloRef}`;
         },
       },
+      followerCount: {
+        type: DataTypes.INTEGER,
+        field: 'follower_count',
+
+        defaultValue: 0,
+      },
       createdAt: {
         type: DataTypes.DATE,
         field: 'created_at',

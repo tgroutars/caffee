@@ -15,21 +15,33 @@ const { trigger } = require('../eventQueue/eventQueue');
 
 const RoadmapItemService = (/* services */) => ({
   async addFollower(roadmapItemId, userId) {
-    return RoadmapItemFollow.findOrCreate({
+    const [roadmapItemFollow, created] = await RoadmapItemFollow.findOrCreate({
       where: {
         roadmapItemId,
         userId,
       },
     });
+    if (created) {
+      await RoadmapItem.increment('followerCount', {
+        where: { id: roadmapItemId },
+      });
+    }
+    return [roadmapItemFollow, created];
   },
 
   async removeFollower(roadmapItemId, userId) {
-    return RoadmapItemFollow.destroy({
+    const destroyCount = await RoadmapItemFollow.destroy({
       where: {
         roadmapItemId,
         userId,
       },
     });
+    if (destroyCount) {
+      await RoadmapItem.decrement('followerCount', {
+        where: { id: roadmapItemId },
+      });
+    }
+    return !!destroyCount;
   },
 
   async removeTag(roadmapItemId, tagId) {

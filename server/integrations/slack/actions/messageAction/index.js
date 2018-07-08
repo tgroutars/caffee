@@ -1,4 +1,5 @@
 const actions = require('./actions');
+const { decode } = require('../../helpers/encoding');
 
 const messageAction = async (payload, state) => {
   const action = actions[payload.callback_id];
@@ -6,7 +7,8 @@ const messageAction = async (payload, state) => {
   if (typeof action !== 'function') {
     throw new Error(`Unknow message action: ${payload.callback_id}`);
   }
-
+  const { workspace } = state;
+  payload.message.text = await decode(workspace)(payload.message.text);
   await action(payload, state);
 };
 

@@ -8,13 +8,19 @@ const {
 } = require('../../../models');
 const { postEphemeral } = require('../messages');
 const getTitleDescription = require('../../../lib/getTitleDescription');
+const { decode } = require('../helpers/encoding');
 
 const { Op } = Sequelize;
 
 const postChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
 
-const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
+const caffee = async ({
+  workspaceSlackId,
+  channel,
+  userSlackId,
+  text: rawText,
+}) => {
   const workspace = await SlackWorkspace.find({
     where: { slackId: workspaceSlackId },
     include: ['installs'],
@@ -29,6 +35,8 @@ const caffee = async ({ workspaceSlackId, channel, userSlackId, text }) => {
   if (!installs.length) {
     return;
   }
+
+  const text = await decode(workspace)(rawText);
 
   const { title, description } = getTitleDescription(text);
 

@@ -3,6 +3,7 @@ const SlackClient = require('@slack/client').WebClient;
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
+const { decode } = require('../../../helpers/encoding');
 
 const { Op } = Sequelize;
 
@@ -11,15 +12,17 @@ const postMenuMessage = postEphemeral('menu');
 
 const channelMessage = async (payload, { workspace }) => {
   const {
-    event: { text, channel, thread_ts: threadTS, user: userSlackId },
+    event: { text: rawText, channel, thread_ts: threadTS, user: userSlackId },
   } = payload;
 
   const { accessToken, appUserId } = workspace;
 
   const appMention = `<@${appUserId}>`;
-  if (!text.includes(appMention)) {
+  if (!rawText.includes(appMention)) {
     return;
   }
+
+  const text = await decode(workspace)(rawText);
 
   const products = await workspace.getProducts();
   if (!products.length) {

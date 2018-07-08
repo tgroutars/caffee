@@ -24,9 +24,6 @@ module.exports = (sequelize, DataTypes) => {
         {
           fields: ['roadmap_item_id', 'tag_id'],
           unique: true,
-          where: {
-            deleted_at: null,
-          },
         },
       ],
     },

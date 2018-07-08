@@ -34,6 +34,15 @@ const menu = ({
       type: 'open_feedback_dialog',
     },
   });
+  actions.push({
+    type: 'button',
+    text: 'View roadmap',
+    value: 'view_roadmap',
+    name: {
+      productId,
+      type: 'view_roadmap',
+    },
+  });
   return {
     attachments: [
       {

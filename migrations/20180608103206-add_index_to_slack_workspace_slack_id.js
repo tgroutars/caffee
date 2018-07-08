@@ -3,9 +3,6 @@ module.exports = {
     await queryInterface.addIndex('slack_workspace', ['slack_id'], {
       indexName: 'slack_workspace_slack_id_index',
       indicesType: 'UNIQUE',
-      where: {
-        deleted_at: null,
-      },
     });
   },
 

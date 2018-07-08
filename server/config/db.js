@@ -9,7 +9,7 @@ const defaultConfig = {
   dialect: 'postgres',
   operatorsAliases: Sequelize.Op,
   define: {
-    paranoid: true,
+    paranoid: false,
     timestamps: true,
     underscored: true,
     underscoredAll: true,

@@ -6,9 +6,6 @@ module.exports = {
       {
         indexName: 'slack_install_product_id_workspace_id_index',
         indicesType: 'UNIQUE',
-        where: {
-          deleted_at: null,
-        },
       },
     );
   },

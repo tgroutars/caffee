@@ -46,9 +46,6 @@ module.exports = (sequelize, DataTypes) => {
         {
           fields: ['slack_id'],
           unique: true,
-          where: {
-            deleted_at: null,
-          },
         },
       ],
     },

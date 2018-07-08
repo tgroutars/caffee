@@ -6,9 +6,6 @@ module.exports = {
       {
         indexName: 'roadmap_stage_trello_ref_product_id_index',
         indicesType: 'UNIQUE',
-        where: {
-          deleted_at: null,
-        },
       },
     );
   },

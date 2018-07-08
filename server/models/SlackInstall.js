@@ -25,9 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         {
           fields: ['product_id', 'workspace_id'],
           unique: true,
-          where: {
-            deleted_at: null,
-          },
         },
       ],
     },

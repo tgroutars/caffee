@@ -6,9 +6,6 @@ module.exports = {
       {
         indexName: 'roadmap_item_tag_roadmap_item_id_tag_id_index',
         indicesType: 'UNIQUE',
-        where: {
-          deleted_at: null,
-        },
       },
     );
   },

@@ -28,13 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      defaultScope: {
+        order: [['position', 'ASC']],
+      },
       indexes: [
         {
           fields: ['trello_ref', 'product_id'],
           unique: true,
-          where: {
-            deleted_at: null,
-          },
         },
       ],
     },

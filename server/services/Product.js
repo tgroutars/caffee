@@ -1,7 +1,13 @@
 const Promise = require('bluebird');
 const winston = require('winston');
 
-const { Product, RoadmapItem, Tag, RoadmapStage } = require('../models');
+const {
+  Product,
+  RoadmapItem,
+  Tag,
+  RoadmapStage,
+  Sequelize,
+} = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 const {
   listCards,
@@ -121,18 +127,22 @@ const ProductService = (/* services */) => ({
     );
 
     // Add new items
-    await Promise.map(cards, async ({ idList, name, desc, id, idLabels }) => {
-      const stage = stagesByTrelloRef[idList];
-      const roadmapItem = await RoadmapItem.create({
-        productId: product.id,
-        trelloRef: id,
-        stageId: stage.id,
-        title: name,
-        description: desc,
-      });
-      const itemTags = idLabels.map(trelloRef => tagsByTrelloRef[trelloRef]);
-      await roadmapItem.addTags(itemTags);
-    });
+    await Promise.mapSeries(
+      cards,
+      async ({ idList, name, desc, id, idLabels, closed }) => {
+        const stage = stagesByTrelloRef[idList];
+        const roadmapItem = await RoadmapItem.create({
+          productId: product.id,
+          trelloRef: id,
+          stageId: stage.id,
+          title: name,
+          description: desc,
+          archivedAt: closed ? Sequelize.fn('NOW') : null,
+        });
+        const itemTags = idLabels.map(trelloRef => tagsByTrelloRef[trelloRef]);
+        await roadmapItem.addTags(itemTags);
+      },
+    );
   },
 });
 

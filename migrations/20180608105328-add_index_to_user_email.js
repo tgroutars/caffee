@@ -3,9 +3,6 @@ module.exports = {
     await queryInterface.addIndex('user', ['email'], {
       indexName: 'user_email_index',
       indicesType: 'UNIQUE',
-      where: {
-        deleted_at: null,
-      },
     });
   },
 

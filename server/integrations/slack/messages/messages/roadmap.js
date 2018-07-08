@@ -15,6 +15,7 @@ module.exports = ({
   page = 0,
   pageCount = 0,
   order = 'date',
+  isPM,
 }) => {
   const isLastPage = page + 1 >= pageCount;
   const defaultNavName = {
@@ -29,6 +30,7 @@ module.exports = ({
     getRoadmapItemAttachment({
       product,
       roadmapItem,
+      isPM,
       followers: roadmapItem.followers,
       stage: roadmapItem.stage,
     }),

@@ -1,14 +1,18 @@
 module.exports = ({
   roadmapItem,
-  follow = true,
-  suggestFollowers = false,
-  openCard = null,
-  showDescription = false,
-  showShowMore = true,
+  isPM = false,
+  showMore = false,
   followers = null,
   stage = null,
   moved = null,
+  hideFollow = false,
 }) => {
+  const follow = !isPM && !hideFollow;
+  const suggestFollowers = isPM;
+  const showDescription = showMore;
+  const showShowMore = !showMore;
+  const openCard = isPM;
+
   const actions = [];
   if (follow) {
     actions.push({

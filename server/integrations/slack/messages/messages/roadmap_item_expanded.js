@@ -1,13 +1,13 @@
 const getRoadmapItemAttachment = require('../attachments/roadmap_item');
 
-module.exports = ({ roadmapItem, followers, stage }) => ({
+module.exports = ({ roadmapItem, followers, stage, isPM }) => ({
   attachments: [
     getRoadmapItemAttachment({
       roadmapItem,
       followers,
       stage,
-      showShowMore: false,
-      showDescription: true,
+      isPM,
+      showMore: true,
     }),
   ],
 });

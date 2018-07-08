@@ -43,7 +43,6 @@ const addFeedbackToRoadmapItem = async (payload, { workspace, slackUser }) => {
     roadmapItem,
     product,
     author,
-    roadmapItemOptions: { openCard: true },
   })({
     accessToken,
     channel,

@@ -1,12 +1,4 @@
-const getRoadmapItemAttachment = require('../attachments/roadmap_item');
-
-const newFeedback = ({
-  feedback,
-  product,
-  roadmapItem,
-  author,
-  roadmapItemOptions = {},
-}) => {
+const newFeedback = ({ feedback, product, roadmapItem, author }) => {
   const { archivedAt } = feedback;
   let actions;
   if (!feedback.archivedAt && !roadmapItem) {
@@ -55,12 +47,6 @@ const newFeedback = ({
       actions,
     },
   ];
-  if (roadmapItem) {
-    attachments.push({
-      ...getRoadmapItemAttachment({ roadmapItem, ...roadmapItemOptions }),
-      pretext: '*_Associated roadmap item:_*',
-    });
-  }
   return {
     text: `*_${author.name} added a new feedback on ${product.name}_*`,
     attachments,

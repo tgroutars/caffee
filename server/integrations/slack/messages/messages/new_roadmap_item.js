@@ -5,6 +5,8 @@ const newRoadmapItem = ({
   product,
   openCard,
   stage,
+  isPM,
+  trelloCardURL,
   suggestFollowers = false,
   follow = true,
 }) => {
@@ -15,6 +17,8 @@ const newRoadmapItem = ({
       suggestFollowers,
       follow,
       stage,
+      isPM,
+      trelloCardURL,
     }),
   ];
   return {

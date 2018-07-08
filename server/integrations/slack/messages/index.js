@@ -42,7 +42,7 @@ const getPostMessage = isEphemeral => type => {
     return async ({ accessToken, channel, user }) => {
       const message = await preProcessMessage(rawMessage);
       const slackClient = new SlackClient(accessToken);
-      await slackClient.apiCall(method, {
+      return slackClient.apiCall(method, {
         ...message,
         channel,
         user,
@@ -62,7 +62,7 @@ const updateMessage = type => {
     return async ({ accessToken, channel, ts }) => {
       const message = await preProcessMessage(rawMessage);
       const slackClient = new SlackClient(accessToken);
-      await slackClient.chat.update({
+      return slackClient.chat.update({
         ...message,
         channel,
         ts,

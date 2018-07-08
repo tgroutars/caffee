@@ -16,10 +16,13 @@ module.exports = async (payload, { workspace }) => {
     Object.assign(options, selectedOptions[0].value);
   }
 
-  const { pageCount, roadmapItems, product, stages } = await getRoadmap(
-    productId,
-    options,
-  );
+  const {
+    pageCount,
+    roadmapItems,
+    product,
+    stages,
+    filterStage,
+  } = await getRoadmap(productId, options);
 
   const { accessToken } = workspace;
   await updateMessage('roadmap')({
@@ -27,7 +30,8 @@ module.exports = async (payload, { workspace }) => {
     product,
     roadmapItems,
     stages,
-    ...options,
+    filterStage,
+    page,
   })({
     accessToken,
     channel,

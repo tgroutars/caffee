@@ -6,9 +6,7 @@ module.exports = async (payload, { workspace, slackUser }) => {
   const { productId, page = 0 } = action.name;
   const { pageCount, roadmapItems, product, stages } = await getRoadmap(
     productId,
-    {
-      page,
-    },
+    { page },
   );
 
   const { accessToken } = workspace;

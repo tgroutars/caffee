@@ -6,14 +6,14 @@ module.exports = ({
   roadmapItems,
   product,
   stages,
-  stageId,
+  filterStage,
   page = 0,
   pageCount = 0,
 }) => {
   const isLastPage = page + 1 >= pageCount;
   const defaultNavName = {
     page,
-    stageId,
+    stageId: filterStage && filterStage.id,
     productId: product.id,
     type: 'navigate_roadmap',
   };
@@ -26,6 +26,24 @@ module.exports = ({
       stage: roadmapItem.stage,
     }),
   );
+
+  const filterAttachment = {
+    title: 'Current filters',
+    callback_id: 'roadmap',
+    actions: [],
+  };
+  if (filterStage) {
+    filterAttachment.actions.push({
+      type: 'button',
+      text: `:x: Status: ${filterStage.name}`,
+      value: 'navigate_roadmap',
+      name: defaults({ stageId: null, page: 0 }, defaultNavName),
+    });
+  }
+
+  if (filterAttachment.actions.length) {
+    attachments.push(filterAttachment);
+  }
 
   const navAttachment = {
     title: `Navigate (${page + 1}/${pageCount})`,

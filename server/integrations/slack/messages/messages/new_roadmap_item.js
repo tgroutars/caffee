@@ -4,6 +4,7 @@ const newRoadmapItem = ({
   roadmapItem,
   product,
   openCard,
+  stage,
   suggestFollowers = false,
   follow = true,
 }) => {
@@ -13,6 +14,7 @@ const newRoadmapItem = ({
       openCard,
       suggestFollowers,
       follow,
+      stage,
     }),
   ];
   return {

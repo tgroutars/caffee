@@ -9,13 +9,14 @@ const postNewRoadmapItemMessage = postMessage('new_roadmap_item');
 
 const roadmapItemCreated = async ({ roadmapItemId }) => {
   const roadmapItem = await RoadmapItem.findById(roadmapItemId, {
-    include: ['product'],
+    include: ['product', 'stage'],
   });
-  const { product } = roadmapItem;
+  const { product, stage } = roadmapItem;
 
   const postPublicNewRoadmapItemMessage = postNewRoadmapItemMessage({
     roadmapItem,
     product,
+    stage,
   });
   const slackInstalls = await SlackInstall.findAll({
     where: { productId: product.id, channel: { [Op.ne]: null } },

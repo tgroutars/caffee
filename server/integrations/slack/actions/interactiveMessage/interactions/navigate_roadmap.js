@@ -8,10 +8,9 @@ module.exports = async (payload, { workspace }) => {
     action: { name, selected_options: selectedOptions },
   } = payload;
 
-  const { productId, page = 0, stageId } = name;
+  const { productId, stageId, order, page = 0 } = name;
 
-  const options = { page, stageId };
-
+  const options = { page, stageId, order };
   if (selectedOptions) {
     Object.assign(options, selectedOptions[0].value);
   }
@@ -31,7 +30,8 @@ module.exports = async (payload, { workspace }) => {
     roadmapItems,
     stages,
     filterStage,
-    page,
+    page: options.page,
+    order: options.order,
   })({
     accessToken,
     channel,

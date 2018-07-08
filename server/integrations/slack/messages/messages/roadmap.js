@@ -2,6 +2,11 @@ const defaults = require('lodash/defaults');
 
 const getRoadmapItemAttachment = require('../attachments/roadmap_item');
 
+const orderString = {
+  date: 'Most recent',
+  followers: 'Most followed',
+};
+
 module.exports = ({
   roadmapItems,
   product,
@@ -9,10 +14,12 @@ module.exports = ({
   filterStage,
   page = 0,
   pageCount = 0,
+  order = 'date',
 }) => {
   const isLastPage = page + 1 >= pageCount;
   const defaultNavName = {
     page,
+    order,
     stageId: filterStage && filterStage.id,
     productId: product.id,
     type: 'navigate_roadmap',
@@ -26,24 +33,6 @@ module.exports = ({
       stage: roadmapItem.stage,
     }),
   );
-
-  const filterAttachment = {
-    title: 'Current filters',
-    callback_id: 'roadmap',
-    actions: [],
-  };
-  if (filterStage) {
-    filterAttachment.actions.push({
-      type: 'button',
-      text: `:x: Status: ${filterStage.name}`,
-      value: 'navigate_roadmap',
-      name: defaults({ stageId: null, page: 0 }, defaultNavName),
-    });
-  }
-
-  if (filterAttachment.actions.length) {
-    attachments.push(filterAttachment);
-  }
 
   const navAttachment = {
     title: `Navigate (${page + 1}/${pageCount})`,
@@ -69,7 +58,7 @@ module.exports = ({
 
   navAttachment.actions.push({
     type: 'select',
-    text: 'Status',
+    text: filterStage ? `Status: ${filterStage.name}` : 'Status',
     name: defaults({ page: 0 }, defaultNavName),
     options: stages.map(stage => ({
       text: stage.name,
@@ -77,6 +66,26 @@ module.exports = ({
         stageId: stage.id,
       },
     })),
+  });
+
+  navAttachment.actions.push({
+    type: 'select',
+    text: `Order: ${orderString[order]}`,
+    name: defaults({ page: 0 }, defaultNavName),
+    options: [
+      {
+        text: 'Most recent',
+        value: {
+          order: 'date',
+        },
+      },
+      {
+        text: 'Most followed',
+        value: {
+          order: 'followers',
+        },
+      },
+    ],
   });
 
   attachments.push(navAttachment);

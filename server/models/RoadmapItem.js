@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
           return `https://trello.com/c/${this.trelloRef}`;
         },
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        field: 'created_at',
+      },
     },
     {
       defaultScope: {

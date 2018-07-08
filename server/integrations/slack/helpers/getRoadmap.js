@@ -11,7 +11,7 @@ const {
 // TODO: Promise.all
 const getRoadmap = async (
   productId,
-  { nbItems = 5, page = 0, stageId } = {},
+  { nbItems = 5, page = 0, order = 'date', stageId } = {},
 ) => {
   const product = await Product.findById(productId);
 
@@ -20,10 +20,18 @@ const getRoadmap = async (
   if (stageId) {
     where.stageId = stageId;
   }
+  const orderBy = [[Sequelize.literal('stage.position'), 'ASC']];
+  switch (order) {
+    case 'date':
+      orderBy.unshift(['createdAt', 'DESC']);
+      break;
+    default:
+  }
+
   const roadmapItems = await RoadmapItem.findAll({
     where,
     include: ['stage'],
-    order: [[Sequelize.literal('stage.position'), 'ASC']],
+    order: orderBy,
     limit: nbItems,
     offset,
   });

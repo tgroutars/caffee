@@ -23,6 +23,7 @@ module.exports = ({
       product,
       roadmapItem,
       followers: roadmapItem.followers,
+      stage: roadmapItem.stage,
     }),
   );
 

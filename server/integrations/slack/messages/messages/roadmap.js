@@ -58,14 +58,22 @@ module.exports = ({
 
   navAttachment.actions.push({
     type: 'select',
-    text: filterStage ? `Status: ${filterStage.name}` : 'Status',
+    text: `Status: ${filterStage ? filterStage.name : 'All'}`,
     name: defaults({ page: 0 }, defaultNavName),
-    options: stages.map(stage => ({
-      text: stage.name,
-      value: {
-        stageId: stage.id,
+    options: [
+      {
+        text: 'All',
+        value: {
+          stageId: null,
+        },
       },
-    })),
+      ...stages.map(stage => ({
+        text: stage.name,
+        value: {
+          stageId: stage.id,
+        },
+      })),
+    ],
   });
 
   navAttachment.actions.push({

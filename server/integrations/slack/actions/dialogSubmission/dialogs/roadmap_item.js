@@ -55,7 +55,6 @@ const createRoadmapItemBG = registerBackgroundTask(
         roadmapItem,
         product,
         author,
-        roadmapItemOptions: { openCard: true },
       })({
         accessToken,
         channel: feedbackMessageRef.channel,
@@ -66,9 +65,7 @@ const createRoadmapItemBG = registerBackgroundTask(
     await postEphemeral('new_roadmap_item')({
       roadmapItem,
       product,
-      openCard: true,
-      suggestFollowers: true,
-      follow: false,
+      isPM: true,
     })({ accessToken, channel, user: userSlackId });
 
     return roadmapItem;

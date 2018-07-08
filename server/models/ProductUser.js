@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 'author',
       },
+      isPM: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.role === 'admin' || this.role === 'user';
+        },
+      },
     },
     {
       indexes: [

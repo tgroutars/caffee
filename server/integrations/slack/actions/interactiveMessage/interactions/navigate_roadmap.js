@@ -1,7 +1,7 @@
 const { updateMessage } = require('../../../messages');
 const getRoadmap = require('../../../helpers/getRoadmap');
 
-module.exports = async (payload, { workspace }) => {
+module.exports = async (payload, { workspace, user }) => {
   const {
     channel: { id: channel },
     message_ts: messageTS,
@@ -21,7 +21,8 @@ module.exports = async (payload, { workspace }) => {
     product,
     stages,
     filterStage,
-  } = await getRoadmap(productId, options);
+    isPM,
+  } = await getRoadmap(productId, user.id, options);
 
   const { accessToken } = workspace;
   await updateMessage('roadmap')({
@@ -30,6 +31,7 @@ module.exports = async (payload, { workspace }) => {
     roadmapItems,
     stages,
     filterStage,
+    isPM,
     page: options.page,
     order: options.order,
   })({

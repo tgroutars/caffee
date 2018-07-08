@@ -5,12 +5,14 @@ const {
   Product,
   RoadmapItem,
   RoadmapStage,
+  ProductUser,
   Sequelize,
 } = require('../../../models');
 
 // TODO: Promise.all
 const getRoadmap = async (
   productId,
+  userId,
   { nbItems = 5, page = 0, order = 'date', stageId } = {},
 ) => {
   const product = await Product.findById(productId);
@@ -45,6 +47,10 @@ const getRoadmap = async (
   await Promise.map(roadmapItems, async roadmapItem => {
     roadmapItem.followers = await roadmapItem.getFollowers();
   });
+
+  const productUser = await ProductUser.find({ where: { productId, userId } });
+  const { isPM } = productUser;
+
   return {
     pageCount,
     roadmapItems,
@@ -52,6 +58,7 @@ const getRoadmap = async (
     product,
     stages,
     filterStage,
+    isPM,
   };
 };
 

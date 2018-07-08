@@ -1,14 +1,20 @@
 const Promise = require('bluebird');
 
-const { Feedback, User, SlackUser } = require('../../models');
+const {
+  Feedback,
+  User,
+  SlackUser,
+  ProductUser,
+  RoadmapItem,
+} = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 const { addComment } = require('../../integrations/trello/helpers/api');
 
 const feedbackProcessed = async ({ feedbackId, processedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [
-      'roadmapItem',
       'product',
+      { model: RoadmapItem, as: 'roadmapItem', include: ['stage'] },
       {
         model: User,
         as: 'author',
@@ -19,12 +25,19 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
     ],
   });
   const { roadmapItem, author } = feedback;
+  const { stage } = roadmapItem;
   const { slackUsers } = author;
   const processedBy = await User.findById(processedById);
+  const productUser = await ProductUser.find({
+    where: { productId: feedback.productId, userId: author.id },
+  });
+  const { isPM } = productUser;
   const postFeedbackProcessedMessage = postMessage('feedback_processed')({
     feedback,
     roadmapItem,
     processedBy,
+    isPM,
+    stage,
   });
 
   await Promise.map(slackUsers, async slackUser => {

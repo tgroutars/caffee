@@ -1,7 +1,7 @@
 const { postEphemeral } = require('../../../messages');
-const { RoadmapItem } = require('../../../../../models');
+const { RoadmapItem, ProductUser } = require('../../../../../models');
 
-module.exports = async (payload, { workspace, slackUser }) => {
+module.exports = async (payload, { workspace, slackUser, user }) => {
   const {
     channel: { id: channel },
     action,
@@ -11,13 +11,17 @@ module.exports = async (payload, { workspace, slackUser }) => {
   const roadmapItem = await RoadmapItem.findById(roadmapItemId, {
     include: ['followers', 'stage'],
   });
-
+  const productUser = await ProductUser.find({
+    where: { productId: roadmapItem.productId, userId: user.id },
+  });
+  const { isPM } = productUser;
   const { followers, stage } = roadmapItem;
   const { accessToken } = workspace;
   await postEphemeral('roadmap_item_expanded')({
     roadmapItem,
     followers,
     stage,
+    isPM,
   })({
     accessToken,
     channel,

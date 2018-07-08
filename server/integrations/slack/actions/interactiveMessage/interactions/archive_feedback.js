@@ -30,7 +30,6 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
       roadmapItem,
       product,
       author,
-      roadmapItemOptions: { openCard: true },
     })({
       accessToken,
       channel,

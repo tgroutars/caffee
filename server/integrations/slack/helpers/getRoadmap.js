@@ -25,6 +25,9 @@ const getRoadmap = async (
     case 'date':
       orderBy.unshift(['createdAt', 'DESC']);
       break;
+    case 'followers':
+      orderBy.unshift(['followerCount', 'DESC']);
+      break;
     default:
   }
 

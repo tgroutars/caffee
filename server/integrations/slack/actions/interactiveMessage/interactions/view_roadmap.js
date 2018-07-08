@@ -1,3 +1,5 @@
+const SlackClient = require('@slack/client').WebClient;
+
 const getRoadmap = require('../../../helpers/getRoadmap');
 const { postMessage, postEphemeral } = require('../../../messages');
 
@@ -14,7 +16,7 @@ module.exports = async (payload, { workspace, slackUser }) => {
   );
 
   const { accessToken } = workspace;
-  const { channel: appChannel } = await postMessage('roadmap')({
+  const { channel: appChannel, ts: messageTS } = await postMessage('roadmap')({
     product,
     roadmapItems,
     page,
@@ -25,7 +27,13 @@ module.exports = async (payload, { workspace, slackUser }) => {
     channel: slackUser.slackId,
   });
   if (channel !== appChannel) {
-    await postEphemeral('roadmap_sent')({ appChannel })({
+    const slackClient = new SlackClient(accessToken);
+    const { permalink: messageLink } = await slackClient.chat.getPermalink({
+      channel: appChannel,
+      message_ts: messageTS,
+    });
+
+    await postEphemeral('roadmap_sent')({ messageLink })({
       accessToken,
       channel,
       user: userSlackId,

@@ -1,3 +1,3 @@
-module.exports = ({ appChannel }) => ({
-  text: `Click here :point_right: <#${appChannel}> to view the roadmap`,
+module.exports = ({ messageLink }) => ({
+  text: `Click :point_right: <${messageLink}|here> :point_left: to view the roadmap`,
 });

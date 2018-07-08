@@ -65,7 +65,7 @@ module.exports = ({
   }
   if (stage) {
     fields.push({
-      title: 'Stage',
+      title: 'Status',
       value: stage.name,
       short: true,
     });

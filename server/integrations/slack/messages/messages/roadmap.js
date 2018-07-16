@@ -36,8 +36,15 @@ module.exports = ({
     }),
   );
 
+  if (roadmapItems.length === 0) {
+    attachments.push({
+      text: '_No roadmap item found_',
+    });
+  }
+
+  const actualPage = Math.min(page + 1, pageCount);
   const navAttachment = {
-    title: `Navigate (${page + 1}/${pageCount})`,
+    title: `Navigate (${actualPage}/${pageCount})`,
     actions: [],
     callback_id: 'roadmap',
   };

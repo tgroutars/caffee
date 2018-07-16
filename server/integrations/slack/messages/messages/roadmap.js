@@ -3,7 +3,7 @@ const defaults = require('lodash/defaults');
 const getRoadmapItemAttachment = require('../attachments/roadmap_item');
 
 const orderString = {
-  date: 'Most recent',
+  date: 'Recently created',
   followers: 'Most followed',
 };
 
@@ -84,7 +84,7 @@ module.exports = ({
     name: defaults({ page: 0 }, defaultNavName),
     options: [
       {
-        text: 'Most recent',
+        text: 'Recently created',
         value: {
           order: 'date',
         },

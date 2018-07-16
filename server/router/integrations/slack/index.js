@@ -1,4 +1,6 @@
+const crypto = require('crypto');
 const Router = require('koa-router');
+const Boom = require('boom');
 
 const authRouter = require('./auth');
 const actionsRouter = require('./actions');
@@ -6,7 +8,28 @@ const eventsRouter = require('./events');
 const commandsRouter = require('./commands');
 const optionsLoadRouter = require('./options-load');
 
+const { SLACK_SIGNING_SECRET } = process.env;
+
 const router = new Router();
+
+router.use(async (ctx, next) => {
+  const {
+    headers: {
+      'x-slack-signature': requestSignature,
+      'x-slack-request-timestamp': requestTimestamp,
+    },
+    rawBody: requestBody,
+  } = ctx.request;
+  const unhashedSignature = `v0:${requestTimestamp}:${requestBody}`;
+  const hmac = crypto
+    .createHmac('sha256', SLACK_SIGNING_SECRET)
+    .update(unhashedSignature);
+  const signature = `v0=${hmac.digest('hex')}`;
+  if (signature !== requestSignature) {
+    throw Boom.unauthorized();
+  }
+  await next();
+});
 
 router.use('/auth', authRouter.routes(), authRouter.allowedMethods());
 router.use('/actions', actionsRouter.routes(), actionsRouter.allowedMethods());

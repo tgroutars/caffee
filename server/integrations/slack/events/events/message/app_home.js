@@ -1,12 +1,12 @@
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
-const { postMessage } = require('../../../messages');
+const { postEphemeral } = require('../../../messages');
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
 const { decode } = require('../../../helpers/encoding');
 
 const { Op } = Sequelize;
 
-const postMenuChooseProductMessage = postMessage('menu_choose_product');
-const postMenuMessage = postMessage('menu');
+const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
+const postMenuMessage = postEphemeral('menu');
 
 const appHomeMessage = async (payload, { workspace }) => {
   const {
@@ -36,7 +36,7 @@ const appHomeMessage = async (payload, { workspace }) => {
       defaultRoadmapItemTitle: title,
       defaultRoadmapItemDescription: description,
       defaultAuthorId: slackUser.userId,
-    })({ accessToken, channel });
+    })({ accessToken, channel, user: slackUser.slackId });
     return;
   }
 
@@ -57,7 +57,7 @@ const appHomeMessage = async (payload, { workspace }) => {
     defaultAuthorId: slackUser.userId,
     productId: product.id,
     createRoadmapItem: !!productUser,
-  })({ accessToken, channel });
+  })({ accessToken, channel, user: slackUser.slackId });
 };
 
 module.exports = appHomeMessage;

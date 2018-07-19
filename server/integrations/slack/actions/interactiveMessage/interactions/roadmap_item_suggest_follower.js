@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
 const { User, RoadmapItem, SlackUser } = require('../../../../../models');
-const { postMessage } = require('../../../messages');
+const { postMessage, postEphemeral } = require('../../../messages');
 
 const roadmapItemSuggestFollower = async (
   payload,
@@ -28,7 +28,7 @@ const roadmapItemSuggestFollower = async (
   const isFollower = await user.hasFollowedRoadmapItem(roadmapItem);
   if (isFollower) {
     const { accessToken } = workspace;
-    await postMessage('roadmap_item_already_followed_by')({
+    await postEphemeral('roadmap_item_already_followed_by')({
       userName: user.name,
     })({
       accessToken,
@@ -41,11 +41,27 @@ const roadmapItemSuggestFollower = async (
     const {
       workspace: { accessToken },
     } = userSlackUser;
-
-    await postMessage('roadmap_item_suggest_follow')({ roadmapItem })({
-      accessToken,
-      channel: userSlackUser.slackId,
-    });
+    try {
+      await postMessage('roadmap_item_suggest_follow')({ roadmapItem })({
+        accessToken,
+        channel: userSlackUser.slackId,
+      });
+      await postEphemeral('suggest_follow_sent')({ slackUser: userSlackUser })({
+        accessToken,
+        channel,
+        user: slackUser.slackId,
+      });
+    } catch (err) {
+      if (err.data && err.data.error === 'no_permission') {
+        await postEphemeral('no_permission')({ slackUser: userSlackUser })({
+          accessToken,
+          channel,
+          user: slackUser.slackId,
+        });
+        return;
+      }
+      throw err;
+    }
   });
 };
 

@@ -7,10 +7,11 @@ module.exports = ({
   moved = null,
   hideFollow = false,
 }) => {
-  const follow = !isPM && !hideFollow;
-  const suggestFollowers = isPM;
+  const isArchived = !!roadmapItem.archivedAt;
+  const follow = !isPM && !hideFollow && !isArchived;
+  const suggestFollowers = isPM && !isArchived;
   const showDescription = showMore;
-  const showShowMore = !showMore;
+  const showShowMore = !showMore && !isArchived;
   const openCard = isPM;
 
   const actions = [];

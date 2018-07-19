@@ -86,10 +86,13 @@ const RoadmapItemService = (/* services */) => ({
   },
 
   async unarchive(roadmapItemId) {
-    await RoadmapItem.update(
+    await RoadmapItem.unscoped().update(
       { archivedAt: null },
       { where: { id: roadmapItemId } },
     );
+    await trigger('roadmap_item_created', {
+      roadmapItemId,
+    });
   },
 
   async archive(roadmapItemId) {
@@ -97,6 +100,9 @@ const RoadmapItemService = (/* services */) => ({
       { archivedAt: sequelize.fn('NOW') },
       { where: { id: roadmapItemId } },
     );
+    await trigger('roadmap_item_archived', {
+      roadmapItemId,
+    });
   },
 
   async createAndSync({ title, description, productId, tagId, stageId }) {

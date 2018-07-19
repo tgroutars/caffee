@@ -9,7 +9,7 @@ const updateCard = async payload => {
 
   // TODO: Create item in case the board is associated to a product
   // but the item does not exist
-  const roadmapItems = await RoadmapItem.findAll({
+  const roadmapItems = await RoadmapItem.unscoped().findAll({
     where: { trelloRef: card.id },
   });
   await Promise.map(roadmapItems, async roadmapItem => {

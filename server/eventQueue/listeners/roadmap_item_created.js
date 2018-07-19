@@ -8,7 +8,7 @@ const { Op } = Sequelize;
 const postNewRoadmapItemMessage = postMessage('new_roadmap_item');
 
 const roadmapItemCreated = async ({ roadmapItemId }) => {
-  const roadmapItem = await RoadmapItem.findById(roadmapItemId, {
+  const roadmapItem = await RoadmapItem.unscoped().findById(roadmapItemId, {
     include: ['product', 'stage'],
   });
   const { product, stage } = roadmapItem;

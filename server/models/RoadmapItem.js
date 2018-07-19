@@ -53,6 +53,8 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      // TODO: remove default scope and filter
+      // appropriately in different parts of the app
       defaultScope: {
         where: { archivedAt: null },
       },

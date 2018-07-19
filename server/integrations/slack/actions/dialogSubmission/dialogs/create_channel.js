@@ -4,8 +4,9 @@ const SlackClient = require('@slack/client').WebClient;
 
 const {
   SlackInstall: SlackInstallService,
+  Product: ProductService,
 } = require('../../../../../services');
-const { SlackInstall } = require('../../../../../models');
+const { SlackInstall, Product } = require('../../../../../models');
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 
 const handleError = err => {
@@ -54,6 +55,15 @@ module.exports = async (payload, { slackUser, workspace }) => {
     await SlackInstallService.setChannel(slackInstall.id, {
       channel: channel.id,
     });
+    const product = await Product.findById(productId);
+    if (
+      product.onboardingStep === Product.ONBOARDING_STEPS['04_CREATE_CHANNEL']
+    ) {
+      await ProductService.doOnboarding(productId, {
+        onboardingStep: Product.ONBOARDING_STEPS['05_COMPLETE'],
+        slackUserId: slackUser.id,
+      });
+    }
   } catch (err) {
     await handleError(err);
   }

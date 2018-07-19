@@ -1,5 +1,7 @@
 const Promise = require('bluebird');
 const winston = require('winston');
+const SlackClient = require('@slack/client').WebClient;
+const { getUserVals } = require('../integrations/slack/helpers/user');
 
 const {
   Product,
@@ -14,15 +16,80 @@ const {
   createWebhook,
   listLabels,
   listLists,
-  fetchBoard,
 } = require('../integrations/trello/helpers/api');
 
-const ProductService = (/* services */) => ({
+const ProductService = services => ({
   async createTag(productId, { name, trelloRef }) {
     return Tag.findOrCreate({
       where: { productId, trelloRef },
       defaults: { name },
     });
+  },
+
+  async setName(productId, { name }) {
+    await Product.update({ name }, { where: { id: productId } });
+  },
+
+  async doOnboarding(productId, { onboardingStep, slackUserId }) {
+    await Product.update({ onboardingStep }, { where: { id: productId } });
+    await trigger('onboarding', {
+      onboardingStep,
+      productId,
+      slackUserId,
+    });
+  },
+
+  async createFromSlackInstall({ accessToken, userSlackId, appId, appUserId }) {
+    const slackClient = new SlackClient(accessToken);
+    const { user: userInfo } = await slackClient.users.info({
+      user: userSlackId,
+    });
+    const { team: workspaceInfo } = await slackClient.team.info();
+    const {
+      id: workspaceSlackId,
+      name: workspaceName,
+      icon: { image_132: workspaceImage },
+      domain,
+    } = workspaceInfo;
+
+    const [workspace] = await services.SlackWorkspace.findOrCreate({
+      accessToken,
+      domain,
+      appId,
+      appUserId,
+      slackId: workspaceSlackId,
+      name: workspaceName,
+      image: workspaceImage,
+    });
+
+    const userVals = getUserVals(userInfo);
+
+    const [slackUser] = await services.SlackUser.findOrCreate({
+      ...userVals,
+      workspaceId: workspace.id,
+    });
+
+    const { user } = slackUser;
+
+    const product = await this.create({
+      name: workspaceName,
+      image: workspaceImage,
+      ownerId: user.id,
+    });
+
+    await product.addUser(user, { through: { role: 'admin' } });
+
+    await services.SlackInstall.create({
+      productId: product.id,
+      workspaceId: workspace.id,
+    });
+
+    await this.doOnboarding(product.id, {
+      onboardingStep: Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME'],
+      slackUserId: slackUser.id,
+    });
+
+    return product;
   },
 
   async create({ name, image, ownerId }) {
@@ -58,9 +125,7 @@ const ProductService = (/* services */) => ({
   // TODO: Danger => Trello limits API to 100 request per token per 10 second
   async syncTrelloBoard(product) {
     const { trelloAccessToken, trelloBoardId } = product;
-    const board = await fetchBoard(trelloAccessToken, {
-      boardId: trelloBoardId,
-    });
+
     const cards = await listCards(trelloAccessToken, {
       boardId: trelloBoardId,
     });
@@ -80,9 +145,6 @@ const ProductService = (/* services */) => ({
         } boardRef=${trelloBoardId}`,
       );
     }
-
-    // Change product name
-    await product.update({ name: board.name });
 
     // Remove old roadmap items
     await RoadmapItem.destroy({

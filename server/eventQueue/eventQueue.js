@@ -4,7 +4,7 @@ const winston = require('winston');
 const queue = require('../lib/queue/queue');
 
 const listeners = {};
-queue.process('event', async (job, done) => {
+queue.process('event', 50, async (job, done) => {
   const { type, payload } = job.data;
   const eventListeners = listeners[type] || [];
 

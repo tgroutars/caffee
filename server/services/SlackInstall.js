@@ -39,6 +39,10 @@ const SlackInstallService = services => ({
     });
     return slackUsers;
   },
+
+  async setChannel(slackInstallId, { channel }) {
+    await SlackInstall.update({ channel }, { where: { id: slackInstallId } });
+  },
 });
 
 module.exports = SlackInstallService;

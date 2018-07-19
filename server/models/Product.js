@@ -1,3 +1,11 @@
+const ONBOARDING_STEPS = {
+  '01_CHOOSE_PRODUCT_NAME': '01_choose_product_name',
+  '02_INSTALL_TRELLO': '02_install_trello',
+  '03_CHOOSE_TRELLO_BOARD': '03_choose_trello_board',
+  '04_CREATE_CHANNEL': '04_create_channel',
+  '05_COMPLETE': '05_complete',
+};
+
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define(
     'product',
@@ -31,9 +39,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         field: 'trello_access_token_secret',
       },
+      onboardingStep: {
+        type: DataTypes.STRING,
+        field: 'onboarding_step',
+        allowNull: true,
+      },
     },
     {},
   );
+
+  Product.ONBOARDING_STEPS = ONBOARDING_STEPS;
 
   /**
    * Associations

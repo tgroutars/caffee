@@ -131,9 +131,6 @@ const ProductService = services => ({
       );
     }
 
-    // Change product name
-    await product.update({ name: board.name });
-
     // Remove old roadmap items
     await RoadmapItem.destroy({
       where: { productId: product.id },

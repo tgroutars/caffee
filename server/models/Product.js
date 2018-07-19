@@ -1,3 +1,8 @@
+const ONBOARDING_STEPS = {
+  '01_CHOOSE_PRODUCT_NAME': '01_choose_product_name',
+  '02_CONFIG_TRELLO': '02_config_trello',
+};
+
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define(
     'product',
@@ -31,9 +36,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         field: 'trello_access_token_secret',
       },
+      onboardingStep: {
+        type: DataTypes.STRING,
+        field: 'onboarding_step',
+        allowNull: false,
+        defaultValue: ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME'],
+      },
     },
     {},
   );
+
+  Product.ONBOARDING_STEPS = ONBOARDING_STEPS;
 
   /**
    * Associations

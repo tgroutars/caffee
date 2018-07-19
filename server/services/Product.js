@@ -26,6 +26,10 @@ const ProductService = services => ({
     });
   },
 
+  async setName(productId, { name }) {
+    await Product.update({ name }, { where: { id: productId } });
+  },
+
   async createFromSlackInstall({ accessToken, userSlackId, appId, appUserId }) {
     const slackClient = new SlackClient(accessToken);
     const { user: userInfo } = await slackClient.users.info({
@@ -69,6 +73,12 @@ const ProductService = services => ({
     await services.SlackInstall.create({
       productId: product.id,
       workspaceId: workspace.id,
+    });
+
+    await trigger('onboarding', {
+      onboardingStep: Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME'],
+      productId: product.id,
+      slackUserId: slackUser.id,
     });
 
     return product;

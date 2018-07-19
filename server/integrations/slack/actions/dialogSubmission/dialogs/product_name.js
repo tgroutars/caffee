@@ -17,7 +17,7 @@ module.exports = async (payload, { slackUser }) => {
     Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME']
   ) {
     await ProductService.doOnboarding(productId, {
-      onboardingStep: Product.ONBOARDING_STEPS['02_CONFIG_TRELLO'],
+      onboardingStep: Product.ONBOARDING_STEPS['02_INSTALL_TRELLO'],
       slackUserId: slackUser.id,
     });
   }

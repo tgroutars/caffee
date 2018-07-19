@@ -1,13 +1,20 @@
+const {
+  Product: ProductService,
+} = require('../../../../../eventQueue/listeners');
 const { Product } = require('../../../../../models');
-const { trigger } = require('../../../../../eventQueue/eventQueue');
 
 module.exports = async (payload, { slackUser }) => {
   const { action } = payload;
   const { productId } = action.name;
 
-  await trigger('onboarding', {
-    onboardingStep: Product.ONBOARDING_STEPS['02_CONFIG_TRELLO'],
-    productId,
-    slackUserId: slackUser.id,
-  });
+  const product = await Product.findById(productId);
+  if (
+    product.onboardingStep ===
+    Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME']
+  ) {
+    ProductService.doOnboarding(productId, {
+      onboardingStep: Product.ONBOARDING_STEPS['02_CONFIG_TRELLO'],
+      slackUserId: slackUser.id,
+    });
+  }
 };

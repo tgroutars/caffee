@@ -10,6 +10,7 @@ module.exports = async ({ productId, slackUserId, onboardingStep }) => {
   ]);
   const { workspace } = slackUser;
   const { accessToken } = workspace;
+
   await postMessage('onboarding')(onboardingStep, { product, slackUser })({
     accessToken,
     channel: slackUser.slackId,

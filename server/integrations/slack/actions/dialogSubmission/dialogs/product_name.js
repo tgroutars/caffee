@@ -1,7 +1,6 @@
 const trim = require('lodash/trim');
 
 const { Product } = require('../../../../../models');
-const { trigger } = require('../../../../../eventQueue/eventQueue');
 const { Product: ProductService } = require('../../../../../services');
 
 module.exports = async (payload, { slackUser }) => {
@@ -12,9 +11,14 @@ module.exports = async (payload, { slackUser }) => {
   await ProductService.setName(productId, {
     name,
   });
-  await trigger('onboarding', {
-    onboardingStep: Product.ONBOARDING_STEPS['02_CONFIG_TRELLO'],
-    productId,
-    slackUserId: slackUser.id,
-  });
+  const product = await Product.findById(productId);
+  if (
+    product.onboardingStep ===
+    Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME']
+  ) {
+    await ProductService.doOnboarding(productId, {
+      onboardingStep: Product.ONBOARDING_STEPS['02_CONFIG_TRELLO'],
+      slackUserId: slackUser.id,
+    });
+  }
 };

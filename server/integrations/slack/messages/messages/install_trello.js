@@ -1,6 +1,5 @@
 const installTrello = ({ installURL }) => {
-  const pretext = "You haven't installed the Trello integration yet";
-  const text = "You'll be redirected to Trello to connect your account";
+  const pretext = 'Click here to connect Trello :point_down:';
   const actions = [
     {
       type: 'button',
@@ -11,7 +10,6 @@ const installTrello = ({ installURL }) => {
   return {
     attachments: [
       {
-        text,
         pretext,
         actions,
         callback_id: 'install_trello',

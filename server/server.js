@@ -1,4 +1,4 @@
-require('events').EventEmitter.defaultMaxListeners = 25;
+require('events').EventEmitter.defaultMaxListeners = 150;
 
 const http = require('http');
 

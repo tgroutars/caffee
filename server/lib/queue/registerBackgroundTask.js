@@ -5,7 +5,7 @@ const queue = require('./queue');
 
 const jobs = {};
 
-queue.process('job', async (job, done) => {
+queue.process('job', 50, async (job, done) => {
   const { jobId, args } = job.data;
   const func = jobs[jobId];
 

@@ -1,10 +1,9 @@
 const dialogSubmission = require('./dialogSubmission');
 const interactiveMessage = require('./interactiveMessage');
 const messageAction = require('./messageAction');
-const registerBackgroundTask = require('../../../lib/queue/registerBackgroundTask');
 const { SlackUser, SlackWorkspace } = require('../../../models');
 
-const handleAction = registerBackgroundTask(async payload => {
+const handleAction = async payload => {
   const {
     team: { id: workspaceSlackId },
     user: { id: userSlackId },
@@ -22,7 +21,7 @@ const handleAction = registerBackgroundTask(async payload => {
     ],
   });
   if (!slackUser) {
-    return;
+    return null;
   }
 
   const { workspace, user } = slackUser;
@@ -31,17 +30,14 @@ const handleAction = registerBackgroundTask(async payload => {
 
   switch (payload.type) {
     case 'interactive_message':
-      await interactiveMessage(payload, state);
-      break;
+      return interactiveMessage(payload, state);
     case 'dialog_submission':
-      await dialogSubmission(payload, state);
-      break;
+      return dialogSubmission(payload, state);
     case 'message_action':
-      await messageAction(payload, state);
-      break;
+      return messageAction(payload, state);
     default:
       throw new Error(`Unknown action type: ${payload.type}`);
   }
-});
+};
 
 module.exports = { handleAction };

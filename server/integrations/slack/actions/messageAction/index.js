@@ -1,5 +1,6 @@
 const actions = require('./actions');
 const { decode } = require('../../helpers/encoding');
+const registerBackgroundTask = require('../../../../lib/queue/registerBackgroundTask');
 
 const messageAction = async (payload, state) => {
   const action = actions[payload.callback_id];
@@ -12,4 +13,4 @@ const messageAction = async (payload, state) => {
   await action(payload, state);
 };
 
-module.exports = messageAction;
+module.exports = registerBackgroundTask(messageAction);

@@ -3,7 +3,6 @@ const Promise = require('bluebird');
 const HashStore = require('../../../../lib/redis/HashStore');
 const interactions = require('./interactions');
 const { postEphemeral } = require('../../messages');
-const registerBackgroundTask = require('../../../../lib/queue/registerBackgroundTask');
 
 const actionValueStore = new HashStore('slack:action_value');
 
@@ -53,4 +52,4 @@ const interactiveMessage = async (rawPayload, state) => {
   await interaction(payload, state);
 };
 
-module.exports = registerBackgroundTask(interactiveMessage);
+module.exports = interactiveMessage;

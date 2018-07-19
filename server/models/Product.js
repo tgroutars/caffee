@@ -39,8 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       onboardingStep: {
         type: DataTypes.STRING,
         field: 'onboarding_step',
-        allowNull: false,
-        defaultValue: ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME'],
+        allowNull: true,
       },
     },
     {},

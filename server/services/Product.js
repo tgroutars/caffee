@@ -1,5 +1,7 @@
 const Promise = require('bluebird');
 const winston = require('winston');
+const SlackClient = require('@slack/client').WebClient;
+const { getUserVals } = require('../integrations/slack/helpers/user');
 
 const {
   Product,
@@ -17,12 +19,60 @@ const {
   fetchBoard,
 } = require('../integrations/trello/helpers/api');
 
-const ProductService = (/* services */) => ({
+const ProductService = services => ({
   async createTag(productId, { name, trelloRef }) {
     return Tag.findOrCreate({
       where: { productId, trelloRef },
       defaults: { name },
     });
+  },
+
+  async createFromSlackInstall({ accessToken, userSlackId, appId, appUserId }) {
+    const slackClient = new SlackClient(accessToken);
+    const { user: userInfo } = await slackClient.users.info({
+      user: userSlackId,
+    });
+    const { team: workspaceInfo } = await slackClient.team.info();
+    const {
+      id: workspaceSlackId,
+      name: workspaceName,
+      icon: { image_132: workspaceImage },
+      domain,
+    } = workspaceInfo;
+
+    const [workspace] = await services.SlackWorkspace.findOrCreate({
+      accessToken,
+      domain,
+      appId,
+      appUserId,
+      slackId: workspaceSlackId,
+      name: workspaceName,
+      image: workspaceImage,
+    });
+
+    const userVals = getUserVals(userInfo);
+
+    const [slackUser] = await services.SlackUser.findOrCreate({
+      ...userVals,
+      workspaceId: workspace.id,
+    });
+
+    const { user } = slackUser;
+
+    const product = await this.create({
+      name: workspaceName,
+      image: workspaceImage,
+      ownerId: user.id,
+    });
+
+    await product.addUser(user, { through: { role: 'admin' } });
+
+    await services.SlackInstall.create({
+      productId: product.id,
+      workspaceId: workspace.id,
+    });
+
+    return product;
   },
 
   async create({ name, image, ownerId }) {

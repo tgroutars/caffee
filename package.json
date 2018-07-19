@@ -22,6 +22,7 @@
     "axios": "^0.18.0",
     "bluebird": "^3.5.1",
     "boom": "^7.2.0",
+    "fuse.js": "^3.2.1",
     "ioredis": "^3.2.2",
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.1",

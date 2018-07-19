@@ -1,6 +1,7 @@
 const ONBOARDING_STEPS = {
   '01_CHOOSE_PRODUCT_NAME': '01_choose_product_name',
   '02_INSTALL_TRELLO': '02_install_trello',
+  '03_CHOOSE_TRELLO_BOARD': '03_choose_trello_board',
 };
 
 module.exports = (sequelize, DataTypes) => {

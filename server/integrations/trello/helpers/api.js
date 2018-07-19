@@ -35,10 +35,7 @@ const listBoards = async accessToken => {
     method: 'GET',
     params: { filter: 'open' },
   });
-  return boards.map(({ name, id }) => ({
-    name,
-    id,
-  }));
+  return boards;
 };
 
 const listLists = async (accessToken, { boardId }) => {

@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const Router = require('koa-router');
 const Boom = require('boom');
 
-const authRouter = require('./auth');
 const actionsRouter = require('./actions');
 const eventsRouter = require('./events');
 const commandsRouter = require('./commands');
@@ -31,7 +30,6 @@ router.use(async (ctx, next) => {
   await next();
 });
 
-router.use('/auth', authRouter.routes(), authRouter.allowedMethods());
 router.use('/actions', actionsRouter.routes(), actionsRouter.allowedMethods());
 router.use('/events', eventsRouter.routes(), eventsRouter.allowedMethods());
 router.use(

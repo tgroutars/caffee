@@ -12,7 +12,7 @@ const SCOPE = 'read,write';
 const EXPIRATION = 'never';
 const { TRELLO_API_KEY, TRELLO_API_SECRET, BASE_URL } = process.env;
 
-const CALLBACK_URL = `${BASE_URL}/integrations/trello/auth/install/callback`;
+const CALLBACK_URL = `${BASE_URL}/auth/trello/install/callback`;
 
 const oauth = new OAuth(
   REQUEST_URL,

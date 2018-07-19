@@ -8,8 +8,8 @@ const {
   SlackInstall: SlackInstallService,
   SlackUser: SlackUserService,
   SlackWorkspace: SlackWorkspaceService,
-} = require('../../../services');
-const { getUserVals } = require('../../../integrations/slack/helpers/user');
+} = require('../../services');
+const { getUserVals } = require('../../integrations/slack/helpers/user');
 
 const SCOPES = [
   'channels:history',
@@ -28,7 +28,7 @@ const SCOPES = [
 const { SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, BASE_URL } = process.env;
 const AUTHORIZATION_URL = `https://slack.com/oauth/authorize`;
 const ACCESS_URL = 'https://slack.com/api/oauth.access';
-const REDIRECT_URI = `${BASE_URL}/integrations/slack/auth/install/callback`;
+const REDIRECT_URI = `${BASE_URL}/auth/slack/install/callback`;
 
 const router = new Router();
 

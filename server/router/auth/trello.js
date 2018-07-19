@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 
-const { getAccessToken } = require('../../../integrations/trello/helpers/auth');
-const { Product: ProductService } = require('../../../services');
+const { getAccessToken } = require('../../integrations/trello/helpers/auth');
+const { Product: ProductService } = require('../../services');
 
 const router = new Router();
 

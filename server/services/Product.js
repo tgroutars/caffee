@@ -16,7 +16,6 @@ const {
   createWebhook,
   listLabels,
   listLists,
-  fetchBoard,
 } = require('../integrations/trello/helpers/api');
 
 const ProductService = services => ({
@@ -108,9 +107,7 @@ const ProductService = services => ({
   // TODO: Danger => Trello limits API to 100 request per token per 10 second
   async syncTrelloBoard(product) {
     const { trelloAccessToken, trelloBoardId } = product;
-    const board = await fetchBoard(trelloAccessToken, {
-      boardId: trelloBoardId,
-    });
+
     const cards = await listCards(trelloAccessToken, {
       boardId: trelloBoardId,
     });

@@ -1,6 +1,4 @@
-const {
-  Product: ProductService,
-} = require('../../../../../eventQueue/listeners');
+const { Product: ProductService } = require('../../../../../services');
 const { Product } = require('../../../../../models');
 
 module.exports = async (payload, { slackUser }) => {

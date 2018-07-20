@@ -86,5 +86,9 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  Product.prototype.getTrelloBoardURL = function getTrelloBoardURL() {
+    return `https://trello.com/b/${this.trelloBoardId}`;
+  };
+
   return Product;
 };

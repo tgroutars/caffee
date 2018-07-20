@@ -1,7 +1,7 @@
 module.exports = ({ product }) => ({
   text: `Great! You now have a high level roadmap to showcase to your whole organisation :hugging_face:
 
-Hang on, we're getting there! My purpose is to keep everyone informed of new roadmap updates.
+Hang on, we're getting there! My purpose is to keep everyone informed of roadmap updates.
 Everytime you make progress on the roadmap, I'll post updates to a dedicated channel that every member of your organisation can follow.
 `,
   attachments: [

@@ -1,15 +1,41 @@
 const actions = require('./actions');
 const { decode } = require('../../helpers/encoding');
+const registerBackgroundTask = require('../../../../lib/queue/registerBackgroundTask');
+const { SlackUser, SlackWorkspace } = require('../../../../models');
 
-const messageAction = async (payload, state) => {
-  const action = actions[payload.callback_id];
+const messageAction = registerBackgroundTask(async payload => {
+  const {
+    message,
+    callback_id: callbackId,
+    team: { id: workspaceSlackId },
+    user: { id: userSlackId },
+  } = payload;
+
+  const slackUser = await SlackUser.find({
+    where: { slackId: userSlackId },
+    include: [
+      'user',
+      {
+        model: SlackWorkspace,
+        as: 'workspace',
+        where: { slackId: workspaceSlackId },
+      },
+    ],
+  });
+  if (!slackUser) {
+    return;
+  }
+
+  const { workspace, user } = slackUser;
+
+  const action = actions[callbackId];
 
   if (typeof action !== 'function') {
-    throw new Error(`Unknow message action: ${payload.callback_id}`);
+    throw new Error(`Unknow message action: ${callbackId}`);
   }
-  const { workspace } = state;
-  payload.message.text = await decode(workspace)(payload.message.text);
-  await action(payload, state);
-};
+
+  message.text = await decode(workspace)(message.text);
+  await action(payload, { workspace, slackUser, user });
+});
 
 module.exports = messageAction;

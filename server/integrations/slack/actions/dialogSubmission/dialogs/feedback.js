@@ -1,23 +1,12 @@
 const trim = require('lodash/trim');
 
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
-const registerBackgroundTask = require('../../../../../lib/queue/registerBackgroundTask');
 const { Feedback: FeedbackService } = require('../../../../../services');
 const { User } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
-const createFeedbackBG = registerBackgroundTask(
-  FeedbackService.create.bind(FeedbackService),
-);
-
-const feedback = async (payload, { slackUser, workspace }) => {
-  const {
-    channel: { id: channel },
-    submission,
-    callback_id: callbackId,
-  } = payload;
-  const { productId, defaultAuthorId } = callbackId;
-  const authorId = submission.authorId || defaultAuthorId;
+const validate = async payload => {
+  const { submission } = payload;
   const description = trim(submission.description);
   if (!description) {
     throw new SlackDialogSubmissionError([
@@ -27,11 +16,23 @@ const feedback = async (payload, { slackUser, workspace }) => {
       },
     ]);
   }
+};
+
+const run = async (payload, { slackUser, workspace }) => {
+  const {
+    channel: { id: channel },
+    submission,
+    callback_id: callbackId,
+  } = payload;
+  const { productId, defaultAuthorId } = callbackId;
+  const authorId = submission.authorId || defaultAuthorId;
+  const description = trim(submission.description);
+
   if (!authorId) {
     throw new Error('Missing authorId in feedback submission');
   }
 
-  await createFeedbackBG({
+  await FeedbackService.create({
     description,
     authorId,
     productId,
@@ -48,4 +49,7 @@ const feedback = async (payload, { slackUser, workspace }) => {
   });
 };
 
-module.exports = feedback;
+module.exports = {
+  validate,
+  run,
+};

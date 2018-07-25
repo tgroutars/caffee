@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const HashStore = require('../../../../lib/redis/HashStore');
 const interactions = require('./interactions');
 const { postEphemeral } = require('../../messages');
+const { SlackUser, SlackWorkspace } = require('../../../../models');
 
 const actionValueStore = new HashStore('slack:action_value');
 
@@ -29,11 +30,32 @@ const preProcessPayload = async payload => {
   };
 };
 
-const interactiveMessage = async (rawPayload, state) => {
+const interactiveMessage = async rawPayload => {
   const payload = await preProcessPayload(rawPayload);
-  const { action } = payload;
+  const {
+    action,
+    team: { id: workspaceSlackId },
+    user: { id: userSlackId },
+  } = payload;
+
+  const slackUser = await SlackUser.find({
+    where: { slackId: userSlackId },
+    include: [
+      'user',
+      {
+        model: SlackWorkspace,
+        as: 'workspace',
+        where: { slackId: workspaceSlackId },
+      },
+    ],
+  });
+  if (!slackUser) {
+    return;
+  }
+
+  const { workspace, user } = slackUser;
+
   if (!action.name) {
-    const { workspace, slackUser } = state;
     const {
       channel: { id: channel },
     } = payload;
@@ -49,7 +71,7 @@ const interactiveMessage = async (rawPayload, state) => {
     throw new Error(`Unknow interaction: ${type}`);
   }
 
-  await interaction(payload, state);
+  await interaction(payload, { workspace, slackUser, user });
 };
 
 module.exports = interactiveMessage;

@@ -33,7 +33,9 @@ const handleError = err => {
   throw err;
 };
 
-module.exports = async (payload, { slackUser, workspace }) => {
+// We need to actually create the channel to validate the channel name
+// So we just create it in the validate
+const validate = async (payload, { slackUser, workspace }) => {
   const { submission, callback_id: callbackId } = payload;
   const { productId } = callbackId;
   const channelName = trimStart(trim(submission.channel), '#');
@@ -67,4 +69,9 @@ module.exports = async (payload, { slackUser, workspace }) => {
   } catch (err) {
     await handleError(err);
   }
+};
+
+module.exports = {
+  validate,
+  run: async () => {},
 };

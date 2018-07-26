@@ -22,11 +22,11 @@ You can also use one of your existing channels, but I highly recommend you don't
         {
           type: 'select',
           text: `Select channel`,
+          data_source: 'channels',
           name: {
             type: 'select_channel',
             slackInstallId: slackInstall.id,
           },
-          value: 'select_channel',
         },
       ],
     },

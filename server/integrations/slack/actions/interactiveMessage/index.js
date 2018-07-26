@@ -24,7 +24,9 @@ const preProcessPayload = async payload => {
         action.selected_options &&
         (await Promise.map(action.selected_options, async option => ({
           ...option,
-          value: option.value && (await actionValueStore.get(option.value)),
+          value:
+            (option.value && (await actionValueStore.get(option.value))) ||
+            option.value,
         }))),
     },
   };

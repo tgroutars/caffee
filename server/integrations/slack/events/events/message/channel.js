@@ -21,8 +21,8 @@ const channelMessage = async (payload, { workspace }) => {
   if (!rawText.includes(appMention)) {
     return;
   }
-
-  const text = await decode(workspace)(rawText);
+  const appMentionRE = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
+  const text = await decode(workspace)(rawText.replace(appMentionRE, ' '));
 
   const products = await workspace.getProducts();
   if (!products.length) {
@@ -42,22 +42,21 @@ const channelMessage = async (payload, { workspace }) => {
     });
     defaultText = message.text;
   } else {
-    const re = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
-    defaultText = text.replace(re, ' ');
+    defaultText = text;
   }
 
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId, workspaceId: workspace.id },
   });
 
-  const { title, description } = getTitleDescription(defaultText);
+  const { defaultTitle, defaultDescription } = getTitleDescription(defaultText);
 
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
       defaultFeedback: defaultText,
-      defaultRoadmapItemTitle: title,
-      defaultRoadmapItemDescription: description,
+      defaultRoadmapItemTitle: defaultTitle,
+      defaultRoadmapItemDescription: defaultDescription,
       defaultAuthorId: slackUser.userId,
     })({ accessToken, channel, user: userSlackId });
     return;
@@ -75,8 +74,8 @@ const channelMessage = async (payload, { workspace }) => {
 
   await postMenuMessage({
     defaultFeedback: defaultText,
-    defaultRoadmapItemTitle: title,
-    defaultRoadmapItemDescription: description,
+    defaultRoadmapItemTitle: defaultTitle,
+    defaultRoadmapItemDescription: defaultDescription,
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
     createRoadmapItem: !!productUser,

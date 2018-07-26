@@ -1,7 +1,7 @@
-module.exports = ({ productId }) => {
+module.exports = ({ slackInstallId }) => {
   const callbackId = {
     type: 'create_channel',
-    productId,
+    slackInstallId,
   };
 
   const elements = [

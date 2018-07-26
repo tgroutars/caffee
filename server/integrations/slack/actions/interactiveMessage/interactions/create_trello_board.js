@@ -7,7 +7,7 @@ module.exports = async (payload, { slackUser }) => {
   const product = await Product.findById(productId);
   await ProductService.createTrelloBoard(product);
   await ProductService.doOnboarding(productId, {
-    onboardingStep: Product.ONBOARDING_STEPS['04_CREATE_CHANNEL'],
+    onboardingStep: Product.ONBOARDING_STEPS['04_CHOOSE_SLACK_CHANNEL'],
     slackUserId: slackUser.id,
   });
 };

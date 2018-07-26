@@ -37,14 +37,16 @@ const handleError = err => {
 // So we just create it in the validate
 const validate = async (payload, { slackUser, workspace }) => {
   const { submission, callback_id: callbackId } = payload;
-  const { productId } = callbackId;
+  const { slackInstallId } = callbackId;
   const channelName = trimStart(trim(submission.channel), '#');
   const { accessToken } = workspace;
   const slackClient = new SlackClient(accessToken);
 
-  const slackInstall = await SlackInstall.find({
-    where: { productId, workspaceId: workspace.id },
+  const slackInstall = await SlackInstall.findById(slackInstallId, {
+    include: ['product'],
   });
+
+  const { product } = slackInstall;
 
   // TODO: Don't create channel if already exists
 
@@ -57,11 +59,11 @@ const validate = async (payload, { slackUser, workspace }) => {
     await SlackInstallService.setChannel(slackInstall.id, {
       channel: channel.id,
     });
-    const product = await Product.findById(productId);
     if (
-      product.onboardingStep === Product.ONBOARDING_STEPS['04_CREATE_CHANNEL']
+      product.onboardingStep ===
+      Product.ONBOARDING_STEPS['04_CHOOSE_SLACK_CHANNEL']
     ) {
-      await ProductService.doOnboarding(productId, {
+      await ProductService.doOnboarding(product.id, {
         onboardingStep: Product.ONBOARDING_STEPS['05_COMPLETE'],
         slackUserId: slackUser.id,
       });

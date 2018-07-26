@@ -1,4 +1,4 @@
-module.exports = ({ product }) => ({
+module.exports = ({ slackInstall }) => ({
   text: `Great! You now have a high level roadmap to showcase to your whole organisation :hugging_face:
 
 Hang on, we're getting there! My purpose is to keep everyone informed of roadmap updates.
@@ -6,17 +6,27 @@ Everytime you make progress on the roadmap, I'll post updates to a dedicated cha
 `,
   attachments: [
     {
-      pretext: `Let's create a channel for that purpose :slightly_smiling_face:`,
+      pretext: `Let's create a channel for that purpose :slightly_smiling_face:
+You can also use one of your existing channels, but I highly recommend you don't pollute an existing conversation with the feed of roadmap update I'll send :wink:`,
       callback_id: 'create_channel',
       actions: [
         {
           type: 'button',
-          text: `Create a new channel`,
+          text: `Create new channel`,
           name: {
             type: 'open_create_channel_dialog',
-            productId: product.id,
+            slackInstallId: slackInstall.id,
           },
           value: 'open_create_channel_dialog',
+        },
+        {
+          type: 'select',
+          text: `Select channel`,
+          name: {
+            type: 'select_channel',
+            slackInstallId: slackInstall.id,
+          },
+          value: 'select_channel',
         },
       ],
     },

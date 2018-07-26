@@ -16,7 +16,21 @@ const {
   createWebhook,
   listLabels,
   listLists,
+  createBoard,
+  createLabel,
+  createList,
 } = require('../integrations/trello/helpers/api');
+
+const DEFAULT_TAGS = [
+  { name: 'Bug', color: 'red' },
+  { name: 'Improvement', color: 'yellow' },
+  { name: 'Feature', color: 'blue' },
+];
+const DEFAULT_STAGES = [
+  { name: 'In consideration' },
+  { name: 'In Progress' },
+  { name: 'Released' },
+];
 
 const ProductService = services => ({
   async createTag(productId, { name, trelloRef }) {
@@ -120,6 +134,30 @@ const ProductService = services => ({
       { where: { id: productId } },
     );
     await trigger('product_trello_board_changed', { productId });
+  },
+
+  async createTrelloBoard(product) {
+    const { trelloAccessToken } = product;
+    const board = await createBoard(trelloAccessToken, {
+      name: `${product.name} roadmap`,
+      desc: `High-level roadmap for ${product.name}`,
+      permissionLevel: 'public',
+    });
+    await Promise.map(DEFAULT_TAGS, async ({ name, color }) =>
+      createLabel(trelloAccessToken, {
+        name,
+        color,
+        boardId: board.id,
+      }),
+    );
+    await Promise.map(DEFAULT_STAGES, async ({ name }, index) =>
+      createList(trelloAccessToken, {
+        name,
+        pos: index + 1,
+        boardId: board.id,
+      }),
+    );
+    await this.setTrelloBoard(product.id, board.id);
   },
 
   // TODO: Danger => Trello limits API to 100 request per token per 10 second

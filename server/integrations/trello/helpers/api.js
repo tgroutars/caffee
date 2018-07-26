@@ -23,6 +23,36 @@ const makeRequest = async (
   return response.data;
 };
 
+const createBoard = async (
+  accessToken,
+  { name, desc, permissionLevel, defaultLabels = false, defaultLists = false },
+) =>
+  makeRequest(accessToken, {
+    url: `/boards`,
+    method: 'POST',
+    params: {
+      name,
+      desc,
+      defaultLabels,
+      defaultLists,
+      prefs_permissionLevel: permissionLevel,
+    },
+  });
+
+const createLabel = async (accessToken, { boardId, name, color }) =>
+  makeRequest(accessToken, {
+    url: `/boards/${boardId}/labels`,
+    method: 'POST',
+    params: { name, color },
+  });
+
+const createList = async (accessToken, { boardId, name, pos }) =>
+  makeRequest(accessToken, {
+    url: `/boards/${boardId}/lists`,
+    method: 'POST',
+    params: { name, pos },
+  });
+
 const fetchBoard = async (accessToken, { boardId }) =>
   makeRequest(accessToken, {
     url: `/boards/${boardId}`,
@@ -114,6 +144,9 @@ const destroyWebhook = async (accessToken, { webhookId }) => {
 
 module.exports = {
   makeRequest,
+  createBoard,
+  createLabel,
+  createList,
   listBoards,
   listLists,
   createCard,

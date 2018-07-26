@@ -6,17 +6,16 @@ const { Product: ProductService } = require('../../services');
 
 const SCOPES = [
   'channels:history',
-  'channels:read',
   'chat:write',
+  'conversations:history',
+  'conversations:read',
+  'conversations:write',
+  'groups:history',
   'commands',
-  'files:read',
-  'groups:read',
-  'reactions:read',
-  'reactions:write',
-  'team:read',
-  'users:read.email',
   'users:read',
+  'users:read.email',
   'users.profile:read',
+  'team:read',
 ];
 const { SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, BASE_URL } = process.env;
 const AUTHORIZATION_URL = `https://slack.com/oauth/authorize`;

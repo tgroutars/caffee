@@ -26,18 +26,4 @@ Of course! When you summon me, you'll have the option to 'View the roadmap'. I'l
 
 That's it for now! If you have a question, never hesitate to send an email to my creator <mailto:thomas@caffee.io|Thomas>, he'll be glad to answer any questions you may have :slightly_smiling_face:
 `,
-  attachments: [
-    {
-      text: `Click the button below if you want to know more, I'll give you some tips to get started :wink:`,
-      callback_id: 'channel_onboarding',
-      actions: [
-        {
-          text: 'Onboard me!',
-          type: 'button',
-          name: { type: 'onboard_me' },
-          value: 'onboard_me',
-        },
-      ],
-    },
-  ],
 });

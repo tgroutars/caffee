@@ -76,13 +76,17 @@ module.exports = ({
     });
   }
 
+  const imageAttachment = roadmapItem.attachments.find(attachment =>
+    attachment.mimetype.startsWith('image/'),
+  );
   return {
     actions,
-    footer,
-    fields,
-    color: '#0079bf',
-    title: roadmapItem.title,
-    text: showDescription ? roadmapItem.description : undefined,
     callback_id: 'roadmap_item',
+    color: '#0079bf',
+    fields,
+    footer,
+    text: showDescription ? roadmapItem.description : undefined,
+    thumb_url: imageAttachment ? imageAttachment.url : undefined,
+    title: roadmapItem.title,
   };
 };

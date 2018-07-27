@@ -1,4 +1,6 @@
 const axios = require('axios');
+const Promise = require('bluebird');
+const FormData = require('form-data');
 
 const { TRELLO_API_KEY } = process.env;
 const EXTERNAL_BASE_URL = process.env.EXTERNAL_BASE_URL || process.env.BASE_URL;
@@ -6,7 +8,7 @@ const WEBHOOK_URL = `${EXTERNAL_BASE_URL}/integrations/trello/webhook`;
 
 const makeRequest = async (
   accessToken,
-  { url, method = 'GET', data, params = {} },
+  { url, method = 'GET', data, params = {}, headers },
 ) => {
   const allParams = Object.assign(
     { token: accessToken, key: TRELLO_API_KEY },
@@ -17,6 +19,7 @@ const makeRequest = async (
     url,
     method,
     data,
+    headers,
     baseURL: 'https://trello.com/1',
     params: allParams,
   });
@@ -100,9 +103,44 @@ const listCards = async (accessToken, { boardId }) => {
   return cards;
 };
 
+const addAttachmentToCard = async (
+  accessToken,
+  { cardId, attachment: { url, name, mimetype } },
+) => {
+  const { data: fileStream } = await axios.get(url, {
+    responseType: 'stream',
+  });
+
+  const formData = new FormData();
+  formData.append('mimeType', mimetype);
+  formData.append('name', name);
+  formData.append('file', fileStream, name);
+  return new Promise((resolve, reject) => {
+    formData.getLength((err, length) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(
+        makeRequest(accessToken, {
+          url: `/cards/${cardId}/attachments`,
+          method: 'POST',
+          data: formData,
+          headers: {
+            'Content-Type': `multipart/form-data; boundary=${
+              formData._boundary
+            }`,
+            'Content-Length': length,
+          },
+        }),
+      );
+    });
+  });
+};
+
 const createCard = async (
   accessToken,
-  { listId, title, description, labelIds = [] },
+  { listId, title, description, labelIds = [], attachments = [] },
 ) => {
   const card = await makeRequest(accessToken, {
     url: '/cards',
@@ -114,6 +152,9 @@ const createCard = async (
       idLabels: labelIds.join(','),
     },
   });
+  await Promise.map(attachments, async attachment =>
+    addAttachmentToCard(accessToken, { attachment, cardId: card.id }),
+  );
   return card;
 };
 
@@ -149,6 +190,7 @@ module.exports = {
   createList,
   listBoards,
   listLists,
+  addAttachmentToCard,
   createCard,
   addComment,
   listCards,

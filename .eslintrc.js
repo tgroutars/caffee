@@ -10,5 +10,6 @@ module.exports = {
     'jsx-a11y/interactive-supports-focus': 'off',
     'class-methods-use-this': 'off',
     'no-param-reassign': [2, { props: false }],
+    'no-underscore-dangle': 'off',
   },
 };

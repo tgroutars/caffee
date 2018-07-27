@@ -124,6 +124,7 @@ const RoadmapItemService = (/* services */) => ({
       labelIds: tag ? [tag.trelloRef] : [],
       title,
       description,
+      attachments,
     });
 
     return this.findOrCreate({

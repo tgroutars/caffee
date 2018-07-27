@@ -41,8 +41,12 @@ const decode = workspace => {
       .replace(new RegExp('&lt;', 'g'), '<')
       .replace(new RegExp('&gt;', 'g'), '>');
 
-  return async text =>
-    decodeChars(decodeChannels(await decodeSlackUsers(text)));
+  return async text => {
+    if (!text) {
+      return '';
+    }
+    return decodeChars(decodeChannels(await decodeSlackUsers(text)));
+  };
 };
 
 module.exports = { decode };

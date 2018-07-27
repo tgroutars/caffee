@@ -7,7 +7,7 @@ const {
   RoadmapItem: RoadmapItemService,
   Feedback: FeedbackService,
 } = require('../../../../../services');
-const { Feedback, SlackUser } = require('../../../../../models');
+const { Feedback } = require('../../../../../models');
 const { updateMessage, postEphemeral } = require('../../../messages');
 
 const validate = async payload => {
@@ -23,12 +23,11 @@ const validate = async payload => {
   }
 };
 
-const run = async (payload, { workspace }) => {
+const run = async (payload, { workspace, slackUser }) => {
   const {
     submission,
     callback_id: callbackId,
     channel: { id: channel },
-    user: { id: userSlackId },
   } = payload;
   const { productId, feedbackId, feedbackMessageRef, files = [] } = callbackId;
   const { stageId, tagId } = submission;
@@ -37,10 +36,13 @@ const run = async (payload, { workspace }) => {
 
   const { accessToken } = workspace;
 
-  // if (files.length) {
-  // TODO: send confirmation that we're processing the user's request
-  // It might just take some time since we need to upload one or several files
-  // }
+  if (files.length) {
+    await postEphemeral('processing_roadmap_item')()({
+      accessToken,
+      channel,
+      user: slackUser.slackId,
+    });
+  }
 
   const attachments = await Promise.map(files, async file =>
     syncFile(file, accessToken),
@@ -54,7 +56,6 @@ const run = async (payload, { workspace }) => {
     tagId,
     attachments,
   });
-  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
 
   const product = await roadmapItem.getProduct();
 
@@ -85,7 +86,7 @@ const run = async (payload, { workspace }) => {
     roadmapItem,
     product,
     isPM: true,
-  })({ accessToken, channel, user: userSlackId });
+  })({ accessToken, channel, user: slackUser.slackId });
 
   return roadmapItem;
 };

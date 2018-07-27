@@ -1,5 +1,6 @@
 const feedback = ({
   productId,
+  files,
   defaultAuthorId,
   defaultAuthorName = null,
   selectAuthor = false,
@@ -8,6 +9,7 @@ const feedback = ({
   const callbackId = {
     type: 'feedback',
     productId,
+    files,
     defaultAuthorId,
   };
 

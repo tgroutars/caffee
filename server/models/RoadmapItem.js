@@ -44,8 +44,12 @@ module.exports = (sequelize, DataTypes) => {
       followerCount: {
         type: DataTypes.INTEGER,
         field: 'follower_count',
-
         defaultValue: 0,
+      },
+      attachments: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+        defaultValue: [],
       },
       createdAt: {
         type: DataTypes.DATE,

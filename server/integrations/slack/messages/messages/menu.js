@@ -1,5 +1,6 @@
 const menu = ({
   productId,
+  files,
   defaultFeedback,
   defaultRoadmapItemTitle,
   defaultRoadmapItemDescription,
@@ -16,6 +17,7 @@ const menu = ({
       value: 'open_roadmap_item_dialog',
       name: {
         productId,
+        files,
         defaultDescription: defaultRoadmapItemDescription,
         defaultTitle: defaultRoadmapItemTitle,
         type: 'open_roadmap_item_dialog',
@@ -28,6 +30,7 @@ const menu = ({
     value: 'open_feedback_dialog',
     name: {
       productId,
+      files,
       defaultAuthorId,
       defaultAuthorName,
       defaultFeedback,

@@ -1,5 +1,6 @@
 const menuChooseProduct = ({
   products,
+  files,
   defaulFeedback,
   defaultRoadmapItemTitle,
   defaultRoadmapItemDescription,
@@ -13,6 +14,7 @@ const menuChooseProduct = ({
     text: product.name,
     value: 'send_menu',
     name: {
+      files,
       defaulFeedback,
       defaultRoadmapItemTitle,
       defaultRoadmapItemDescription,

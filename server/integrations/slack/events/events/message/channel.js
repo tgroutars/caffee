@@ -1,4 +1,5 @@
 const SlackClient = require('@slack/client').WebClient;
+const trim = require('lodash/trim');
 
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
@@ -12,7 +13,13 @@ const postMenuMessage = postEphemeral('menu');
 
 const channelMessage = async (payload, { workspace }) => {
   const {
-    event: { text: rawText, channel, thread_ts: threadTS, user: userSlackId },
+    event: {
+      channel,
+      files: messageFiles,
+      thread_ts: threadTS,
+      user: userSlackId,
+      text: rawText = '',
+    },
   } = payload;
 
   const { accessToken, appUserId } = workspace;
@@ -22,13 +29,16 @@ const channelMessage = async (payload, { workspace }) => {
     return;
   }
   const appMentionRE = new RegExp(`\\s*?${appMention}\\s*?`, 'g');
-  const text = await decode(workspace)(rawText.replace(appMentionRE, ' '));
+  const text = trim(
+    await decode(workspace)(rawText.replace(appMentionRE, ' ')),
+  );
 
   const products = await workspace.getProducts();
   if (!products.length) {
     return;
   }
 
+  let files;
   let defaultText;
   if (threadTS) {
     const slackClient = new SlackClient(accessToken);
@@ -41,19 +51,24 @@ const channelMessage = async (payload, { workspace }) => {
       inclusive: true,
     });
     defaultText = message.text;
+    files = message.files || [];
   } else {
     defaultText = text;
+    files = messageFiles;
   }
 
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId, workspaceId: workspace.id },
   });
-
-  const { defaultTitle, defaultDescription } = getTitleDescription(defaultText);
+  const {
+    title: defaultTitle,
+    description: defaultDescription,
+  } = getTitleDescription(defaultText);
 
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
+      files,
       defaultFeedback: defaultText,
       defaultRoadmapItemTitle: defaultTitle,
       defaultRoadmapItemDescription: defaultDescription,
@@ -73,6 +88,7 @@ const channelMessage = async (payload, { workspace }) => {
   });
 
   await postMenuMessage({
+    files,
     defaultFeedback: defaultText,
     defaultRoadmapItemTitle: defaultTitle,
     defaultRoadmapItemDescription: defaultDescription,

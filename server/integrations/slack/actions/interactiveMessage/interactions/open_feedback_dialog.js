@@ -9,6 +9,7 @@ const openFeedbackDialog = async (payload, { workspace, slackUser }) => {
   const { trigger_id: triggerId, action } = payload;
 
   const {
+    files,
     productId,
     defaultFeedback,
     defaultAuthorName,
@@ -25,6 +26,7 @@ const openFeedbackDialog = async (payload, { workspace, slackUser }) => {
     },
   });
   await openFeedbackDialogHelper({
+    files,
     productId,
     defaultFeedback,
     defaultAuthorId,

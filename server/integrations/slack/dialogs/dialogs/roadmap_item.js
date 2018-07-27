@@ -1,5 +1,6 @@
 const roadmapItem = ({
   tags,
+  files,
   productId,
   feedbackId,
   roadmapStages,
@@ -11,6 +12,7 @@ const roadmapItem = ({
     type: 'roadmap_item',
     productId,
     feedbackId,
+    files,
     feedbackMessageRef,
   };
 

@@ -105,7 +105,14 @@ const RoadmapItemService = (/* services */) => ({
     });
   },
 
-  async createAndSync({ title, description, productId, tagId, stageId }) {
+  async createAndSync({
+    title,
+    description,
+    attachments,
+    productId,
+    tagId,
+    stageId,
+  }) {
     const product = await Product.findById(productId);
     const { trelloAccessToken } = product;
 
@@ -124,6 +131,7 @@ const RoadmapItemService = (/* services */) => ({
       description,
       productId,
       stageId,
+      attachments,
       trelloRef: card.id,
       tagIds: tag && [tag.id],
     });
@@ -136,6 +144,7 @@ const RoadmapItemService = (/* services */) => ({
     stageId,
     trelloRef,
     tagIds,
+    attachments,
   }) {
     const [roadmapItem, created] = await RoadmapItem.findOrCreate({
       where: { productId, trelloRef },
@@ -143,6 +152,7 @@ const RoadmapItemService = (/* services */) => ({
         title,
         description,
         stageId,
+        attachments,
       },
     });
     if (tagIds) {
@@ -154,7 +164,11 @@ const RoadmapItemService = (/* services */) => ({
     }
 
     if (!created) {
-      await roadmapItem.update({ title, description, stageId });
+      const vals = { title, description, stageId };
+      if (attachments) {
+        vals.attachments = attachments;
+      }
+      await roadmapItem.update(vals);
     }
     return roadmapItem;
   },

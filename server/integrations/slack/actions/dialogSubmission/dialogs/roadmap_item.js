@@ -1,5 +1,7 @@
 const trim = require('lodash/trim');
+const Promise = require('bluebird');
 
+const { syncFile } = require('../../../helpers/files');
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 const {
   RoadmapItem: RoadmapItemService,
@@ -28,10 +30,21 @@ const run = async (payload, { workspace }) => {
     channel: { id: channel },
     user: { id: userSlackId },
   } = payload;
-  const { productId, feedbackId, feedbackMessageRef } = callbackId;
+  const { productId, feedbackId, feedbackMessageRef, files = [] } = callbackId;
   const { stageId, tagId } = submission;
   const title = trim(submission.title);
   const description = trim(submission.description);
+
+  const { accessToken } = workspace;
+
+  // if (files.length) {
+  // TODO: send confirmation that we're processing the user's request
+  // It might just take some time since we need to upload one or several files
+  // }
+
+  const attachments = await Promise.map(files, async file =>
+    syncFile(file, accessToken),
+  );
 
   const roadmapItem = await RoadmapItemService.createAndSync({
     title,
@@ -39,11 +52,11 @@ const run = async (payload, { workspace }) => {
     productId,
     stageId,
     tagId,
+    attachments,
   });
   const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
 
   const product = await roadmapItem.getProduct();
-  const { accessToken } = workspace;
 
   if (feedbackId) {
     await FeedbackService.setRoadmapItem(feedbackId, {

@@ -13,6 +13,7 @@ const sendMenu = async (payload, { workspace, slackUser }) => {
 
   const {
     productId,
+    files,
     defaultFeedback,
     defaultRoadmapItemTitle,
     defaultRoadmapItemDescription,
@@ -32,6 +33,7 @@ const sendMenu = async (payload, { workspace, slackUser }) => {
 
   await postMenuMessage({
     productId,
+    files,
     defaultFeedback,
     defaultRoadmapItemTitle,
     defaultRoadmapItemDescription,

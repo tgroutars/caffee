@@ -10,7 +10,7 @@ const postMenuMessage = postEphemeral('menu');
 
 const appHomeMessage = async (payload, { workspace }) => {
   const {
-    event: { user: userSlackId, text: rawText, channel },
+    event: { user: userSlackId, text: rawText, channel, files = [] },
   } = payload;
   const products = await workspace.getProducts();
   const { accessToken, appUserId } = workspace;
@@ -32,6 +32,7 @@ const appHomeMessage = async (payload, { workspace }) => {
   if (products.length > 1) {
     await postMenuChooseProductMessage({
       products,
+      files,
       defaultFeedback: text,
       defaultRoadmapItemTitle: title,
       defaultRoadmapItemDescription: description,
@@ -51,6 +52,7 @@ const appHomeMessage = async (payload, { workspace }) => {
   });
 
   await postMenuMessage({
+    files,
     defaultFeedback: text,
     defaultRoadmapItemTitle: title,
     defaultRoadmapItemDescription: description,

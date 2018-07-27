@@ -19,7 +19,7 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
 
   const { accessToken, appUserId, domain } = workspace;
 
-  const { productId, defaultTitle, defaultDescription } = action.name;
+  const { productId, files, defaultTitle, defaultDescription } = action.name;
 
   const product = await Product.findById(productId);
 
@@ -67,6 +67,7 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
     tags,
     roadmapStages,
     productId: product.id,
+    files,
     defaultTitle,
     defaultDescription,
   })({

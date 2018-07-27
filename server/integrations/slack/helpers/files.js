@@ -22,7 +22,7 @@ const syncFile = async (file, accessToken) => {
     .digest('hex');
   const stream = await downloadFile(url, accessToken);
   const { Location } = await S3.upload({ key, body: stream });
-  return { url: Location, name, mimetype, size };
+  return { url: Location, name, mimetype, size, key };
 };
 
 module.exports = { downloadFile, syncFile };

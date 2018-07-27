@@ -62,6 +62,12 @@ const fetchBoard = async (accessToken, { boardId }) =>
     method: 'GET',
   });
 
+const fetchAttachment = async (accessToken, { cardId, attachmentId }) =>
+  makeRequest(accessToken, {
+    url: `/cards/${cardId}/attachments/${attachmentId}`,
+    method: 'GET',
+  });
+
 const listBoards = async accessToken => {
   const boards = await makeRequest(accessToken, {
     url: '/members/me/boards',
@@ -192,6 +198,7 @@ module.exports = {
   listLists,
   addAttachmentToCard,
   createCard,
+  fetchAttachment,
   addComment,
   listCards,
   listLabels,

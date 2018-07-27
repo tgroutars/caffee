@@ -64,6 +64,19 @@ const RoadmapItemService = (/* services */) => ({
     });
   },
 
+  async addAttachment(roadmapItemId, attachment) {
+    await RoadmapItem.update(
+      {
+        attachments: sequelize.fn(
+          'array_append',
+          sequelize.col('attachments'),
+          sequelize.cast(JSON.stringify(attachment), 'jsonb'),
+        ),
+      },
+      { where: { id: roadmapItemId } },
+    );
+  },
+
   async setPublicMessages(roadmapItemId, publicMessages) {
     await RoadmapItem.update(
       { publicMessages },
@@ -125,13 +138,16 @@ const RoadmapItemService = (/* services */) => ({
 
     const tag = tagId ? await Tag.findById(tagId) : null;
     const stage = await RoadmapStage.findById(stageId);
-
+    const trelloAttachments = attachments.map(attachment => ({
+      ...attachment,
+      name: `caffee:${attachment.key}_${attachment.name}`,
+    }));
     const card = await createCard(trelloAccessToken, {
-      listId: stage.trelloRef,
-      labelIds: tag ? [tag.trelloRef] : [],
       title,
       description,
-      attachments,
+      listId: stage.trelloRef,
+      labelIds: tag ? [tag.trelloRef] : [],
+      attachments: trelloAttachments,
     });
 
     return this.findOrCreate({
@@ -139,7 +155,6 @@ const RoadmapItemService = (/* services */) => ({
       description,
       productId,
       stageId,
-      attachments,
       trelloRef: card.id,
       tagIds: tag && [tag.id],
     });

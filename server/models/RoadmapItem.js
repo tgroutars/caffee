@@ -47,12 +47,12 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       attachments: {
-        type: DataTypes.JSONB,
+        type: DataTypes.ARRAY(DataTypes.JSONB),
         allowNull: false,
         defaultValue: [],
       },
       publicMessages: {
-        type: DataTypes.JSONB,
+        type: DataTypes.ARRAY(DataTypes.JSONB),
         field: 'public_messages',
         allowNull: false,
         defaultValue: [],

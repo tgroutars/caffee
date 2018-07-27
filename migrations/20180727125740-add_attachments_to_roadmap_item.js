@@ -1,7 +1,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn('roadmap_item', 'attachments', {
-      type: Sequelize.JSONB,
+      type: Sequelize.ARRAY(Sequelize.JSONB),
       allowNull: false,
       defaultValue: [],
     });

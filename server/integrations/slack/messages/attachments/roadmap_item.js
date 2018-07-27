@@ -86,7 +86,7 @@ module.exports = ({
     fields,
     footer,
     text: showDescription ? roadmapItem.description : undefined,
-    thumb_url: imageAttachment ? imageAttachment.url : undefined,
+    image_url: imageAttachment ? imageAttachment.url : undefined,
     title: roadmapItem.title,
   };
 };

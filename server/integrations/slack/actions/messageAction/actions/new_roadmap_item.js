@@ -19,7 +19,7 @@ const newRoadmapItem = async (payload, { workspace, slackUser }) => {
   const {
     team: { domain },
     channel: { id: channel },
-    message: { text },
+    message: { text, files },
     trigger_id: triggerId,
   } = payload;
 
@@ -58,6 +58,7 @@ const newRoadmapItem = async (payload, { workspace, slackUser }) => {
 
   if (products.length > 1) {
     await postChooseProductMessage({
+      files,
       products: adminProducts,
       defaultTitle: title,
       defaultDescription: description,
@@ -110,6 +111,7 @@ const newRoadmapItem = async (payload, { workspace, slackUser }) => {
   ]);
   await openRoadmapItemDialog({
     tags,
+    files,
     roadmapStages,
     productId: product.id,
     defaultTitle: title,

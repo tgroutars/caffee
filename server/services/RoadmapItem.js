@@ -64,6 +64,13 @@ const RoadmapItemService = (/* services */) => ({
     });
   },
 
+  async setPublicMessages(roadmapItemId, publicMessages) {
+    await RoadmapItem.update(
+      { publicMessages },
+      { where: { id: roadmapItemId } },
+    );
+  },
+
   async update(roadmapItemId, values) {
     const newValues = pick(values, ['title', 'description']);
     await RoadmapItem.update(newValues, { where: { id: roadmapItemId } });

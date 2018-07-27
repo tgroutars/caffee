@@ -51,6 +51,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: [],
       },
+      publicMessages: {
+        type: DataTypes.JSONB,
+        field: 'public_messages',
+        allowNull: false,
+        defaultValue: [],
+      },
       createdAt: {
         type: DataTypes.DATE,
         field: 'created_at',

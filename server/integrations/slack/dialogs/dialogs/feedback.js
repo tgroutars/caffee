@@ -1,5 +1,5 @@
 const feedback = ({
-  productId,
+  product,
   files,
   defaultAuthorId,
   defaultAuthorName = null,
@@ -8,7 +8,7 @@ const feedback = ({
 }) => {
   const callbackId = {
     type: 'feedback',
-    productId,
+    productId: product.id,
     files,
     defaultAuthorId,
   };
@@ -18,7 +18,7 @@ const feedback = ({
       label: 'Description',
       name: 'description',
       type: 'textarea',
-      value: defaultFeedback,
+      value: product.getFeedbackForm(defaultFeedback),
       max_length: 3000, // Maximum imposed by Slack
       optional: false,
     },

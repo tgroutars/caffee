@@ -1,4 +1,4 @@
-const { ProductUser, Sequelize } = require('../../../../../models');
+const { ProductUser, Product, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 
 const { Op } = Sequelize;
@@ -24,10 +24,13 @@ const openFeedbackDialog = async (payload, { workspace, slackUser }) => {
       productId,
       role: { [Op.in]: ['user', 'admin'] },
     },
+    include: ['product'],
   });
+
+  const product = await Product.findById(productId);
   await openFeedbackDialogHelper({
     files,
-    productId,
+    product,
     defaultFeedback,
     defaultAuthorId,
     defaultAuthorName,

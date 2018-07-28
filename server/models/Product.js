@@ -44,6 +44,11 @@ module.exports = (sequelize, DataTypes) => {
         field: 'onboarding_step',
         allowNull: true,
       },
+      questions: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
+        defaultValue: [],
+      },
     },
     {},
   );
@@ -88,6 +93,21 @@ module.exports = (sequelize, DataTypes) => {
 
   Product.prototype.getTrelloBoardURL = function getTrelloBoardURL() {
     return `https://trello.com/b/${this.trelloBoardId}`;
+  };
+
+  Product.prototype.getFeedbackForm = function getFeedbackForm(text) {
+    const { questions } = this;
+    const questionsText = questions
+      .map(question => `*${question}*`)
+      .join('\n\n');
+    let feedbackForm = `${questionsText}\n`;
+    if (text && questions.length) {
+      feedbackForm = `${feedbackForm}\n\n----------------------\n\n`;
+    }
+    if (text) {
+      feedbackForm = `${feedbackForm}${text}`;
+    }
+    return feedbackForm;
   };
 
   return Product;

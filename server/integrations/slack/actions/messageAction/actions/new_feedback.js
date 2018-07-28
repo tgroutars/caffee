@@ -58,7 +58,7 @@ const newFeedback = async (payload, { workspace, slackUser }) => {
     files,
     defaultAuthorId,
     defaultAuthorName,
-    productId: product.id,
+    product,
     defaultFeedback: text,
     selectAuthor: !!productUser,
   })({

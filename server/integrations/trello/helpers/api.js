@@ -77,9 +77,9 @@ const listBoards = async accessToken => {
   return boards;
 };
 
-const listLists = async (accessToken, { boardId }) => {
+const listLists = async (accessToken, { boardId, filter = 'all' }) => {
   const lists = await makeRequest(accessToken, {
-    url: `/boards/${boardId}/lists`,
+    url: `/boards/${boardId}/lists/${filter}`,
     method: 'GET',
   });
   return lists;

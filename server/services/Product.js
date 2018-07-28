@@ -216,6 +216,7 @@ const ProductService = services => ({
         name: list.name,
         trelloRef: list.id,
         position: list.pos,
+        isArchived: list.closed,
       }),
     );
     const stagesByTrelloRef = stages.reduce(

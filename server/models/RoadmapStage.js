@@ -26,10 +26,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'trello_ref',
       },
+      isArchived: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        field: 'is_archived',
+        defaultValue: false,
+      },
     },
     {
       defaultScope: {
         order: [['position', 'ASC']],
+        where: { isArchived: false },
       },
       indexes: [
         {

@@ -51,8 +51,26 @@ const uploadFromURL = async ({ key, url }) => {
 
 const getURLFromKey = key => `https://${AWS_S3_BUCKET}.s3.amazonaws.com/${key}`;
 
+const fileExists = async key => {
+  try {
+    await s3
+      .headObject({
+        Bucket: AWS_S3_BUCKET,
+        Key: key,
+      })
+      .promise();
+    return true;
+  } catch (err) {
+    if (err.code === 'NotFound') {
+      return false;
+    }
+    throw err;
+  }
+};
+
 module.exports = {
   upload,
   getURLFromKey,
   uploadFromURL,
+  fileExists,
 };

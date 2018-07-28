@@ -101,10 +101,11 @@ const listLabels = async (accessToken, { boardId }) => {
   return cards;
 };
 
-const listCards = async (accessToken, { boardId }) => {
+const listCards = async (accessToken, { boardId, includeAttachments }) => {
   const cards = await makeRequest(accessToken, {
     url: `/boards/${boardId}/cards/all`,
     method: 'GET',
+    params: { attachments: includeAttachments },
   });
   return cards;
 };

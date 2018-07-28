@@ -1,40 +1,11 @@
-const crypto = require('crypto');
 const Promise = require('bluebird');
-const mime = require('mime-types');
 
-const { getURLFromKey, uploadFromURL } = require('../../../../lib/S3');
 const { fetchAttachment } = require('../../helpers/api');
+const { findOrUploadFile } = require('../../helpers/attachments');
 const { RoadmapItem } = require('../../../../models');
 const { RoadmapItem: RoadmapItemService } = require('../../../../services');
 
-const findOrUploadFile = async ({ name, id, url, bytes: size }) => {
-  const mimetype = mime.lookup(name);
-  const nameMatch = name.match(/^caffee:([A-z 0-9]+)_(.*)$/);
-  if (nameMatch) {
-    const [, key, realName] = nameMatch;
-    return {
-      key,
-      size,
-      mimetype,
-      name: realName,
-      url: getURLFromKey(key),
-    };
-  }
-  const key = crypto
-    .createHash('md5')
-    .update(`trello_id:${id}`)
-    .digest('hex');
-  const { Location } = await uploadFromURL({ key, url });
-  return {
-    key,
-    size,
-    name,
-    mimetype,
-    url: Location,
-  };
-};
-
-const addLabelToCard = async payload => {
+const addAttachmentToCard = async payload => {
   const {
     card,
     attachment: { id: attachmentId },
@@ -58,4 +29,4 @@ const addLabelToCard = async payload => {
   });
 };
 
-module.exports = addLabelToCard;
+module.exports = addAttachmentToCard;

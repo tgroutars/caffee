@@ -20,6 +20,9 @@ const {
   createLabel,
   createList,
 } = require('../integrations/trello/helpers/api');
+const {
+  findOrUploadFile,
+} = require('../integrations/trello/helpers/attachments');
 
 const DEFAULT_TAGS = [
   { name: 'Bug', color: 'red' },
@@ -166,6 +169,7 @@ const ProductService = services => ({
 
     const cards = await listCards(trelloAccessToken, {
       boardId: trelloBoardId,
+      includeAttachments: true,
     });
     const labels = await listLabels(trelloAccessToken, {
       boardId: trelloBoardId,
@@ -230,9 +234,22 @@ const ProductService = services => ({
     // Add new items
     await Promise.mapSeries(
       cards,
-      async ({ idList, name, desc, id, idLabels, closed }) => {
+      async ({
+        idList,
+        name,
+        desc,
+        id,
+        idLabels,
+        closed,
+        attachments: trelloAttachments,
+      }) => {
+        const attachments = await Promise.map(
+          trelloAttachments.filter(({ isUpload }) => isUpload),
+          async trelloAttachment => findOrUploadFile(trelloAttachment),
+        );
         const stage = stagesByTrelloRef[idList];
         const roadmapItem = await RoadmapItem.create({
+          attachments,
           productId: product.id,
           trelloRef: id,
           stageId: stage.id,

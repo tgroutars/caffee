@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 const { Feedback, sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
@@ -20,6 +22,9 @@ const FeedbackService = services => ({
     const feedback = await Feedback.findById(feedbackId);
     await feedback.update({ roadmapItemId });
     await services.RoadmapItem.addFollower(roadmapItemId, feedback.authorId);
+    await Promise.map(feedback.attachments, async attachment =>
+      services.RoadmapItem.addAttachmentAndSync(roadmapItemId, attachment),
+    );
     await trigger('feedback_processed', { feedbackId, processedById });
   },
 

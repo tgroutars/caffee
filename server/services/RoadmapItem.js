@@ -1,7 +1,10 @@
 const pick = require('lodash/pick');
 const Promise = require('bluebird');
 
-const { createCard } = require('../integrations/trello/helpers/api');
+const {
+  createCard,
+  addAttachmentToCard,
+} = require('../integrations/trello/helpers/api');
 const {
   RoadmapItem,
   Product,
@@ -124,6 +127,22 @@ const RoadmapItemService = (/* services */) => ({
     );
     await trigger('roadmap_item_archived', {
       roadmapItemId,
+    });
+  },
+
+  async addAttachmentAndSync(roadmapItemId, attachment) {
+    const roadmapItem = await RoadmapItem.findById(roadmapItemId, {
+      include: ['product'],
+    });
+    const { trelloRef, product } = roadmapItem;
+    const { trelloAccessToken } = product;
+    const trelloAttachment = {
+      ...attachment,
+      name: `caffee:${attachment.key}_${attachment.name}`,
+    };
+    await addAttachmentToCard(trelloAccessToken, {
+      cardId: trelloRef,
+      attachment: trelloAttachment,
     });
   },
 

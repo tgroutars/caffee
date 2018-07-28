@@ -4,7 +4,7 @@ Next steps:
 *1/ Create your roadmap*
 If not already done, create some items in your roadmap to tell everyone what your team is working on => <${product.getTrelloBoardURL()}|Open your board>
 
-*2/ Play around with me*
+*2/ Play around*
 Try sending a feedback or creating a roadmap item. Just summon me by either talking to me, @mentioning me, using the \`/caffee\` command, or using message actions (select the three dots next to a message, then click 'Send feedback' or 'Create roadmap item')
 You can invite a few people in the channel and explain to them how it works before you roll it out to your whole organisation
 

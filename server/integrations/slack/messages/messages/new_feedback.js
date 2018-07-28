@@ -36,11 +36,15 @@ const newFeedback = ({ feedback, product, roadmapItem, author }) => {
       },
     ];
   }
+  const imageAttachment = feedback.attachments.find(attachment =>
+    attachment.mimetype.startsWith('image/'),
+  );
   const attachments = [
     {
       text: feedback.description,
       color: '#f2d600',
       callback_id: 'new_feedback',
+      image_url: imageAttachment ? imageAttachment.url : undefined,
       footer: archivedAt
         ? ':no_entry_sign: This feedback has been archived'
         : undefined,

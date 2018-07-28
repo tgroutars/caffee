@@ -75,6 +75,7 @@ const RoadmapItemService = (/* services */) => ({
       },
       { where: { id: roadmapItemId } },
     );
+    await trigger('roadmap_item_changed', { roadmapItemId });
   },
 
   async setPublicMessages(roadmapItemId, publicMessages) {
@@ -87,6 +88,7 @@ const RoadmapItemService = (/* services */) => ({
   async update(roadmapItemId, values) {
     const newValues = pick(values, ['title', 'description']);
     await RoadmapItem.update(newValues, { where: { id: roadmapItemId } });
+    await trigger('roadmap_item_changed', { roadmapItemId });
   },
 
   async move(roadmapItemId, { oldList, newList }) {

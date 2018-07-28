@@ -48,9 +48,15 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
 
   if (roadmapItem) {
     const { product } = feedback;
-    const text = `**_New feedback from ${author.name}:_**\n\n${
+    let text = `**_New feedback from ${author.name}:_**\n\n${
       feedback.description
     }`;
+    if (feedback.attachments.length) {
+      text = `${text}
+
+**Attachments**
+${feedback.attachments.map(({ name, url }) => `[${name}](${url})`)}`;
+    }
     await addComment(product.trelloAccessToken, {
       cardId: roadmapItem.trelloRef,
       text,

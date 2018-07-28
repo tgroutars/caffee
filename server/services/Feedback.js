@@ -2,12 +2,13 @@ const { Feedback, sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
 const FeedbackService = services => ({
-  async create({ description, authorId, productId, createdById }) {
+  async create({ description, authorId, productId, attachments, createdById }) {
     const feedback = await Feedback.create({
       authorId,
       productId,
       description,
       createdById,
+      attachments,
     });
 
     trigger('feedback_created', { feedbackId: feedback.id });

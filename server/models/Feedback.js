@@ -40,6 +40,11 @@ module.exports = (sequelize, DataTypes) => {
       field: 'archive_reason',
       allowNull: true,
     },
+    attachments: {
+      type: DataTypes.ARRAY(DataTypes.JSONB),
+      allowNull: false,
+      defaultValue: [],
+    },
   });
 
   /**

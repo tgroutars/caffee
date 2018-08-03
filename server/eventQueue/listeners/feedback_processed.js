@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const winston = require('winston');
 
 const {
   Feedback,
@@ -43,7 +44,11 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
   await Promise.map(slackUsers, async slackUser => {
     const { workspace, slackId: userSlackId } = slackUser;
     const { accessToken } = workspace;
-    await postFeedbackProcessedMessage({ accessToken, channel: userSlackId });
+    try {
+      await postFeedbackProcessedMessage({ accessToken, channel: userSlackId });
+    } catch (err) {
+      winston.error(err);
+    }
   });
 
   if (roadmapItem) {

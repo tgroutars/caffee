@@ -8,7 +8,8 @@ const findOrUploadFile = async ({ name, id, url, bytes: size }) => {
   const nameMatch = name.match(/^caffee:([A-z 0-9]+)_(.*)$/);
   console.log(nameMatch);
   if (nameMatch) {
-    const [, key, realName] = nameMatch;
+    const key = nameMatch[1];
+    const realName = nameMatch[2].split('_')[0];
     return {
       key,
       size,

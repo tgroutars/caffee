@@ -4,6 +4,7 @@ const axios = require('axios');
 const S3 = require('../../../lib/S3');
 
 const downloadFile = async (url, accessToken) => {
+  console.log({ url, accessToken });
   const response = await axios.get(url, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -15,7 +16,7 @@ const downloadFile = async (url, accessToken) => {
 };
 
 const syncFile = async (file, accessToken) => {
-  console.log(file, accessToken);
+  console.log({ file, accessToken });
   const { url_private: url, name, mimetype, size } = file;
   const key = crypto
     .createHash('md5')

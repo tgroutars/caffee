@@ -6,6 +6,7 @@ const { getURLFromKey, uploadFromURL, fileExists } = require('../../../lib/S3');
 const findOrUploadFile = async ({ name, id, url, bytes: size }) => {
   const mimetype = mime.lookup(name);
   const nameMatch = name.match(/^caffee:([A-z 0-9]+)_(.*)$/);
+  console.log(nameMatch);
   if (nameMatch) {
     const [, key, realName] = nameMatch;
     return {

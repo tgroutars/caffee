@@ -11,7 +11,7 @@ const createLabel = async payload => {
 
   await Promise.map(products, async product => {
     await ProductService.createTag(product.id, {
-      name: label.name,
+      name: label.name || label.color,
       trelloRef: label.id,
     });
   });

@@ -202,7 +202,7 @@ const ProductService = services => ({
       Tag.create({
         productId: product.id,
         trelloRef: label.id,
-        name: label.name,
+        name: label.name || label.color,
       }),
     );
     const tagsByTrelloRef = tags.reduce(

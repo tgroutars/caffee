@@ -15,6 +15,7 @@ const downloadFile = async (url, accessToken) => {
 };
 
 const syncFile = async (file, accessToken) => {
+  console.log(file, accessToken);
   const { url_private: url, name, mimetype, size } = file;
   const key = crypto
     .createHash('md5')

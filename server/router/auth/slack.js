@@ -15,6 +15,8 @@ const SCOPES = [
   'users:read',
   'users:read.email',
   'users.profile:read',
+  'files:read',
+  'files:write',
   'team:read',
 ];
 const { SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, BASE_URL } = process.env;

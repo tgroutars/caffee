@@ -12,15 +12,14 @@ const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
 
 const channelMessage = async (payload, { workspace }) => {
+  const { event } = payload;
   const {
-    event: {
-      channel,
-      files: messageFiles,
-      thread_ts: threadTS,
-      user: userSlackId,
-      text: rawText = '',
-    },
-  } = payload;
+    channel,
+    files: messageFiles,
+    thread_ts: threadTS,
+    user: userSlackId,
+  } = event;
+  const rawText = event.text || '';
 
   const { accessToken, appUserId } = workspace;
 

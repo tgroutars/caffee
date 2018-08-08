@@ -9,9 +9,10 @@ const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
 
 const appHomeMessage = async (payload, { workspace }) => {
-  const {
-    event: { user: userSlackId, text: rawText, channel, files = [] },
-  } = payload;
+  const { event } = payload;
+  const { user: userSlackId, channel, files = [] } = event;
+  const rawText = event.text || '';
+
   const products = await workspace.getProducts();
   const { accessToken, appUserId } = workspace;
 

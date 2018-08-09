@@ -77,7 +77,7 @@ module.exports = ({
   }
 
   const imageAttachment = roadmapItem.attachments.find(attachment =>
-    attachment.mimetype.startsWith('image/'),
+    (attachment.mimetype || '').startsWith('image/'),
   );
   return {
     actions,

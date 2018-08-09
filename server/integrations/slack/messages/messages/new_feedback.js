@@ -37,7 +37,7 @@ const newFeedback = ({ feedback, product, roadmapItem, author }) => {
     ];
   }
   const imageAttachment = feedback.attachments.find(attachment =>
-    attachment.mimetype.startsWith('image/'),
+    (attachment.mimetype || '').startsWith('image/'),
   );
   const attachments = [
     {

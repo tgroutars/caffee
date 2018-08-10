@@ -6,7 +6,7 @@ If not already done, create some items in your roadmap to tell everyone what you
 
 *2/ Play around*
 Try sending a feedback or creating a roadmap item. Just summon me by either talking to me, @mentioning me, using the \`/caffee\` command, or using message actions (select the three dots next to a message, then click 'Send feedback' or 'Create roadmap item')
-You can invite a few people in the channel and explain to them how it works before you roll it out to your whole organisation
+You can invite a few people in the channel and explain to them how it works before you roll it out to your whole organization
 
 *3/ Let people know I exist*
 When you're ready to onboard everyone, add them in the <#${
@@ -17,7 +17,7 @@ If you have any questions, don't hesitate to e-mail my creator <mailto:thomas@ca
 `,
   attachments: [
     {
-      text: `Ready to onboard your organisation? Make sure you invited people in the <#${
+      text: `Ready to onboard your organization? Make sure you invited people in the <#${
         slackInstall.channel
       }> channel first`,
       callback_id: 'onboarding:05_complete',

@@ -40,6 +40,19 @@ const sendFollowupEmail = async email => {
   );
 };
 
+router.options('*', async (ctx, next) => {
+  ctx.set({
+    'Access-Control-Allow-Origin': 'https://caffee.io',
+  });
+  await next();
+});
+router.use(async (ctx, next) => {
+  ctx.set({
+    'Access-Control-Allow-Origin': 'https://caffee.io',
+  });
+  await next();
+});
+
 router.post('/', async ctx => {
   const email = trim(ctx.request.body.email);
 

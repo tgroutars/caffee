@@ -5,14 +5,11 @@ const sendFile = require('koa-sendfile');
 const integrationsRouter = require('./integrations');
 const authRouter = require('./auth');
 const signupRouter = require('./signup');
+const apiRouter = require('./api');
 
 const router = new Router();
 
-router.use(async (ctx, next) => {
-  ctx.set('Access-Control-Allow-Origin', 'https://caffee.io');
-  await next();
-});
-
+router.use('/api', apiRouter.routes(), apiRouter.allowedMethods());
 router.use('/signup', signupRouter.routes(), signupRouter.allowedMethods());
 router.use(
   '/integrations',

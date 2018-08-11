@@ -16,7 +16,7 @@
     "prettier": "prettier --write \"server/**/*.js\"",
     "start": "node bin/www",
     "build": "parcel build ./client/index.html",
-    "heroku-postbuild": "npm run build:prod"
+    "heroku-postbuild": "npm run build"
   },
   "repository": "https://github.com/tgroutars/caffee-old/settings",
   "license": "MIT",

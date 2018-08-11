@@ -70,3 +70,5 @@ package-lock.json
 
 # Tern
 .tern-project
+
+.cache

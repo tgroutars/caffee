@@ -12,5 +12,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-param-reassign': [2, { props: false }],
     'no-underscore-dangle': 'off',
+    'import/prefer-default-export': 'off',
   },
 };

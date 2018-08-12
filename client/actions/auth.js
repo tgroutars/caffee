@@ -2,47 +2,49 @@ import queryString from 'query-string';
 import omit from 'lodash/omit';
 import { push } from 'connected-react-router';
 
-import {
-  AUTH_TEST_FAILURE,
-  AUTH_TEST_SUCCESS,
-  AUTH_TEST_REQUEST,
-  AUTH_SET_TOKEN,
-} from '../types';
-import CaffeeAPI, { APIError } from '../lib/CaffeeAPI';
+import api, { APIError } from './api';
+import { addEntities } from './entities';
+import { AUTH_SET_TOKEN, AUTH_SUCCESS, AUTH_FAILURE } from '../types';
 
-const authTestFailure = () => ({
-  type: AUTH_TEST_FAILURE,
-});
-
-const authTestSuccess = () => ({
-  type: AUTH_TEST_SUCCESS,
-});
-
-const authTestRequest = () => ({
-  type: AUTH_TEST_REQUEST,
-});
-
-export const setToken = token => ({
+const setToken = token => ({
   type: AUTH_SET_TOKEN,
   payload: { token },
 });
 
-export const testAuth = () => async (dispatch, getState) => {
-  const { token } = getState().auth;
-  const caffeeAPI = new CaffeeAPI(token);
-  await dispatch(authTestRequest());
+const fetchAuthedUser = () => async dispatch => {
+  const { user } = await dispatch(api.users.me());
+  dispatch(addEntities('user', user));
+};
+
+const authSuccess = userId => ({
+  type: AUTH_SUCCESS,
+  payload: { userId },
+});
+
+const authFailure = () => async dispatch => {
+  localStorage.remove('token', null);
+  dispatch({
+    type: AUTH_FAILURE,
+  });
+};
+
+const testAuth = () => async dispatch => {
   try {
-    await caffeeAPI.auth.test();
-    await dispatch(authTestSuccess());
+    const { userId } = await dispatch(api.auth.test());
+    await dispatch(authSuccess(userId));
+    await dispatch(fetchAuthedUser());
   } catch (err) {
-    await dispatch(authTestFailure());
+    if (err instanceof APIError && err.error === 'no_auth') {
+      await dispatch(authFailure());
+      return;
+    }
+    throw err;
   }
 };
 
-export const login = (userId, authCode) => async dispatch => {
-  const caffeeAPI = new CaffeeAPI();
+const login = (userId, authCode) => async dispatch => {
   try {
-    const { token } = await caffeeAPI.auth.login({ authCode, userId });
+    const { token } = await dispatch(api.auth.login({ authCode, userId }));
     localStorage.setItem('token', token);
     await dispatch(setToken(token));
     await dispatch(testAuth());

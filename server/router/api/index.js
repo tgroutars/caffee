@@ -3,8 +3,9 @@ const winston = require('winston');
 
 const { APIError, UnknownError } = require('./errors');
 const { authenticate } = require('../../lib/auth');
-const authRouter = require('./auth');
 const { User } = require('../../models');
+const authRouter = require('./auth');
+const usersRouter = require('./users');
 
 const router = new Router();
 
@@ -24,7 +25,7 @@ router.use(async (ctx, next) => {
 });
 
 router.use(async (ctx, next) => {
-  ctx.send = payload => {
+  ctx.send = (payload = {}) => {
     ctx.body = {
       ok: true,
       payload,
@@ -62,5 +63,6 @@ router.use(async (ctx, next) => {
 });
 
 router.use(authRouter.routes(), authRouter.allowedMethods());
+router.use(usersRouter.routes(), usersRouter.allowedMethods());
 
 module.exports = router;

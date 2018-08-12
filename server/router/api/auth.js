@@ -2,15 +2,12 @@ const Router = require('koa-router');
 
 const { APIError } = require('./errors');
 const { exchangeAuthCode } = require('../../lib/auth');
+const { requireAuth } = require('./middleware');
 
 const router = new Router();
 
-router.post('/auth.test', async ctx => {
-  const { user } = ctx.state;
-  if (!user) {
-    throw new APIError('no_auth');
-  }
-  ctx.send();
+router.post('/auth.test', requireAuth, async ctx => {
+  ctx.send({ userId: ctx.state.user.id });
 });
 
 router.post('/auth.login', async ctx => {

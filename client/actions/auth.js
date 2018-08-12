@@ -1,3 +1,7 @@
+import queryString from 'query-string';
+import omit from 'lodash/omit';
+import { push } from 'connected-react-router';
+
 import {
   AUTH_TEST_FAILURE,
   AUTH_TEST_SUCCESS,
@@ -39,6 +43,7 @@ export const login = (userId, authCode) => async dispatch => {
   const caffeeAPI = new CaffeeAPI();
   try {
     const { token } = await caffeeAPI.auth.login({ authCode, userId });
+    localStorage.setItem('token', token);
     await dispatch(setToken(token));
     await dispatch(testAuth());
   } catch (err) {
@@ -49,9 +54,19 @@ export const login = (userId, authCode) => async dispatch => {
   }
 };
 
-export const checkAuth = ({ userId, authCode }) => async dispatch => {
+export const checkAuth = () => async (dispatch, getState) => {
+  const { location } = getState().router;
+  const query = queryString.parse(location.search);
+  const { authCode, userId } = query;
   if (userId && authCode) {
     await dispatch(login(userId, authCode));
+    const newQuery = omit(query, ['userId', 'authCode']);
+    await dispatch(
+      push({
+        ...location,
+        search: `?${queryString.stringify(newQuery)}`,
+      }),
+    );
     return;
   }
   const storedToken = localStorage.getItem('token');

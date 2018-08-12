@@ -6,7 +6,7 @@ const Store = require('./redis/Store');
 
 const randomBytes = Promise.promisify(crypto.randomBytes);
 
-const { BASE_URL } = process.env;
+const { WEB_BASE_URL } = process.env;
 
 const tokenStore = new Store('auth:token', 60 * 60 * 24 * 100); // Expire in 100 days
 const authCodeStore = new Store('auth:authCode', 60 * 60 * 24 * 10); // Expire in 10 days
@@ -35,7 +35,7 @@ const exchangeAuthCode = async (userId, authCode) => {
 
 const passwordlessURL = async (userId, { productId }) => {
   const path = productId ? `/p/${productId}` : '';
-  const url = new URL(path, BASE_URL);
+  const url = new URL(path, WEB_BASE_URL);
   const authCode = await generateAuthCode(userId);
   url.searchParams.append('userId', userId);
   url.searchParams.append('authCode', authCode);

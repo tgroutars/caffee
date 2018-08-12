@@ -11,13 +11,14 @@ const router = new Router();
 router.options('*', async (ctx, next) => {
   ctx.set({
     'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Authorization,Content-Type',
   });
   await next();
 });
 router.use(async (ctx, next) => {
   ctx.set({
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Authorization',
+    'Access-Control-Allow-Headers': 'Authorization,Content-Type',
   });
   await next();
 });

@@ -22,7 +22,7 @@ const isWaiting = (state = true, action) => {
 const token = (state = null, action) => {
   switch (action.type) {
     case AUTH_SET_TOKEN:
-      return token;
+      return action.payload.token;
     default:
       return state;
   }

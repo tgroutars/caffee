@@ -1,11 +1,12 @@
 const { postEphemeral } = require('../../../messages');
 const { ProductUser, Sequelize } = require('../../../../../models');
+const { passwordlessURL } = require('../../../../../lib/auth');
 
 const { Op } = Sequelize;
 
 const postMenuMessage = postEphemeral('menu');
 
-const sendMenu = async (payload, { workspace, slackUser }) => {
+const sendMenu = async (payload, { workspace, slackUser, user }) => {
   const {
     action,
     channel: { id: channel },
@@ -39,6 +40,9 @@ const sendMenu = async (payload, { workspace, slackUser }) => {
     defaultRoadmapItemDescription,
     defaultAuthorId,
     defaultAuthorName,
+    settingsURL: productUser.isAdmin
+      ? await passwordlessURL(user.id, { productId })
+      : null,
     createRoadmapItem: !!productUser,
   })({
     accessToken,

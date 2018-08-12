@@ -2,6 +2,7 @@ const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
 const { decode } = require('../../../helpers/encoding');
+const { passwordlessURL } = require('../../../../../lib/auth');
 
 const { Op } = Sequelize;
 
@@ -51,7 +52,6 @@ const appHomeMessage = async (payload, { workspace }) => {
       role: { [Op.in]: ['user', 'admin'] },
     },
   });
-
   await postMenuMessage({
     files,
     defaultFeedback: text,
@@ -60,6 +60,9 @@ const appHomeMessage = async (payload, { workspace }) => {
     defaultAuthorId: slackUser.userId,
     productId: product.id,
     createRoadmapItem: !!productUser,
+    settingsURL: productUser.isAdmin
+      ? await passwordlessURL(slackUser.userId, { productId: product.id })
+      : null,
   })({ accessToken, channel, user: slackUser.slackId });
 };
 

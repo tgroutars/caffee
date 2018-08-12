@@ -9,6 +9,7 @@ const {
 const { postEphemeral } = require('../messages');
 const getTitleDescription = require('../../../lib/getTitleDescription');
 const { decode } = require('../helpers/encoding');
+const { passwordlessURL } = require('../../../lib/auth');
 
 const { Op } = Sequelize;
 
@@ -78,6 +79,9 @@ const caffee = async ({
     defaultRoadmapItemDescription: description,
     defaultAuthorId: slackUser.userId,
     createRoadmapItem: !!productUser,
+    settingsURL: productUser.isAdmin
+      ? await passwordlessURL(slackUser.userId, { productId })
+      : null,
   })({
     accessToken,
     channel,

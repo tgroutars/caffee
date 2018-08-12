@@ -29,6 +29,12 @@ module.exports = (sequelize, DataTypes) => {
           return this.role === 'admin' || this.role === 'user';
         },
       },
+      isAdmin: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.role === 'admin';
+        },
+      },
     },
     {
       indexes: [

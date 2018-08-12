@@ -23,8 +23,10 @@
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
     "@slack/client": "^4.3.1",
+    "antd": "^3.8.1",
     "aws-sdk": "^2.282.1",
     "axios": "^0.18.0",
+    "babel-plugin-import": "^1.8.0",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
@@ -50,6 +52,7 @@
     "koa-sslify": "^2.1.2",
     "koa-static": "^5.0.0",
     "kue": "^0.11.6",
+    "less": "^2.7.2",
     "lodash": "^4.17.10",
     "mime-types": "^2.1.19",
     "oauth": "^0.9.15",
@@ -68,6 +71,7 @@
     "redux-thunk": "^2.3.0",
     "sequelize": "^4.37.10",
     "sequelize-cli": "^4.0.0",
+    "styled-components": "^3.4.2",
     "uuid": "^3.2.1",
     "winston": "^2.4.2"
   },

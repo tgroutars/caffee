@@ -9,6 +9,13 @@
         "regenerator": true
       }
     ],
-    "transform-builtin-extend"
+    "transform-builtin-extend",
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "es"
+      }
+    ]
   ]
 }

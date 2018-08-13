@@ -47,11 +47,11 @@ const ProductSettings = ({ match }) => {
       <StyledSider>
         <Menu mode="vertical" selectedKeys={[settings]}>
           <MenuItem key="feedback">
-            <Link to={`/p/${productId}/settings/feedback`}>Feedback Form</Link>
+            <Link to={`/p/${productId}/settings/feedback`}>Feedback form</Link>
           </MenuItem>
-          <MenuItem key="users">
+          {/* <MenuItem key="users">
             <Link to={`/p/${productId}/settings/users`}>Users</Link>
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
       </StyledSider>
       <StyledContent>

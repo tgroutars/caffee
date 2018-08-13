@@ -6,6 +6,7 @@ const menu = ({
   defaultRoadmapItemDescription,
   defaultAuthorId,
   defaultAuthorName,
+  settingsURL,
   createRoadmapItem = false,
 }) => {
   const pretext = 'Hi there :wave: What do you want to do?';
@@ -46,6 +47,13 @@ const menu = ({
       type: 'view_roadmap',
     },
   });
+  if (settingsURL) {
+    actions.push({
+      type: 'button',
+      url: settingsURL,
+      text: 'Open Settings',
+    });
+  }
   return {
     attachments: [
       {

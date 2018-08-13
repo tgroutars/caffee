@@ -117,6 +117,10 @@ const ProductService = services => ({
     });
   },
 
+  async setQuestions(productId, questions) {
+    await Product.update({ questions }, { where: { id: productId } });
+  },
+
   async setTrelloTokens(
     productId,
     { accessToken, accessTokenSecret, installer },

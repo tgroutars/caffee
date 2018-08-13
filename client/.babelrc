@@ -1,0 +1,21 @@
+{
+  "presets": ["react", "env", "stage-0"],
+  "plugins": [
+    "transform-class-properties",
+    [
+      "transform-runtime",
+      {
+        "polyfill": false,
+        "regenerator": true
+      }
+    ],
+    "transform-builtin-extend",
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "es"
+      }
+    ]
+  ]
+}

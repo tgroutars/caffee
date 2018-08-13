@@ -5,6 +5,7 @@ const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
 const { decode } = require('../../../helpers/encoding');
+const { passwordlessURL } = require('../../../../../lib/auth');
 
 const { Op } = Sequelize;
 
@@ -94,6 +95,9 @@ const channelMessage = async (payload, { workspace }) => {
     defaultAuthorId: slackUser.userId,
     productId: products[0].id,
     createRoadmapItem: !!productUser,
+    settingsURL: productUser.isAdmin
+      ? await passwordlessURL(slackUser.userId, { productId: product.id })
+      : null,
   })({ accessToken, channel, user: userSlackId });
 };
 

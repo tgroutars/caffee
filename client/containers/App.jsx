@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import Loading from '../components/Loading';
-import Layout from '../components/Layout';
+import Layout, { Header, Content } from '../components/Layout';
+import UserMenu from './UserMenu';
 import { checkAuth } from '../actions/auth';
 
 const Greater = styled.h1`
@@ -32,7 +33,12 @@ class App extends React.Component {
     }
     return (
       <Layout>
-        <Greater>Hi, I&apos;m Caffee 🤗</Greater>
+        <Header>
+          <UserMenu />
+        </Header>
+        <Content>
+          <Greater>Hi, I&apos;m Caffee 🤗</Greater>
+        </Content>
       </Layout>
     );
   }

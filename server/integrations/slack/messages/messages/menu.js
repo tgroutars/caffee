@@ -51,7 +51,7 @@ const menu = ({
     actions.push({
       type: 'button',
       url: settingsURL,
-      text: 'Settings',
+      text: 'Open Settings',
     });
   }
   return {

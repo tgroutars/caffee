@@ -8,7 +8,7 @@ import Layout, { Header, Content } from '../components/Layout';
 import UserMenu from './UserMenu';
 import CaffeeLogo from './CaffeeLogo';
 import ProductMenu from './ProductMenu';
-import ProductRoute from './ProductRoute';
+import ProductRoute from './Product/ProductRoute';
 import { checkAuth } from '../actions/auth';
 
 class App extends React.Component {

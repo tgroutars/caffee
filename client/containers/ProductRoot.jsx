@@ -15,7 +15,7 @@ const ProductRoot = ({ isWaiting }) => {
       <Redirect
         exact
         from="/p/:productId"
-        to="/p/:productId/settings/feedbacks"
+        to="/p/:productId/settings/feedback"
       />
       <Route
         path="/p/:productId/settings/:settings"

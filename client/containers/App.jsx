@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import { Route, Switch } from 'react-router-dom';
 
 import Loading from '../components/Loading';
 import Layout, { Header, Content } from '../components/Layout';
 import UserMenu from './UserMenu';
+import ProductMenu from './ProductMenu';
+import ProductRoute from './ProductRoute';
 import { checkAuth } from '../actions/auth';
-
-const Greater = styled.h1`
-  text-align: center;
-`;
 
 class App extends React.Component {
   static propTypes = {
@@ -34,10 +32,13 @@ class App extends React.Component {
     return (
       <Layout>
         <Header>
+          <Route path="/p/:productId" component={ProductMenu} />
           <UserMenu />
         </Header>
         <Content>
-          <Greater>Hi, I&apos;m Caffee 🤗</Greater>
+          <Switch>
+            <Route path="/p/:productId" component={ProductRoute} />
+          </Switch>
         </Content>
       </Layout>
     );

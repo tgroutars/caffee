@@ -8,9 +8,9 @@ const apiSuccess = (method, params, result) => ({
   type: `API_SUCCESS:${method}`,
   payload: { params, result },
 });
-const apiFailure = (method, params) => ({
+const apiFailure = (method, params, error) => ({
   type: `API_FAILURE:${method}`,
-  payload: { params },
+  payload: { params, error },
 });
 
 export class APIError extends Error {
@@ -34,15 +34,12 @@ export const apiCall = (method, params = {}) => async (dispatch, getState) => {
   });
   const { ok, payload, error } = response.data;
   if (!ok) {
-    dispatch(apiFailure(method, params));
+    dispatch(apiFailure(method, params, error));
     throw new APIError(error);
   }
   dispatch(apiSuccess(method, params, payload));
   return payload;
 };
-
-export const makeMethod = method => params => async (dispatch, getState) =>
-  apiCall(method, params)(dispatch, getState);
 
 export default {
   auth: {
@@ -50,6 +47,9 @@ export default {
     login: apiCall.bind(this, 'auth.login'),
   },
   users: {
-    me: makeMethod('users.me'),
+    me: apiCall.bind(this, 'users.me'),
+  },
+  products: {
+    info: apiCall.bind(this, 'products.info'),
   },
 };

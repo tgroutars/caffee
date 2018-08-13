@@ -6,6 +6,7 @@ const { authenticate } = require('../../lib/auth');
 const { User } = require('../../models');
 const authRouter = require('./auth');
 const usersRouter = require('./users');
+const productsRouter = require('./products');
 
 const router = new Router();
 
@@ -64,5 +65,6 @@ router.use(async (ctx, next) => {
 
 router.use(authRouter.routes(), authRouter.allowedMethods());
 router.use(usersRouter.routes(), usersRouter.allowedMethods());
+router.use(productsRouter.routes(), productsRouter.allowedMethods());
 
 module.exports = router;

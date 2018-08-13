@@ -44,7 +44,7 @@ class ProductSettingsFeedbacks extends React.Component {
       .filter(q => q);
 
     await this.props.saveQuestions(product.id, questions);
-    message.success('Feedback form saved', 10);
+    message.success('Feedback form saved', 1);
   };
 
   handleQuestionsChange = evt => {

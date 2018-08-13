@@ -5,7 +5,7 @@ const queue = require('./queue');
 
 const jobs = {};
 
-queue.process('job', 50, async (job, done) => {
+queue.process('backgroundTask', 50, async (job, done) => {
   const { jobId, args } = job.data;
   const func = jobs[jobId];
 
@@ -24,7 +24,7 @@ const registerBackgroundTask = func => {
 
   return async (...args) => {
     await queue
-      .create('job', { jobId, args })
+      .create('backgroundTask', { jobId, args })
       .removeOnComplete(true)
       .save();
   };

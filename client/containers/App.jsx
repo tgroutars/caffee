@@ -6,6 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import Loading from '../components/Loading';
 import Layout, { Header, Content } from '../components/Layout';
 import UserMenu from './UserMenu';
+import CaffeeLogo from './CaffeeLogo';
 import ProductMenu from './ProductMenu';
 import ProductRoute from './ProductRoute';
 import { checkAuth } from '../actions/auth';
@@ -33,6 +34,7 @@ class App extends React.Component {
       <Layout>
         <Header>
           <Route path="/p/:productId" component={ProductMenu} />
+          <CaffeeLogo />
           <UserMenu />
         </Header>
         <Content>

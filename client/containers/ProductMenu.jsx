@@ -13,9 +13,15 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   left: 0;
-  height: 64px;
-  padding-left: 24px;
-  font-size: 24px;
+  height: 48px;
+  margin-left: 24px;
+  margin-top: 8px;
+  font-size: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 7px;
+  padding-right: 16px;
+  user-select: none;
 `;
 
 const Placeholder = styled.div`

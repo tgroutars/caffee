@@ -51,5 +51,6 @@ export default {
   },
   products: {
     info: apiCall.bind(this, 'products.info'),
+    setQuestions: apiCall.bind(this, 'products.setQuestions'),
   },
 };

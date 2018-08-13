@@ -21,3 +21,10 @@ export const changeCurrentProduct = productId => async (dispatch, getState) => {
   dispatch(addEntities('product', product));
   dispatch(fetchSuccess(product));
 };
+
+export const saveQuestions = (productId, questions) => async dispatch => {
+  const { product } = await dispatch(
+    api.products.setQuestions({ productId, questions }),
+  );
+  await dispatch(addEntities('product', product));
+};

@@ -1,31 +1,36 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 
-import { currentProductSelector } from '../selectors/product';
 import Loading from '../components/Loading';
+import ProductSettings from './ProductSettings';
 
-const ProductRoot = ({ product, isWaiting }) => {
+const ProductRoot = ({ isWaiting }) => {
   if (isWaiting) {
     return <Loading />;
   }
-  return <div>{product.name}</div>;
+  return (
+    <Switch>
+      <Redirect
+        exact
+        from="/p/:productId"
+        to="/p/:productId/settings/feedbacks"
+      />
+      <Route
+        path="/p/:productId/settings/:settings"
+        component={ProductSettings}
+      />
+    </Switch>
+  );
 };
 
 ProductRoot.propTypes = {
-  product: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }),
   isWaiting: PropTypes.bool.isRequired,
 };
 
-ProductRoot.defaultProps = {
-  product: null,
-};
-
 const mapStateToProps = state => ({
-  product: currentProductSelector(state),
   isWaiting: state.product.isWaiting,
 });
 
-export default connect(mapStateToProps)(ProductRoot);
+export default withRouter(connect(mapStateToProps)(ProductRoot));

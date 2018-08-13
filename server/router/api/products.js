@@ -1,13 +1,14 @@
 const Router = require('koa-router');
 const pick = require('lodash/pick');
 
-const { requireAuth } = require('./middleware');
+const { requireAuth, requireAdmin } = require('./middleware');
 const { Product, ProductUser } = require('../../models');
+const { Product: ProductService } = require('../../services');
 const { APIError } = require('./errors');
 
 const router = new Router();
 
-router.post('/products.info', requireAuth, async ctx => {
+const findProduct = async (ctx, next) => {
   const { productId } = ctx.request.body;
   const { user } = ctx.state;
   const product = await Product.findById(productId, {
@@ -25,8 +26,30 @@ router.post('/products.info', requireAuth, async ctx => {
   if (!product) {
     throw new APIError('product_not_found');
   }
+  ctx.state.product = product;
+  await next();
+};
 
-  ctx.send({ product: pick(product, ['id', 'name', 'image']) });
+const serializeProduct = product =>
+  pick(product, ['id', 'name', 'image', 'questions']);
+
+router.post('/products.info', requireAuth, findProduct, async ctx => {
+  const { product } = ctx.state;
+  ctx.send({ product: serializeProduct(product) });
 });
+
+router.post(
+  '/products.setQuestions',
+  requireAuth,
+  findProduct,
+  requireAdmin,
+  async ctx => {
+    const { questions } = ctx.request.body;
+    const { product } = ctx.state;
+    await ProductService.setQuestions(product.id, questions);
+    const updatedProduct = await Product.findById(product.id);
+    ctx.send({ product: serializeProduct(updatedProduct) });
+  },
+);
 
 module.exports = router;

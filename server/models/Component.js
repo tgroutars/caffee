@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     parentId: {
       type: DataTypes.UUID,
-      field: 'parent',
+      field: 'parent_id',
       allowNull: true,
     },
   });

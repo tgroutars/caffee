@@ -25,6 +25,11 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
+      level: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false,

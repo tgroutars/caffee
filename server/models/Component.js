@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
       field: 'parent_id',
       allowNull: true,
     },
+    level: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   });
 
   /**

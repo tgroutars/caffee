@@ -1,6 +1,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('component', {
+    await queryInterface.createTable('scope', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -44,6 +44,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable('component');
+    await queryInterface.dropTable('scope');
   },
 };

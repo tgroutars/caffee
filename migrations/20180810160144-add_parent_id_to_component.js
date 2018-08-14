@@ -1,10 +1,10 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('component', 'parent_id', {
+    await queryInterface.addColumn('scope', 'parent_id', {
       type: Sequelize.UUID,
       allowNull: true,
       references: {
-        model: 'component',
+        model: 'scope',
         key: 'id',
       },
       onUpdate: 'cascade',
@@ -13,6 +13,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.removeColumn('component', 'parent_id');
+    await queryInterface.removeColumn('scope', 'parent_id');
   },
 };

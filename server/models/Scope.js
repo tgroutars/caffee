@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Component = sequelize.define('component', {
+  const Scope = sequelize.define('scope', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -35,21 +35,21 @@ module.exports = (sequelize, DataTypes) => {
   /**
    * Associations
    */
-  Component.associate = models => {
+  Scope.associate = models => {
     const { Product, User } = models;
-    Component.belongsTo(Component, {
+    Scope.belongsTo(Scope, {
       as: 'parent',
       foreignKey: 'parentId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });
-    Component.belongsTo(User, {
+    Scope.belongsTo(User, {
       as: 'responsible',
       foreignKey: 'responsibleId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });
-    Component.belongsTo(Product, {
+    Scope.belongsTo(Product, {
       as: 'product',
       foreignKey: 'productId',
       onDelete: 'cascade',
@@ -57,5 +57,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Component;
+  return Scope;
 };

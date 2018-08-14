@@ -10,6 +10,7 @@ const SCOPES = [
   'conversations:history',
   'conversations:read',
   'conversations:write',
+  'conversations.app_home:create',
   'groups:history',
   'commands',
   'users:read',

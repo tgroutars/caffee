@@ -14,7 +14,7 @@ const authCodeStore = new Store('auth:authCode', 60 * 60 * 24 * 10); // Expire i
 const authenticate = async token => tokenStore.get(token);
 
 const login = async userId => {
-  const token = (await randomBytes(64)).toString('hex');
+  const token = (await randomBytes(16)).toString('hex');
   await tokenStore.set(token, userId);
   return token;
 };

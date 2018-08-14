@@ -25,9 +25,19 @@ const Container = styled.div`
 `;
 
 const Placeholder = styled.div`
-  background: rgb(240, 242, 245);
-  height: 32px;
+  display: flex;
+  position: absolute;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  height: 48px;
   width: 128px;
+  margin-left: 24px;
+  margin-top: 8px;
+  font-size: 20px;
+  border-radius: 4px;
+  background: rgb(240, 242, 245);
 `;
 
 const ProductName = styled.span`
@@ -36,11 +46,7 @@ const ProductName = styled.span`
 
 const ProductMenu = ({ product, isWaiting }) => {
   if (isWaiting) {
-    return (
-      <Container>
-        <Placeholder />
-      </Container>
-    );
+    return <Placeholder />;
   }
   return (
     <Container>

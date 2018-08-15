@@ -8,6 +8,8 @@ queue.process('event', 50, async (job, done) => {
   const { type, payload } = job.data;
   const eventListeners = listeners[type] || [];
 
+  winston.info(`Envent: ${type}`);
+
   try {
     await Promise.map(eventListeners, async eventListener => {
       await eventListener(payload);

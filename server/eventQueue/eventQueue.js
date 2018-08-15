@@ -8,7 +8,7 @@ queue.process('event', 50, async (job, done) => {
   const { type, payload } = job.data;
   const eventListeners = listeners[type] || [];
 
-  winston.info(`Envent: ${type}`);
+  winston.info(`event process: ${type}`);
 
   try {
     await Promise.map(eventListeners, async eventListener => {
@@ -27,6 +27,7 @@ const addListener = (eventType, listener) => {
 };
 
 const trigger = (eventType, payload) => {
+  winston.info(`event trigger: ${eventType}`);
   const job = queue
     .create('event', { type: eventType, payload })
     .removeOnComplete(true);

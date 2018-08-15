@@ -5,6 +5,7 @@ import { Menu, Layout } from 'antd';
 import { Route, Link, Switch } from 'react-router-dom';
 
 import ProductSettingsFeedbacks from './ProductSettingsFeedbacks';
+import ProductSettingsScopes from './ProductSettingsScopes';
 
 const { Sider, Content } = Layout;
 const MenuItem = Menu.Item;
@@ -49,6 +50,9 @@ const ProductSettings = ({ match }) => {
           <MenuItem key="feedback">
             <Link to={`/p/${productId}/settings/feedback`}>Feedback form</Link>
           </MenuItem>
+          <MenuItem key="scopes">
+            <Link to={`/p/${productId}/settings/scopes`}>Scopes</Link>
+          </MenuItem>
           {/* <MenuItem key="users">
             <Link to={`/p/${productId}/settings/users`}>Users</Link>
           </MenuItem> */}
@@ -59,6 +63,10 @@ const ProductSettings = ({ match }) => {
           <Route
             path="/p/:productId/settings/feedback"
             component={ProductSettingsFeedbacks}
+          />
+          <Route
+            path="/p/:productId/settings/scopes"
+            component={ProductSettingsScopes}
           />
         </Switch>
       </StyledContent>

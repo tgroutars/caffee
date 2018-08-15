@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   Product.associate = models => {
-    const { User, ProductUser, RoadmapItem, Tag, RoadmapStage } = models;
+    const { User, ProductUser, RoadmapItem, Tag, RoadmapStage, Scope } = models;
 
     Product.belongsTo(User, {
       as: 'owner',
@@ -87,6 +87,10 @@ module.exports = (sequelize, DataTypes) => {
     });
     Product.hasMany(RoadmapStage, {
       as: 'roadmapStages',
+      foreignKey: 'productId',
+    });
+    Product.hasMany(Scope, {
+      as: 'scopes',
       foreignKey: 'productId',
     });
   };

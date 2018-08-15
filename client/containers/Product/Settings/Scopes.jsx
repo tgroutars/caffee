@@ -9,7 +9,7 @@ import Editable from '../../../components/Editable';
 const ScopeInfo = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-left: ${({ level }) => level * 24};
+  margin-left: ${({ level }) => level * 48};
   padding: 8px;
   border-left: 4px solid rgba(0, 0, 0, 0.1);
   &:hover {

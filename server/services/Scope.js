@@ -20,6 +20,12 @@ const ScopeService = (/* services */) => ({
       level,
     });
   },
+
+  async setName(scopeId, { name }) {
+    const scope = await Scope.findById(scopeId);
+    await scope.update({ name });
+    return scope;
+  },
 });
 
 module.exports = ScopeService;

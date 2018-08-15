@@ -55,5 +55,6 @@ export default {
   },
   scopes: {
     list: apiCall.bind(this, 'scopes.list'),
+    setName: apiCall.bind(this, 'scopes.setName'),
   },
 };

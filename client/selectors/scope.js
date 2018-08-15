@@ -39,6 +39,16 @@ export const scopesTreeSelector = createSelector(
         roots.push(scope);
       }
     });
+    scopes.forEach(scope => {
+      if (scope.level < 1) {
+        scope.subscopes.push({
+          id: null,
+          name: '',
+          level: scope.level + 1,
+          subscopes: [],
+        });
+      }
+    });
     return roots;
   },
 );

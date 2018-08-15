@@ -50,6 +50,11 @@ module.exports = (sequelize, DataTypes) => {
       field: 'scope_id',
       allowNull: true,
     },
+    assignedToId: {
+      type: DataTypes.UUID,
+      field: 'assigned_to_id',
+      allowNull: true,
+    },
   });
 
   /**

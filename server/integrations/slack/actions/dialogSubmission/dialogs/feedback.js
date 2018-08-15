@@ -26,7 +26,7 @@ const run = async (payload, { slackUser, workspace }) => {
     submission,
     callback_id: callbackId,
   } = payload;
-  const { productId, defaultAuthorId, files = [] } = callbackId;
+  const { productId, defaultAuthorId, files = [], scopeId } = callbackId;
   const authorId = submission.authorId || defaultAuthorId;
   const description = trim(submission.description);
 
@@ -53,6 +53,7 @@ const run = async (payload, { slackUser, workspace }) => {
     authorId,
     productId,
     attachments,
+    scopeId,
     createdById: slackUser.userId,
   });
 

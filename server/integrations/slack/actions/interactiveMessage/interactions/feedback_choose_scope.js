@@ -32,43 +32,50 @@ module.exports = async (payload, { slackUser, workspace }) => {
   const { accessToken } = workspace;
   const product = await Product.findById(productId);
 
-  if (selectedOption.value === 'default') {
-    const productUser = await ProductUser.find({
-      where: {
-        userId: slackUser.userId,
+  const defaultSelected = selectedOption.value === 'default';
+  const selectedScopeId = defaultSelected
+    ? defaultScopeId
+    : selectedOption.value;
+
+  if (!defaultSelected) {
+    const scopes = await Scope.findAll({
+      where: { parentId: selectedScopeId },
+    });
+
+    if (scopes.length) {
+      await postEphemeral('feedback_choose_scope')({
         productId,
-        role: { [Op.in]: ['user', 'admin'] },
-      },
-      include: ['product'],
-    });
-
-    await openFeedbackDialogHelper({
-      files,
-      product,
-      defaultFeedback,
-      defaultAuthorId,
-      defaultAuthorName,
-      selectAuthor: !!productUser,
-      scopeId: defaultScopeId,
-    })({
-      accessToken,
-      triggerId,
-    });
+        files,
+        defaultFeedback,
+        defaultAuthorId,
+        defaultAuthorName,
+        scopes,
+        level: level + 1,
+        defaultScopeId: selectedScopeId,
+      })({ accessToken, channel, user: slackUser.slackId });
+      return;
+    }
   }
 
-  const scopeId = selectedOption.value;
-  const scopes = await Scope.findAll({ where: { parentId: scopeId } });
-
-  if (scopes.length) {
-    await postEphemeral('feedback_choose_scope')({
+  const productUser = await ProductUser.find({
+    where: {
+      userId: slackUser.userId,
       productId,
-      files,
-      defaultFeedback,
-      defaultAuthorId,
-      defaultAuthorName,
-      scopes,
-      level: level + 1,
-      defaultScopeId: scopeId,
-    })({ accessToken, channel, user: slackUser.slackId });
-  }
+      role: { [Op.in]: ['user', 'admin'] },
+    },
+    include: ['product'],
+  });
+
+  await openFeedbackDialogHelper({
+    files,
+    product,
+    defaultFeedback,
+    defaultAuthorId,
+    defaultAuthorName,
+    selectAuthor: !!productUser,
+    scopeId: selectedScopeId,
+  })({
+    accessToken,
+    triggerId,
+  });
 };

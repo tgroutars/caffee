@@ -60,7 +60,7 @@ class Editable extends React.Component {
   save = async () => {
     const { value } = this.state;
     this.setState({ isSaving: true });
-    this.savePromise = this.props.onSave(value);
+    await this.props.onSave(value);
     if (!this.cancelled) {
       this.setState({ isSaving: false });
     }

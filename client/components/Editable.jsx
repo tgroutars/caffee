@@ -70,8 +70,8 @@ class Editable extends React.Component {
     const { value } = this.state;
     const { required } = this.props;
     if (required && !value) {
-      this.props.onReset();
       this.setState({ value: this.props.value });
+      this.props.onReset();
       return;
     }
     if (value === this.props.value) {

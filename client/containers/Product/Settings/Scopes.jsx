@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Dropdown, Menu, Icon } from 'antd';
+import { Dropdown, Menu, Icon, Popconfirm } from 'antd';
 
 import Clickable from '../../../components/Clickable';
 import Editable from '../../../components/Editable';
@@ -20,8 +20,22 @@ const AddScope = styled(ScopeInfo)`
   cursor: pointer;
   border: none;
 `;
+const Actions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+const ArchiveIcon = styled(Icon)`
+  visibility: hidden;
+  ${ScopeInfo}:hover & {
+    visibility: visible;
+  }
+  margin-left: 32px;
+  font-size: 16px;
+  color: #f5222d;
+  cursor: pointer;
+`;
 
-const Scopes = ({ scopes, level, onSave }) => (
+const Scopes = ({ scopes, level, onSave, onArchive }) => (
   <div level={level}>
     {scopes.map(scope => (
       <Scopes.Item
@@ -29,6 +43,7 @@ const Scopes = ({ scopes, level, onSave }) => (
         key={scope.id || scope.cid}
         scope={scope}
         onSave={onSave}
+        onArchive={onArchive}
       />
     ))}
   </div>
@@ -37,6 +52,7 @@ Scopes.propTypes = {
   scopes: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   level: PropTypes.number,
   onSave: PropTypes.func.isRequired,
+  onArchive: PropTypes.func.isRequired,
 };
 Scopes.defaultProps = {
   level: 0,
@@ -47,6 +63,7 @@ class ScopeItem extends React.Component {
     scope: PropTypes.shape({}).isRequired,
     level: PropTypes.number.isRequired,
     onSave: PropTypes.func.isRequired,
+    onArchive: PropTypes.func.isRequired,
   };
 
   state = { isCreating: false };
@@ -67,6 +84,51 @@ class ScopeItem extends React.Component {
     }
   };
 
+  archive = () => {
+    this.props.onArchive(this.props.scope);
+  };
+
+  renderActions() {
+    const { scope } = this.props;
+    const isNew = !scope.id;
+    if (isNew) {
+      return null;
+    }
+    return (
+      <Actions>
+        {scope.responsible ? (
+          <div>
+            Responsible:
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="1">
+                    <Icon type="user" />TODO: Show list of users
+                  </Menu.Item>
+                </Menu>
+              }
+              trigger={['click']}
+            >
+              <Clickable>
+                {scope.responsible.name} <Icon type="down" />
+              </Clickable>
+            </Dropdown>
+          </div>
+        ) : null}
+        {!isNew ? (
+          <Popconfirm
+            title="Delete this scope?"
+            onConfirm={this.archive}
+            okText="Yes"
+            cancelText="No"
+          >
+            <ArchiveIcon type="delete" />
+          </Popconfirm>
+        ) : null}
+      </Actions>
+    );
+  }
+
   render() {
     const { scope, level } = this.props;
     const { isCreating } = this.state;
@@ -78,6 +140,7 @@ class ScopeItem extends React.Component {
         </AddScope>
       );
     }
+
     return (
       // TODO: Use fragments <></> (need babel 7)
       <div>
@@ -88,28 +151,11 @@ class ScopeItem extends React.Component {
             value={scope.name}
             onSave={this.handleSave}
           />
-          {scope.responsible ? (
-            <div>
-              Responsible:
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item key="1">
-                      <Icon type="user" />TODO: Show list of users
-                    </Menu.Item>
-                  </Menu>
-                }
-                trigger={['click']}
-              >
-                <Clickable>
-                  {scope.responsible.name} <Icon type="down" />
-                </Clickable>
-              </Dropdown>
-            </div>
-          ) : null}
+          {this.renderActions()}
         </ScopeInfo>
         <Scopes
           onSave={this.props.onSave}
+          onArchive={this.props.onArchive}
           scopes={scope.subscopes}
           level={level + 1}
         />

@@ -29,3 +29,23 @@ export const createScope = ({ productId, parentId, name }) => async (
     addEntities('product', { id: productId, scopes: [...scopeIds, scope.id] }),
   );
 };
+
+const archiveRecursive = scope => dispatch => {
+  if (!scope.id) {
+    return;
+  }
+  dispatch(
+    addEntities('scope', {
+      ...scope,
+      isArchived: true,
+    }),
+  );
+  scope.subscopes.forEach(subscope => dispatch(archiveRecursive(subscope)));
+};
+
+export const archiveScope = scopeId => async (dispatch, getState) => {
+  const { scope } = await dispatch(api.scopes.archive({ scopeId, name }));
+  dispatch(addEntities('scope', scope));
+  const scopeEntity = getState().entities.scopes[scope.id];
+  dispatch(archiveRecursive(scopeEntity));
+};

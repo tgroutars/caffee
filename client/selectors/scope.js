@@ -13,15 +13,18 @@ export const currentScopessSelector = createSelector(
   currentScopeIdsSelector,
   scopesSelector,
   (scopeIds, scopes) =>
-    scopeIds.map(scopeId => scopes[scopeId]).sort((s1, s2) => {
-      if (s1.level === s2.level) {
-        if (s1.createdAt < s2.createdAt) {
-          return -1;
+    scopeIds
+      .map(scopeId => scopes[scopeId])
+      .filter(scope => !scope.isArchived)
+      .sort((s1, s2) => {
+        if (s1.level === s2.level) {
+          if (s1.createdAt < s2.createdAt) {
+            return -1;
+          }
+          return 1;
         }
-        return 1;
-      }
-      return s1.level - s2.level;
-    }),
+        return s1.level - s2.level;
+      }),
 );
 
 export const scopesTreeSelector = createSelector(
@@ -35,7 +38,10 @@ export const scopesTreeSelector = createSelector(
     });
     scopes.forEach(scope => {
       if (scope.parentId) {
-        map[scope.parentId].subscopes.push(scope);
+        const parent = map[scope.parentId];
+        if (parent) {
+          parent.subscopes.push(scope);
+        }
       } else {
         roots.push(scope);
       }

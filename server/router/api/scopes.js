@@ -17,6 +17,7 @@ const serializeScope = scope => ({
     'parentId',
     'productId',
     'createdAt',
+    'isArchived',
   ]),
   responsible: pick(scope.responsible, ['id', 'name', 'image']),
 });
@@ -69,6 +70,21 @@ router.post(
       name,
     });
     await scope.reload({ include: ['responsible'] });
+    ctx.send({ scope: serializeScope(scope) });
+  },
+);
+
+router.post(
+  '/scopes.archive',
+  requireAuth,
+  findScope,
+  requireAdmin,
+  async ctx => {
+    const { scopeId } = ctx.request.body;
+    await ScopeService.archive(scopeId);
+    const scope = await Scope.unscoped().findById(scopeId, {
+      include: ['responsible'],
+    });
     ctx.send({ scope: serializeScope(scope) });
   },
 );

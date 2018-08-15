@@ -3,7 +3,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { fetchScopes, saveName, createScope } from '../../../actions/scopes';
+import {
+  fetchScopes,
+  saveName,
+  createScope,
+  archiveScope,
+} from '../../../actions/scopes';
 import { scopesTreeSelector } from '../../../selectors/scope';
 import Scopes from './Scopes';
 
@@ -18,6 +23,7 @@ class ProductSettingsFeedbacks extends React.Component {
     productId: PropTypes.string.isRequired,
     fetchScopes: PropTypes.func.isRequired,
     createScope: PropTypes.func.isRequired,
+    archiveScope: PropTypes.func.isRequired,
     saveName: PropTypes.func.isRequired,
     scopesTree: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   };
@@ -40,6 +46,10 @@ class ProductSettingsFeedbacks extends React.Component {
     }
   };
 
+  handleArchive = async scope => {
+    await this.props.archiveScope(scope.id);
+  };
+
   render() {
     const { scopesTree } = this.props;
 
@@ -51,7 +61,11 @@ class ProductSettingsFeedbacks extends React.Component {
           it to the right PM
         </p>
         <ScopesWrapper>
-          <Scopes scopes={scopesTree} onSave={this.handleSave} />
+          <Scopes
+            scopes={scopesTree}
+            onSave={this.handleSave}
+            onArchive={this.handleArchive}
+          />
         </ScopesWrapper>
       </div>
     );
@@ -67,6 +81,7 @@ const mapDispatchToProps = {
   fetchScopes,
   saveName,
   createScope,
+  archiveScope,
 };
 
 export default connect(

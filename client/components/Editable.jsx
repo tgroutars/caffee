@@ -47,7 +47,8 @@ class Editable extends React.Component {
     this.setState({ isSaving: false });
   };
 
-  handleBlur = () => {
+  handleBlur = evt => {
+    evt.target.blur();
     const { value } = this.state;
     const { required } = this.props;
     if (value === this.props.value) {
@@ -73,6 +74,7 @@ class Editable extends React.Component {
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
+          onPressEnter={this.handleBlur}
         />
         {isSaving ? <StyledSpin /> : null}
       </Wrapper>

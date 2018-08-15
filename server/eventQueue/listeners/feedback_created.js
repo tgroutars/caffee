@@ -1,21 +1,21 @@
 const Promise = require('bluebird');
 
-const { Feedback, User } = require('../../models');
+const { Feedback, User, SlackUser } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 
 const feedbackCreated = async ({ feedbackId }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: ['product', 'author'],
   });
-  const { product, createdById, author, responsibleId } = feedback;
+  const { product, createdById, author, assignedToId } = feedback;
 
   const postNewFeedback = postMessage('new_feedback')({
     feedback,
     product,
     author,
   });
-  const responsible = await User.findById(responsibleId, {
-    include: ['slackUsers'],
+  const responsible = await User.findById(assignedToId, {
+    include: [{ model: SlackUser, as: 'slackUsers', include: ['workspace'] }],
   });
   await Promise.map(responsible.slackUsers, async slackUser => {
     const { workspace } = slackUser;

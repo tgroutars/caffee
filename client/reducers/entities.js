@@ -5,6 +5,7 @@ import { ADD_ENTITIES } from '../types';
 const initialState = {
   users: {},
   products: {},
+  scopes: {},
 };
 
 const entities = (state = initialState, action) => {

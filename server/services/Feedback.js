@@ -1,16 +1,33 @@
 const Promise = require('bluebird');
 
-const { Feedback, sequelize } = require('../models');
+const { Feedback, Scope, Product, sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 
 const FeedbackService = services => ({
-  async create({ description, authorId, productId, attachments, createdById }) {
+  async create({
+    description,
+    authorId,
+    productId,
+    attachments,
+    createdById,
+    scopeId,
+  }) {
+    let assignedToId;
+    if (scopeId) {
+      const scope = await Scope.findById(scopeId);
+      assignedToId = scope.responsibleId;
+    } else {
+      const product = await Product.findById(productId);
+      assignedToId = product.ownerId;
+    }
     const feedback = await Feedback.create({
       authorId,
       productId,
       description,
       createdById,
       attachments,
+      scopeId,
+      assignedToId,
     });
 
     trigger('feedback_created', { feedbackId: feedback.id });

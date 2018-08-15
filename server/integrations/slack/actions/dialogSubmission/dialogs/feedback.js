@@ -26,7 +26,7 @@ const run = async (payload, { slackUser, workspace }) => {
     submission,
     callback_id: callbackId,
   } = payload;
-  const { productId, defaultAuthorId, files = [] } = callbackId;
+  const { productId, defaultAuthorId, files = [], scopeId } = callbackId;
   const authorId = submission.authorId || defaultAuthorId;
   const description = trim(submission.description);
 
@@ -48,17 +48,18 @@ const run = async (payload, { slackUser, workspace }) => {
     throw new Error('Missing authorId in feedback submission');
   }
 
-  await FeedbackService.create({
+  const feedback = await FeedbackService.create({
     description,
     authorId,
     productId,
     attachments,
+    scopeId,
     createdById: slackUser.userId,
   });
-
+  const assignedTo = await User.findById(feedback.assignedToId);
   const isAuthor = slackUser.userId === authorId;
   const author = await User.findById(authorId);
-  await postEphemeral('feedback_thanks')({ isAuthor, author })({
+  await postEphemeral('feedback_thanks')({ isAuthor, author, assignedTo })({
     accessToken,
     channel,
     user: slackUser.slackId,

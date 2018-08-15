@@ -45,13 +45,23 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: [],
     },
+    scopeId: {
+      type: DataTypes.UUID,
+      field: 'scope_id',
+      allowNull: true,
+    },
+    assignedToId: {
+      type: DataTypes.UUID,
+      field: 'assigned_to_id',
+      allowNull: true,
+    },
   });
 
   /**
    * Associations
    */
   Feedback.associate = models => {
-    const { Product, User, RoadmapItem } = models;
+    const { Product, User, RoadmapItem, Scope } = models;
     Feedback.belongsTo(User, {
       as: 'author',
       foreignKey: 'authorId',
@@ -73,6 +83,12 @@ module.exports = (sequelize, DataTypes) => {
     Feedback.belongsTo(RoadmapItem, {
       as: 'roadmapItem',
       foreignKey: 'roadmapItemId',
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    });
+    Feedback.belongsTo(Scope, {
+      as: 'scope',
+      foreignKey: 'scopeId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });

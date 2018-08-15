@@ -1,6 +1,7 @@
 const feedback = ({
   product,
   files,
+  scopeId,
   defaultAuthorId,
   defaultAuthorName = null,
   selectAuthor = false,
@@ -11,6 +12,7 @@ const feedback = ({
     productId: product.id,
     files,
     defaultAuthorId,
+    scopeId,
   };
 
   const elements = [

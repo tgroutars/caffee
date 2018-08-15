@@ -6,6 +6,7 @@ const Logo = styled.div`
   left: 50%;
   font-size: 32px;
   font-weight: bold;
+  color: rgba(0, 0, 0, 0.85);
 `;
 
 const ProductMenu = () => <Logo>Caffee</Logo>;

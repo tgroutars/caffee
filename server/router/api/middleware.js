@@ -1,5 +1,5 @@
 const { APIError } = require('./errors');
-const { ProductUser } = require('../../models');
+const { ProductUser, Product } = require('../../models');
 
 const requireAuth = async (ctx, next) => {
   const { user } = ctx.state;
@@ -30,4 +30,26 @@ const requireAdmin = async (ctx, next) => {
   await next();
 };
 
-module.exports = { requireAuth, requireAdmin };
+const findProduct = async (ctx, next) => {
+  const { productId } = ctx.request.body;
+  const { user } = ctx.state;
+  const product = await Product.findById(productId, {
+    include: [
+      {
+        model: ProductUser,
+        as: 'productUsers',
+        where: {
+          userId: user.id,
+          role: 'admin',
+        },
+      },
+    ],
+  });
+  if (!product) {
+    throw new APIError('product_not_found');
+  }
+  ctx.state.product = product;
+  await next();
+};
+
+module.exports = { requireAuth, requireAdmin, findProduct };

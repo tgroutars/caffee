@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 
-import Loading from '../components/Loading';
-import ProductSettings from './ProductSettings';
+import Loading from '../../components/Loading';
+import ProductSettings from './Settings/ProductSettings';
 
 const ProductRoot = ({ isWaiting }) => {
   if (isWaiting) {

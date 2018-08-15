@@ -53,4 +53,10 @@ export default {
     info: apiCall.bind(this, 'products.info'),
     setQuestions: apiCall.bind(this, 'products.setQuestions'),
   },
+  scopes: {
+    list: apiCall.bind(this, 'scopes.list'),
+    setName: apiCall.bind(this, 'scopes.setName'),
+    create: apiCall.bind(this, 'scopes.create'),
+    archive: apiCall.bind(this, 'scopes.archive'),
+  },
 };

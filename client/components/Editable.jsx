@@ -28,14 +28,26 @@ class Editable extends React.Component {
     value: PropTypes.string,
     onSave: PropTypes.func.isRequired,
     required: PropTypes.bool,
+    onReset: PropTypes.func,
+    autofocus: PropTypes.bool,
   };
 
   static defaultProps = {
     value: '',
     required: true,
+    onReset: () => {},
+    autofocus: false,
   };
 
   state = { value: this.props.value, isSaving: false };
+
+  componentDidMount() {
+    if (this.input && this.props.autofocus) {
+      this.input.current.focus();
+    }
+  }
+
+  input = React.createRef();
 
   isDirty = () => this.state.value !== this.props.value;
 
@@ -51,11 +63,12 @@ class Editable extends React.Component {
     evt.target.blur();
     const { value } = this.state;
     const { required } = this.props;
-    if (value === this.props.value) {
+    if (required && !value) {
+      this.props.onReset();
+      this.setState({ value: this.props.value });
       return;
     }
-    if (required && !value) {
-      this.setState({ value: this.props.value });
+    if (value === this.props.value) {
       return;
     }
     this.save();
@@ -70,6 +83,7 @@ class Editable extends React.Component {
     return (
       <Wrapper>
         <StyledInput
+          innerRef={this.input}
           value={value}
           onChange={this.handleChange}
           onFocus={this.handleFocus}

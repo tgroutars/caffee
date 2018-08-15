@@ -5,7 +5,7 @@ import { Input, Spin } from 'antd';
 
 const Wrapper = styled.div``;
 
-const StyledInput = styled(Input)`
+const StyledInput = styled(Input.TextArea)`
   && {
     border-color: rgba(0, 0, 0, 0) !important;
     box-shadow: none;
@@ -17,6 +17,7 @@ const StyledInput = styled(Input)`
       background: white;
       border-width: 1px !important;
     }
+    resize: none;
   }
 `;
 const StyledSpin = styled(Spin)`
@@ -42,9 +43,14 @@ class Editable extends React.Component {
   state = { value: this.props.value, isSaving: false };
 
   componentDidMount() {
+    this._isMounted = true;
     if (this.input && this.props.autofocus) {
       this.input.current.focus();
     }
+  }
+
+  comonentWillUnmount() {
+    this.cancelled = true;
   }
 
   input = React.createRef();
@@ -53,14 +59,14 @@ class Editable extends React.Component {
 
   save = async () => {
     const { value } = this.state;
-
     this.setState({ isSaving: true });
-    await this.props.onSave(value);
-    this.setState({ isSaving: false });
+    this.savePromise = this.props.onSave(value);
+    if (!this.cancelled) {
+      this.setState({ isSaving: false });
+    }
   };
 
-  handleBlur = evt => {
-    evt.target.blur();
+  handleBlur = () => {
     const { value } = this.state;
     const { required } = this.props;
     if (required && !value) {
@@ -74,21 +80,27 @@ class Editable extends React.Component {
     this.save();
   };
 
+  handlePressEnter = evt => {
+    evt.target.blur();
+  };
+
   handleChange = evt => {
     this.setState({ value: evt.target.value });
   };
 
   render() {
-    const { value, isSaving } = this.state;
+    const { isSaving } = this.state;
+    const { value } = this.state;
     return (
       <Wrapper>
         <StyledInput
+          autosize
           innerRef={this.input}
           value={value}
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          onPressEnter={this.handleBlur}
+          onPressEnter={this.handlePressEnter}
         />
         {isSaving ? <StyledSpin /> : null}
       </Wrapper>

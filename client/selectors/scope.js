@@ -1,15 +1,16 @@
 import { createSelector } from 'reselect';
+import uuidv4 from 'uuid/v4';
 
 import { currentProductSelector } from './product';
 
 const scopesSelector = state => state.entities.scopes;
-const currentComponentIdsSelector = createSelector(
+export const currentScopeIdsSelector = createSelector(
   currentProductSelector,
   product => product.scopes || [],
 );
 
-export const currentComponentsSelector = createSelector(
-  currentComponentIdsSelector,
+export const currentScopessSelector = createSelector(
+  currentScopeIdsSelector,
   scopesSelector,
   (scopeIds, scopes) =>
     scopeIds.map(scopeId => scopes[scopeId]).sort((s1, s2) => {
@@ -24,7 +25,7 @@ export const currentComponentsSelector = createSelector(
 );
 
 export const scopesTreeSelector = createSelector(
-  currentComponentsSelector,
+  currentScopessSelector,
   scopes => {
     const map = {};
     const roots = [];
@@ -39,13 +40,23 @@ export const scopesTreeSelector = createSelector(
         roots.push(scope);
       }
     });
+    roots.push({
+      id: null,
+      cid: uuidv4(),
+      name: '',
+      level: 0,
+      subscopes: [],
+      parentId: null,
+    });
     scopes.forEach(scope => {
       if (scope.level < 1) {
         scope.subscopes.push({
           id: null,
+          cid: uuidv4(),
           name: '',
           level: scope.level + 1,
           subscopes: [],
+          parentId: scope.id,
         });
       }
     });

@@ -21,14 +21,14 @@ const AddScope = styled(ScopeInfo)`
   border: none;
 `;
 
-const Scopes = ({ scopes, level, onChangeName }) => (
+const Scopes = ({ scopes, level, onSave }) => (
   <div level={level}>
     {scopes.map(scope => (
       <Scopes.Item
         level={level}
-        key={scope.id}
+        key={scope.id || scope.cid}
         scope={scope}
-        onChangeName={onChangeName}
+        onSave={onSave}
       />
     ))}
   </div>
@@ -36,7 +36,7 @@ const Scopes = ({ scopes, level, onChangeName }) => (
 Scopes.propTypes = {
   scopes: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   level: PropTypes.number,
-  onChangeName: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
 };
 Scopes.defaultProps = {
   level: 0,
@@ -46,29 +46,48 @@ class ScopeItem extends React.Component {
   static propTypes = {
     scope: PropTypes.shape({}).isRequired,
     level: PropTypes.number.isRequired,
-    onChangeName: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
   };
 
-  handleSaveName = async value => {
+  state = { isCreating: false };
+
+  handleSave = async name => {
     const { scope } = this.props;
-    await this.props.onChangeName(scope.id, value);
+    await this.props.onSave(scope, name);
+  };
+
+  handleClickAdd = () => {
+    this.setState({ isCreating: true });
+  };
+
+  handleStopCreate = () => {
+    const { scope } = this.props;
+    if (!scope.id) {
+      this.setState({ isCreating: false });
+    }
   };
 
   render() {
     const { scope, level } = this.props;
+    const { isCreating } = this.state;
     const isNew = !scope.id;
-    if (isNew) {
+    if (isNew && !isCreating) {
       return (
-        <AddScope level={level}>
-          <Clickable>+ Add</Clickable>
+        <AddScope level={level} onClick={this.handleClickAdd}>
+          <Clickable>+ Add scope</Clickable>
         </AddScope>
       );
     }
     return (
       // TODO: Use fragments <></> (need babel 7)
       <div>
-        <ScopeInfo key={scope.id} level={level}>
-          <Editable value={scope.name} onSave={this.handleSaveName} />
+        <ScopeInfo level={level}>
+          <Editable
+            autofocus={isNew}
+            onReset={this.handleStopCreate}
+            value={scope.name}
+            onSave={this.handleSave}
+          />
           {scope.responsible ? (
             <div>
               Responsible:
@@ -90,7 +109,7 @@ class ScopeItem extends React.Component {
           ) : null}
         </ScopeInfo>
         <Scopes
-          onChangeName={this.props.onChangeName}
+          onSave={this.props.onSave}
           scopes={scope.subscopes}
           level={level + 1}
         />

@@ -42,33 +42,33 @@ router.post('/scopes.list', requireAuth, findProduct, async ctx => {
 });
 
 router.post(
-  '/scopes.create',
-  requireAuth,
-  findProduct,
-  requireAdmin,
-  async ctx => {
-    const { product } = ctx.state;
-    const { name, responsibleId, parentId } = ctx.request.body;
-    const scope = await ScopeService.create({
-      name,
-      responsibleId,
-      parentId,
-      productId: product.id,
-    });
-    ctx.send({ scope: serializeScope(scope) });
-  },
-);
-
-router.post(
   '/scopes.setName',
   requireAuth,
   findScope,
   requireAdmin,
   async ctx => {
     const { name, scopeId } = ctx.request.body;
-    const scope = await ScopeService.setName(scopeId, {
+    await ScopeService.setName(scopeId, {
       name,
     });
+    const scope = await Scope.findById(scopeId, { include: ['responsible'] });
+    ctx.send({ scope: serializeScope(scope) });
+  },
+);
+
+router.post(
+  '/scopes.create',
+  requireAuth,
+  findProduct,
+  requireAdmin,
+  async ctx => {
+    const { name, parentId, productId } = ctx.request.body;
+    const scope = await ScopeService.create({
+      parentId,
+      productId,
+      name,
+    });
+    await scope.reload({ include: ['responsible'] });
     ctx.send({ scope: serializeScope(scope) });
   },
 );

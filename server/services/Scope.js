@@ -22,9 +22,7 @@ const ScopeService = (/* services */) => ({
   },
 
   async setName(scopeId, { name }) {
-    const scope = await Scope.findById(scopeId);
-    await scope.update({ name });
-    return scope;
+    await Scope.update({ name }, { where: { id: scopeId } });
   },
 });
 

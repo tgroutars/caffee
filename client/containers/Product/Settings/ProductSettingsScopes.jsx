@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { fetchScopes, saveName } from '../../../actions/scopes';
+import { fetchScopes, saveName, createScope } from '../../../actions/scopes';
 import { scopesTreeSelector } from '../../../selectors/scope';
 import Scopes from './Scopes';
 
@@ -17,6 +17,7 @@ class ProductSettingsFeedbacks extends React.Component {
   static propTypes = {
     productId: PropTypes.string.isRequired,
     fetchScopes: PropTypes.func.isRequired,
+    createScope: PropTypes.func.isRequired,
     saveName: PropTypes.func.isRequired,
     scopesTree: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   };
@@ -26,8 +27,17 @@ class ProductSettingsFeedbacks extends React.Component {
     await this.props.fetchScopes(productId);
   }
 
-  saveName = async (scopeId, name) => {
-    await this.props.saveName(scopeId, name);
+  handleSave = async (scope, name) => {
+    const { productId } = this.props;
+    if (scope.id) {
+      await this.props.saveName(scope.id, name);
+    } else {
+      await this.props.createScope({
+        name,
+        productId,
+        parentId: scope.parentId,
+      });
+    }
   };
 
   render() {
@@ -41,7 +51,7 @@ class ProductSettingsFeedbacks extends React.Component {
           it to the right PM
         </p>
         <ScopesWrapper>
-          <Scopes scopes={scopesTree} onChangeName={this.saveName} />
+          <Scopes scopes={scopesTree} onSave={this.handleSave} />
         </ScopesWrapper>
       </div>
     );
@@ -56,6 +66,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   fetchScopes,
   saveName,
+  createScope,
 };
 
 export default connect(

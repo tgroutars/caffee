@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Dropdown, Menu, Icon, Popconfirm } from 'antd';
+import { Dropdown, Menu, Icon, Popconfirm, Avatar } from 'antd';
 
 import Clickable from '../../../components/Clickable';
 import Editable from '../../../components/Editable';
@@ -103,7 +103,9 @@ class ScopeItem extends React.Component {
               overlay={
                 <Menu>
                   <Menu.Item key="1">
-                    <Icon type="user" />TODO: Show list of users
+                    {/* TODO: Set responsible */}
+                    <Avatar size="small" src={scope.responsible.image} />{' '}
+                    {scope.responsible.name}
                   </Menu.Item>
                 </Menu>
               }

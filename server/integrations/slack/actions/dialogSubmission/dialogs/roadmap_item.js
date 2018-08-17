@@ -82,10 +82,8 @@ const run = async (payload, { workspace, slackUser }) => {
     });
   }
 
-  await postEphemeral('new_roadmap_item')({
+  await postEphemeral('roadmap_item_create_confirm')({
     roadmapItem,
-    product,
-    isPM: true,
   })({ accessToken, channel, user: slackUser.slackId });
 
   return roadmapItem;

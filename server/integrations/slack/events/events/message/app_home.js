@@ -15,9 +15,10 @@ const appHomeMessage = async (payload, { workspace }) => {
     files = [],
     channel_type: channelType,
     subtype,
+    thread_ts: threadTS,
   } = event;
 
-  if (subtype === 'message_changed' || channelType !== 'app_home') {
+  if (subtype === 'message_changed' || channelType !== 'app_home' || threadTS) {
     return;
   }
   const rawText = event.text || '';

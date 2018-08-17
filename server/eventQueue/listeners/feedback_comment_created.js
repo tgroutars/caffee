@@ -32,6 +32,7 @@ module.exports = async ({ feedbackCommentId }) => {
       thread_ts: threadTS,
       icon_url: author.image,
       username: author.name,
+      reply_broadcast: true,
     });
   });
 };

@@ -9,12 +9,12 @@ const menu = ({
   settingsURL,
   createRoadmapItem = false,
 }) => {
-  const pretext = 'Hi there :wave: What do you want to do?';
+  const pretext = 'What can I do for you? 😊';
   const actions = [];
   if (createRoadmapItem) {
     actions.push({
       type: 'button',
-      text: 'Create a new roadmap item',
+      text: 'Create roadmap item',
       value: 'open_roadmap_item_dialog',
       name: {
         productId,
@@ -27,7 +27,7 @@ const menu = ({
   }
   actions.push({
     type: 'button',
-    text: 'Send a new feedback',
+    text: 'Send feedback',
     value: 'open_feedback_dialog',
     name: {
       productId,

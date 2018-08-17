@@ -1,5 +1,6 @@
 const SlackClient = require('@slack/client').WebClient;
 const trim = require('lodash/trim');
+const includes = require('lodash/includes');
 
 const { SlackUser, ProductUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
@@ -17,7 +18,17 @@ const channelMessage = async (payload, { workspace }) => {
     files: messageFiles,
     thread_ts: threadTS,
     user: userSlackId,
+    channel_type: channelType,
+    subtype,
   } = event;
+
+  if (
+    !includes(['channel', 'group', 'im', 'mpim'], channelType) ||
+    subtype === 'message_changed'
+  ) {
+    return;
+  }
+
   const rawText = event.text || '';
 
   const { accessToken, appUserId } = workspace;

@@ -9,7 +9,17 @@ const postMenuMessage = postEphemeral('menu');
 
 const appHomeMessage = async (payload, { workspace }) => {
   const { event } = payload;
-  const { user: userSlackId, channel, files = [] } = event;
+  const {
+    user: userSlackId,
+    channel,
+    files = [],
+    channel_type: channelType,
+    subtype,
+  } = event;
+
+  if (subtype === 'message_changed' || channelType !== 'app_home') {
+    return;
+  }
   const rawText = event.text || '';
 
   const products = await workspace.getProducts();

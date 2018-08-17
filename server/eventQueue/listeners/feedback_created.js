@@ -35,7 +35,7 @@ const feedbackCreated = async ({ feedbackId }) => {
       })({ accessToken, channel: slackUser.slackId });
       await FeedbackExternalRefService.create({
         feedbackId,
-        ref: `slack:${workspace.id}-${channel}-${ts}`,
+        ref: `slack:${workspace.slackId}_${channel}_${ts}`,
         props: { ts, channel, userId: userTo.id, workspaceId: workspace.id },
       });
     }),

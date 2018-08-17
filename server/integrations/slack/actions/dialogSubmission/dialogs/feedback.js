@@ -4,7 +4,6 @@ const Promise = require('bluebird');
 const { syncFile } = require('../../../helpers/files');
 const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
 const { Feedback: FeedbackService } = require('../../../../../services');
-const { User } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const validate = async payload => {
@@ -48,21 +47,13 @@ const run = async (payload, { slackUser, workspace }) => {
     throw new Error('Missing authorId in feedback submission');
   }
 
-  const feedback = await FeedbackService.create({
+  await FeedbackService.create({
     description,
     authorId,
     productId,
     attachments,
     scopeId,
     createdById: slackUser.userId,
-  });
-  const assignedTo = await User.findById(feedback.assignedToId);
-  const isAuthor = slackUser.userId === authorId;
-  const author = await User.findById(authorId);
-  await postEphemeral('feedback_thanks')({ isAuthor, author, assignedTo })({
-    accessToken,
-    channel,
-    user: slackUser.slackId,
   });
 };
 

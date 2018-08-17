@@ -1,7 +1,48 @@
-const newFeedback = ({ feedback, product, roadmapItem, author }) => {
+/* eslint-disable no-lonely-if */
+
+const newFeedback = ({
+  userTo,
+  feedback,
+  product,
+  roadmapItem,
+  author,
+  createdBy,
+  assignedTo,
+}) => {
+  const isAuthor = userTo.id === author.id;
+  const isAssigned = userTo.id === assignedTo.id;
+  const isCreator = userTo.id === createdBy.id;
+  const isOnBehalf = author.id !== createdBy.id;
   const { archivedAt } = feedback;
+
+  let text;
+  if (isCreator) {
+    if (isAuthor) {
+      text = `You added a new feedback on ${product.name}`;
+    } else {
+      text = `You added a feedback on ${product.name} on behalf of *${
+        author.name
+      }*`;
+    }
+  } else {
+    if (isAuthor) {
+      text = `*${createdBy.name}* added a new feedback on ${
+        product.name
+      } on your behalf`;
+    } else {
+      if (isOnBehalf) {
+        text = `*${createdBy.name}* added a new feedback on ${
+          product.name
+        } on behalf of *${author.name}*`;
+      } else {
+        text = `*${author.name}* added a new feedback on ${product.name}`;
+      }
+    }
+  }
+  text = `${text}\nReply in this thread to discuss it :point_down:`;
+
   let actions;
-  if (!feedback.archivedAt && !roadmapItem) {
+  if (isAssigned && !feedback.archivedAt && !roadmapItem) {
     actions = [
       {
         type: 'button',
@@ -52,7 +93,7 @@ const newFeedback = ({ feedback, product, roadmapItem, author }) => {
     },
   ];
   return {
-    text: `*_${author.name} added a new feedback on ${product.name}_*`,
+    text,
     attachments,
   };
 };

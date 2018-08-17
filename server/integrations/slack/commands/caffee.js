@@ -1,17 +1,10 @@
 const uniqBy = require('lodash/uniqBy');
 
-const {
-  Product,
-  SlackWorkspace,
-  ProductUser,
-  Sequelize,
-} = require('../../../models');
+const { Product, SlackWorkspace, ProductUser } = require('../../../models');
 const { postEphemeral } = require('../messages');
 const getTitleDescription = require('../../../lib/getTitleDescription');
 const { decode } = require('../helpers/encoding');
 const { passwordlessURL } = require('../../../lib/auth');
-
-const { Op } = Sequelize;
 
 const postChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
@@ -68,7 +61,6 @@ const caffee = async ({
     where: {
       userId: slackUser.userId,
       productId,
-      role: { [Op.in]: ['user', 'admin'] },
     },
   });
 
@@ -78,7 +70,7 @@ const caffee = async ({
     defaultRoadmapItemTitle: title,
     defaultRoadmapItemDescription: description,
     defaultAuthorId: slackUser.userId,
-    createRoadmapItem: !!productUser,
+    createRoadmapItem: productUser.isPM,
     settingsURL: productUser.isAdmin
       ? await passwordlessURL(slackUser.userId, { productId })
       : null,

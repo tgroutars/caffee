@@ -18,7 +18,7 @@ const getRoadmap = async (
   const product = await Product.findById(productId);
 
   const offset = page * 5;
-  const where = { productId };
+  const where = { productId, archivedAt: null };
   if (stageId) {
     where.stageId = stageId;
   }
@@ -41,7 +41,9 @@ const getRoadmap = async (
     offset,
   });
   const roadmapItemCount = await RoadmapItem.count({ where });
-  const stages = await RoadmapStage.findAll({ where: { productId } });
+  const stages = await RoadmapStage.findAll({
+    where: { productId, isArchived: false },
+  });
   const filterStage = stageId && stages.find(stage => stage.id === stageId);
   const pageCount = ceil(roadmapItemCount / nbItems);
   await Promise.map(roadmapItems, async roadmapItem => {

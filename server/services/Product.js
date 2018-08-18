@@ -193,13 +193,13 @@ const ProductService = services => ({
     }
 
     // Remove old roadmap items
-    await RoadmapItem.unscoped().destroy({
+    await RoadmapItem.destroy({
       where: { productId: product.id },
     });
     // Remove old tags
     await Tag.destroy({ where: { productId: product.id } });
     // Remove old stages
-    await RoadmapStage.unscoped().destroy({ where: { productId: product.id } });
+    await RoadmapStage.destroy({ where: { productId: product.id } });
 
     // Add new tags
     const tags = await Promise.map(labels, async label =>

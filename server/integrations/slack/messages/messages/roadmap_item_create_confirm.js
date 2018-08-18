@@ -13,7 +13,7 @@ module.exports = ({ roadmapItem }) => ({
         },
       ],
       callback_id: 'roadmap_item_create_confirm',
-      pretext: 'Done :thumbsup:',
+      pretext: 'Roadmap item created',
     },
   ],
 });

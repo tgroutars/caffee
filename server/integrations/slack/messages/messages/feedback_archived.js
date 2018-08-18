@@ -1,7 +1,7 @@
 module.exports = ({ feedback, archivedBy }) => ({
   text: `*_${
     archivedBy ? archivedBy.name : 'The product team'
-  } has archived your feedback :no_entry_sign:_*`,
+  } has archived your feedback :man-gesturing-no:_*`,
   attachments: [
     {
       color: '#f2d600',

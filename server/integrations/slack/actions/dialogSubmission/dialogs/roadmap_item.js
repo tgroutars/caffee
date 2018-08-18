@@ -7,8 +7,7 @@ const {
   RoadmapItem: RoadmapItemService,
   Feedback: FeedbackService,
 } = require('../../../../../services');
-const { Feedback } = require('../../../../../models');
-const { updateMessage, postEphemeral } = require('../../../messages');
+const { postEphemeral } = require('../../../messages');
 
 const validate = async payload => {
   const { submission } = payload;
@@ -29,7 +28,7 @@ const run = async (payload, { workspace, slackUser }) => {
     callback_id: callbackId,
     channel: { id: channel },
   } = payload;
-  const { productId, feedbackId, feedbackMessageRef, files = [] } = callbackId;
+  const { productId, feedbackId, files = [] } = callbackId;
   const { stageId, tagId } = submission;
   const title = trim(submission.title);
   const description = trim(submission.description);
@@ -57,28 +56,10 @@ const run = async (payload, { workspace, slackUser }) => {
     attachments,
   });
 
-  const product = await roadmapItem.getProduct();
-
   if (feedbackId) {
     await FeedbackService.setRoadmapItem(feedbackId, {
       roadmapItemId: roadmapItem.id,
       processedById: slackUser.userId,
-    });
-  }
-  if (feedbackMessageRef) {
-    const feedback = await Feedback.findById(feedbackId, {
-      include: ['author'],
-    });
-    const { author } = feedback;
-    await updateMessage('new_feedback')({
-      feedback,
-      roadmapItem,
-      product,
-      author,
-    })({
-      accessToken,
-      channel: feedbackMessageRef.channel,
-      ts: feedbackMessageRef.ts,
     });
   }
 

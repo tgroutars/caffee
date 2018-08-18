@@ -25,7 +25,7 @@ const feedbackCreated = async ({ feedbackId }) => {
     Promise.map(userTo.slackUsers, async slackUser => {
       const { workspace } = slackUser;
       const { accessToken } = workspace;
-      const { channel, ts } = await postMessage('new_feedback')({
+      const { channel, ts } = await postMessage('feedback')({
         feedback,
         product,
         userTo,

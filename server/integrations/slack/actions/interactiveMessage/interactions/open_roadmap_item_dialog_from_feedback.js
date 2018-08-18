@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
 const { Feedback } = require('../../../../../models');
-const { postEphemeral, updateMessage } = require('../../../messages');
+const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 const { openDialog } = require('../../../dialogs');
 const { listBoards } = require('../../../../trello/helpers/api');
@@ -15,7 +15,6 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
     action,
     trigger_id: triggerId,
     channel: { id: channel },
-    original_message: originalMessage,
   } = payload;
 
   const { accessToken, appUserId, domain } = workspace;
@@ -24,7 +23,7 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: ['product', 'author'],
   });
-  const { product, author } = feedback;
+  const { product } = feedback;
   const { trelloAccessToken, trelloBoardId } = product;
 
   // TODO: Extract this in some helper
@@ -66,22 +65,14 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
       channel,
       user: slackUser.slackId,
     });
-    const roadmapItem = await feedback.getRoadmapItem();
-    await updateMessage('new_feedback')({
-      feedback,
-      roadmapItem,
-      product,
-      author,
-    })({
-      accessToken,
-      channel,
-      ts: originalMessage.ts,
-    });
     return;
   }
   const [tags, roadmapStages] = await Promise.all([
     product.getTags(),
-    product.getRoadmapStages({ order: [['position', 'asc']] }),
+    product.getRoadmapStages({
+      order: [['position', 'asc']],
+      where: { isArchived: false },
+    }),
   ]);
 
   await openRoadmapItemDialogHelper({
@@ -90,7 +81,6 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
     roadmapStages,
     productId: product.id,
     defaultDescription,
-    feedbackMessageRef: { channel, ts: originalMessage.ts },
   })({
     accessToken,
     triggerId,

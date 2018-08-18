@@ -13,7 +13,7 @@ const { Op } = Sequelize;
 const postRoadmapItemArchivedMessage = postMessage('roadmap_item_archived');
 
 module.exports = async ({ roadmapItemId }) => {
-  const roadmapItem = await RoadmapItem.unscoped().findById(roadmapItemId);
+  const roadmapItem = await RoadmapItem.findById(roadmapItemId);
 
   const slackInstalls = await SlackInstall.findAll({
     where: { productId: roadmapItem.productId, channel: { [Op.ne]: null } },

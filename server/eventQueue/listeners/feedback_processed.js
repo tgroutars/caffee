@@ -7,6 +7,7 @@ const {
   SlackUser,
   ProductUser,
   RoadmapItem,
+  FeedbackComment,
 } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 const { addComment } = require('../../integrations/trello/helpers/api');
@@ -23,9 +24,10 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
           { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
         ],
       },
+      { model: FeedbackComment, as: 'comments', include: ['author'] },
     ],
   });
-  const { roadmapItem, author } = feedback;
+  const { roadmapItem, author, comments, attachments } = feedback;
   const { stage } = roadmapItem;
   const { slackUsers } = author;
   const processedBy = await User.findById(processedById);
@@ -53,14 +55,19 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
 
   if (roadmapItem) {
     const { product } = feedback;
-    let text = `**_New feedback from ${author.name}:_**\n\n${
+    let text = `**New feedback from ${author.name}:**\n\n${
       feedback.description
     }`;
-    if (feedback.attachments.length) {
-      text = `${text}
-
-**Attachments**
-${feedback.attachments.map(({ name, url }) => `[${name}](${url})`)}`;
+    if (comments.length) {
+      text = `${text}\n\n**Discussion**`;
+      comments.forEach(comment => {
+        text = `${text}\n***${comment.author.name}***\n${comment.text}`;
+      });
+    }
+    if (attachments.length) {
+      text = `${text}\n\n**Attachments**\n${attachments.map(
+        ({ name, url }) => `[${name}](${url})`,
+      )}`;
     }
     await addComment(product.trelloAccessToken, {
       cardId: roadmapItem.trelloRef,

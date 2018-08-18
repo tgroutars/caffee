@@ -43,6 +43,7 @@ const FeedbackService = services => ({
       services.RoadmapItem.addAttachmentAndSync(roadmapItemId, attachment),
     );
     await trigger('feedback_processed', { feedbackId, processedById });
+    await trigger('feedback_changed', { feedbackId });
   },
 
   async archive(feedbackId, { archiveReason, archivedById }) {
@@ -51,6 +52,7 @@ const FeedbackService = services => ({
       { where: { id: feedbackId } },
     );
     await trigger('feedback_archived', { feedbackId, archivedById });
+    await trigger('feedback_changed', { feedbackId });
   },
 });
 

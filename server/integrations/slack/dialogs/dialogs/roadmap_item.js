@@ -6,14 +6,12 @@ const roadmapItem = ({
   roadmapStages,
   defaultDescription = '',
   defaultTitle = '',
-  feedbackMessageRef,
 }) => {
   const callbackId = {
     type: 'roadmap_item',
     productId,
     feedbackId,
     files,
-    feedbackMessageRef,
   };
 
   const elements = [

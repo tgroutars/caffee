@@ -99,6 +99,12 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });
+    Feedback.belongsTo(User, {
+      as: 'assignedTo',
+      foreignKey: 'assignedToId',
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    });
     Feedback.hasMany(FeedbackExternalRef, {
       as: 'externalRefs',
       foreignKey: 'feedbackId',

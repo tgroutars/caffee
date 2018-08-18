@@ -1,5 +1,5 @@
 const { openDialog } = require('../../../dialogs');
-const { postEphemeral, updateMessage } = require('../../../messages');
+const { postEphemeral } = require('../../../messages');
 const { Feedback } = require('../../../../../models');
 
 const openArchiveReasonDialog = openDialog('archive_feedback_reason');
@@ -9,7 +9,6 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
     trigger_id: triggerId,
     action,
     channel: { id: channel },
-    original_message: originalMessage,
   } = payload;
   const { feedbackId } = action.name;
   const { accessToken } = workspace;
@@ -24,22 +23,9 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
       channel,
       user: slackUser.slackId,
     });
-    const roadmapItem = await feedback.getRoadmapItem();
-    const { product, author } = feedback;
-    await updateMessage('new_feedback')({
-      feedback,
-      roadmapItem,
-      product,
-      author,
-    })({
-      accessToken,
-      channel,
-      ts: originalMessage.ts,
-    });
   } else {
     await openArchiveReasonDialog({
       feedbackId,
-      feedbackMessageRef: { channel, ts: originalMessage.ts },
     })({
       accessToken,
       triggerId,

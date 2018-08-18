@@ -42,7 +42,7 @@ const newFeedback = ({
   text = `${text}\nReply in this thread to discuss it :point_down:`;
 
   let actions;
-  if (isAssigned && !feedback.archivedAt && !roadmapItem) {
+  if (isAssigned && !archivedAt && !roadmapItem) {
     actions = [
       {
         type: 'button',
@@ -80,21 +80,26 @@ const newFeedback = ({
   const imageAttachment = feedback.attachments.find(attachment =>
     (attachment.mimetype || '').startsWith('image/'),
   );
+  let footer;
+  if (roadmapItem) {
+    footer = ':thumbsup: This feedback is already processed';
+  } else if (feedback.archivedAt) {
+    footer = ':man-gesturing-no: This feedback is archived';
+  }
   const attachments = [
     {
       text: feedback.description,
       color: '#f2d600',
-      callback_id: 'new_feedback',
+      callback_id: 'feedback',
       image_url: imageAttachment ? imageAttachment.url : undefined,
-      footer: archivedAt
-        ? ':no_entry_sign: This feedback has been archived'
-        : undefined,
+      footer,
       actions,
     },
   ];
   return {
     text,
     attachments,
+    footer,
   };
 };
 

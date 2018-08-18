@@ -69,6 +69,9 @@ const channelMessage = async (payload, { workspace }) => {
   const slackUser = await SlackUser.find({
     where: { slackId: userSlackId, workspaceId: workspace.id },
   });
+  if (!slackUser) {
+    return;
+  }
   const {
     title: defaultTitle,
     description: defaultDescription,

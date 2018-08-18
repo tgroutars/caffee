@@ -1,4 +1,5 @@
 /* eslint-disable no-lonely-if */
+const andify = require('../../../../lib/andify');
 
 const newFeedback = ({
   userTo,
@@ -14,6 +15,9 @@ const newFeedback = ({
   const isCreator = userTo.id === createdBy.id;
   const isOnBehalf = author.id !== createdBy.id;
   const { archivedAt } = feedback;
+  const otherUsers = [author, assignedTo, createdBy].filter(
+    user => user.id !== userTo.id,
+  );
 
   let text;
   if (isCreator) {
@@ -39,7 +43,13 @@ const newFeedback = ({
       }
     }
   }
-  text = `${text}\nReply in this thread to discuss it :point_down:`;
+  if (!isAssigned) {
+    text = `${text}\nI sent it to *${assignedTo.name}*`;
+  }
+  if (otherUsers.length) {
+    const otherUsersStr = andify(otherUsers.map(user => `*${user.name}*`));
+    text = `${text}\nReply in this thread to discuss it with ${otherUsersStr} :point_down:`;
+  }
 
   let actions;
   if (isAssigned && !archivedAt && !roadmapItem) {

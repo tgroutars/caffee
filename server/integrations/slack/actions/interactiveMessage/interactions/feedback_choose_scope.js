@@ -39,7 +39,7 @@ module.exports = async (payload, { slackUser, workspace }) => {
 
   if (!defaultSelected) {
     const scopes = await Scope.findAll({
-      where: { parentId: selectedScopeId },
+      where: { parentId: selectedScopeId, archivedAt: null },
     });
 
     if (scopes.length) {

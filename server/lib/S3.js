@@ -9,13 +9,14 @@ const s3 = new S3({
   secretAccessKey: AWS_SECRET_ACCESS_KEY,
 });
 
-const upload = ({ key, body }) =>
+const upload = ({ key, body, ...args }) =>
   new Promise((resolve, reject) => {
     s3.upload(
       {
         Bucket: AWS_S3_BUCKET,
         Key: key,
         Body: body,
+        ...args,
       },
       (err, data) => {
         if (err) {
@@ -27,7 +28,7 @@ const upload = ({ key, body }) =>
     );
   });
 
-const uploadFromURL = async ({ key, url }) => {
+const uploadFromURL = async ({ key, url, ...args }) => {
   const { data: fileStream } = await axios.get(url, {
     responseType: 'stream',
   });
@@ -37,6 +38,7 @@ const uploadFromURL = async ({ key, url }) => {
         Bucket: AWS_S3_BUCKET,
         Key: key,
         Body: fileStream,
+        ...args,
       },
       (err, data) => {
         if (err) {

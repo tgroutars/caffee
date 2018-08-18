@@ -26,7 +26,9 @@ const openFeedbackDialog = async (payload, { workspace, slackUser }) => {
   } = action.name;
   const { accessToken } = workspace;
   const product = await Product.findById(productId);
-  const scopes = await Scope.findAll({ where: { productId, parentId: null } });
+  const scopes = await Scope.findAll({
+    where: { productId, parentId: null, archivedAt: null },
+  });
 
   if (scopes.length) {
     await postEphemeral('feedback_choose_scope')({

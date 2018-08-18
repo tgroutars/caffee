@@ -35,9 +35,10 @@ const findScope = async (ctx, next) => {
 
 router.post('/scopes.list', requireAuth, findProduct, async ctx => {
   const { product } = ctx.state;
-  const scopes = await product.getScopes({
+  const scopes = await Scope.findAll({
     order: [['level', 'asc']],
     include: ['responsible'],
+    where: { archivedAt: null, productId: product.id },
   });
   ctx.send({ scopes: scopes.map(serializeScope) });
 });
@@ -82,7 +83,7 @@ router.post(
   async ctx => {
     const { scopeId } = ctx.request.body;
     await ScopeService.archive(scopeId);
-    const scope = await Scope.unscoped().findById(scopeId, {
+    const scope = await Scope.findById(scopeId, {
       include: ['responsible'],
     });
     ctx.send({ scope: serializeScope(scope) });

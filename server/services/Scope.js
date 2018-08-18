@@ -29,7 +29,9 @@ const ScopeService = (/* services */) => ({
 
   async archive(scopeId) {
     // TODO: Do this in transaction
-    const children = await Scope.findAll({ where: { parentId: scopeId } });
+    const children = await Scope.findAll({
+      where: { parentId: scopeId, archivedAt: null },
+    });
     await Promise.map(children, child => this.archive(child.id));
     await Scope.update(
       { archivedAt: sequelize.fn('NOW') },

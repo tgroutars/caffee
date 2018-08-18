@@ -111,7 +111,7 @@ const RoadmapItemService = (/* services */) => ({
   },
 
   async unarchive(roadmapItemId) {
-    await RoadmapItem.unscoped().update(
+    await RoadmapItem.update(
       { archivedAt: null },
       { where: { id: roadmapItemId } },
     );

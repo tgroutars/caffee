@@ -36,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       defaultScope: {
         order: [['position', 'ASC']],
-        where: { isArchived: false },
       },
       indexes: [
         {

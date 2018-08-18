@@ -1,42 +1,45 @@
 const Promise = require('bluebird');
 
 const { Feedback, User, SlackUser } = require('../../models');
+const {
+  FeedbackExternalRef: FeedbackExternalRefService,
+} = require('../../services');
 const { postMessage } = require('../../integrations/slack/messages');
 
 const feedbackCreated = async ({ feedbackId }) => {
   const feedback = await Feedback.findById(feedbackId, {
-    include: ['product', 'author'],
+    include: ['product'],
   });
-  const { product, createdById, author, assignedToId } = feedback;
-
-  const postNewFeedback = postMessage('new_feedback')({
-    feedback,
-    product,
-    author,
-  });
-  const responsible = await User.findById(assignedToId, {
+  const { product, createdById, authorId, assignedToId } = feedback;
+  const [assignedTo, author, createdBy] = await Promise.all([
+    User.findById(assignedToId),
+    User.findById(authorId),
+    User.findById(createdById),
+  ]);
+  const usersTo = await User.findAll({
+    where: { id: [createdById, authorId, assignedToId] },
     include: [{ model: SlackUser, as: 'slackUsers', include: ['workspace'] }],
   });
-  await Promise.map(responsible.slackUsers, async slackUser => {
-    const { workspace } = slackUser;
-    const { accessToken } = workspace;
-    await postNewFeedback({ accessToken, channel: slackUser.slackId });
-  });
 
-  if (author.id !== createdById) {
-    const [authorSlackUsers, createdBy] = await Promise.all([
-      author.getSlackUsers({ include: ['workspace'] }),
-      User.findById(createdById),
-    ]);
-    await Promise.map(authorSlackUsers, async slackUser => {
+  await Promise.map(usersTo, async userTo =>
+    Promise.map(userTo.slackUsers, async slackUser => {
       const { workspace } = slackUser;
       const { accessToken } = workspace;
-      await postMessage('feedback_created_by')({ createdBy, feedback })({
-        accessToken,
-        channel: slackUser.slackId,
+      const { channel, ts } = await postMessage('feedback')({
+        feedback,
+        product,
+        userTo,
+        assignedTo,
+        createdBy,
+        author,
+      })({ accessToken, channel: slackUser.slackId });
+      await FeedbackExternalRefService.create({
+        feedbackId,
+        ref: `slack:${workspace.slackId}_${channel}_${ts}`,
+        props: { ts, channel, userId: userTo.id, workspaceId: workspace.id },
       });
-    });
-  }
+    }),
+  );
 };
 
 module.exports = feedbackCreated;

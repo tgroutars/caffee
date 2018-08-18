@@ -61,7 +61,14 @@ module.exports = (sequelize, DataTypes) => {
    * Associations
    */
   Feedback.associate = models => {
-    const { Product, User, RoadmapItem, Scope } = models;
+    const {
+      Product,
+      User,
+      RoadmapItem,
+      Scope,
+      FeedbackExternalRef,
+      FeedbackComment,
+    } = models;
     Feedback.belongsTo(User, {
       as: 'author',
       foreignKey: 'authorId',
@@ -91,6 +98,20 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'scopeId',
       onDelete: 'cascade',
       onUpdate: 'cascade',
+    });
+    Feedback.belongsTo(User, {
+      as: 'assignedTo',
+      foreignKey: 'assignedToId',
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    });
+    Feedback.hasMany(FeedbackExternalRef, {
+      as: 'externalRefs',
+      foreignKey: 'feedbackId',
+    });
+    Feedback.hasMany(FeedbackComment, {
+      as: 'comments',
+      foreignKey: 'feedbackId',
     });
   };
 

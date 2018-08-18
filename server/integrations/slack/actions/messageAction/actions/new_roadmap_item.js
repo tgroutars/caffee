@@ -106,7 +106,7 @@ const newRoadmapItem = async (payload, { workspace, slackUser }) => {
   }
 
   const [roadmapStages, tags] = await Promise.all([
-    product.getRoadmapStages(),
+    product.getRoadmapStages({ where: { isArchived: false } }),
     product.getTags(),
   ]);
   await openRoadmapItemDialog({

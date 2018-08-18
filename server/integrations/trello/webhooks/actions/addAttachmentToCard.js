@@ -12,7 +12,7 @@ const addAttachmentToCard = async payload => {
   } = payload.action.data;
 
   const roadmapItems = await RoadmapItem.findAll({
-    where: { trelloRef: card.id },
+    where: { trelloRef: card.id, archivedAt: null },
     include: ['product'],
   });
   if (!roadmapItems.length) {

@@ -1,8 +1,7 @@
-const archiveReason = ({ feedbackId, feedbackMessageRef }) => {
+const archiveReason = ({ feedbackId }) => {
   const callbackId = {
     type: 'archive_feedback_reason',
     feedbackId,
-    feedbackMessageRef,
   };
 
   const elements = [

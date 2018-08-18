@@ -4,7 +4,7 @@ const { RoadmapItem, SlackWorkspace } = require('../../models');
 const { updateMessage } = require('../../integrations/slack/messages');
 
 module.exports = async ({ roadmapItemId }) => {
-  const roadmapItem = await RoadmapItem.unscoped().findById(roadmapItemId, {
+  const roadmapItem = await RoadmapItem.findById(roadmapItemId, {
     include: ['product', 'stage'],
   });
   const { product, stage } = roadmapItem;

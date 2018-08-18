@@ -1,13 +1,6 @@
-const {
-  Product,
-  ProductUser,
-  Scope,
-  Sequelize,
-} = require('../../../../../models');
+const { Product, ProductUser, Scope } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
-
-const { Op } = Sequelize;
 
 const openFeedbackDialogHelper = openDialog('feedback');
 
@@ -61,7 +54,6 @@ module.exports = async (payload, { slackUser, workspace }) => {
     where: {
       userId: slackUser.userId,
       productId,
-      role: { [Op.in]: ['user', 'admin'] },
     },
     include: ['product'],
   });
@@ -72,7 +64,7 @@ module.exports = async (payload, { slackUser, workspace }) => {
     defaultFeedback,
     defaultAuthorId,
     defaultAuthorName,
-    selectAuthor: !!productUser,
+    selectAuthor: productUser.isPM,
     scopeId: selectedScopeId,
   })({
     accessToken,

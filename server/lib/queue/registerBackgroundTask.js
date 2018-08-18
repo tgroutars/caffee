@@ -1,13 +1,12 @@
 const winston = require('winston');
-const uuidv4 = require('uuid/v4');
 
 const queue = require('./queue');
 
 const jobs = {};
 
 queue.process('backgroundTask', 50, async (job, done) => {
-  const { jobId, args } = job.data;
-  const func = jobs[jobId];
+  const { name, args } = job.data;
+  const func = jobs[name];
 
   try {
     await func(...args);
@@ -18,16 +17,13 @@ queue.process('backgroundTask', 50, async (job, done) => {
   }
 });
 
-const registerBackgroundTask = func => {
-  const jobId = uuidv4();
-  jobs[jobId] = func;
+module.exports = (name, func) => {
+  jobs[name] = func;
 
   return async (...args) => {
     await queue
-      .create('backgroundTask', { jobId, args })
+      .create('backgroundTask', { name, args })
       .removeOnComplete(true)
       .save();
   };
 };
-
-module.exports = registerBackgroundTask;

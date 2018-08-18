@@ -6,10 +6,13 @@ const HashStore = require('../../../lib/redis/HashStore');
 
 const callbackIdStore = new HashStore('slack:callback_id');
 
-const slackDialogOpen = registerBackgroundTask(async (accessToken, args) => {
-  const slackClient = new SlackClient(accessToken);
-  await slackClient.dialog.open(args);
-});
+const slackDialogOpen = registerBackgroundTask(
+  'slack_dialog_open',
+  async (accessToken, args) => {
+    const slackClient = new SlackClient(accessToken);
+    await slackClient.dialog.open(args);
+  },
+);
 
 const preProcessDialog = async rawDialog => ({
   ...rawDialog,

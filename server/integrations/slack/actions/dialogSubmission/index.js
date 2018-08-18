@@ -28,6 +28,7 @@ const validateDialog = async (payload, state) => {
 };
 
 const runDialog = registerBackgroundTask(
+  'run_dialog',
   async (payload, { workspaceId, slackUserId, userId }) => {
     const { type } = payload.callback_id;
     const dialog = dialogs[type];

@@ -1,5 +1,6 @@
 const Redis = require('ioredis');
 const kue = require('kue');
+const winston = require('winston');
 
 const { REDIS_URL = 'redis://127.0.0.1:6379' } = process.env;
 
@@ -21,5 +22,12 @@ setInterval(() => {
 if (process.env.NODE_ENV === 'development') {
   kue.app.listen(4000);
 }
+
+process.once('SIGTERM', () => {
+  queue.shutdown(5000, err => {
+    winston.info('Kue shutdown: ', err || '');
+    process.exit(0);
+  });
+});
 
 module.exports = queue;

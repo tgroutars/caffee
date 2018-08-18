@@ -1,4 +1,6 @@
 /* eslint-disable no-lonely-if */
+const uniqBy = require('lodash/uniqBy');
+
 const andify = require('../../../../lib/andify');
 
 const newFeedback = ({
@@ -15,8 +17,9 @@ const newFeedback = ({
   const isCreator = userTo.id === createdBy.id;
   const isOnBehalf = author.id !== createdBy.id;
   const { archivedAt } = feedback;
-  const otherUsers = [author, assignedTo, createdBy].filter(
-    user => user.id !== userTo.id,
+  const otherUsers = uniqBy(
+    [author, assignedTo, createdBy].filter(user => user.id !== userTo.id),
+    'id',
   );
 
   let text;

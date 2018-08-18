@@ -61,7 +61,14 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
     if (comments.length) {
       text = `${text}\n\n**Discussion**`;
       comments.forEach(comment => {
-        text = `${text}\n***${comment.author.name}***\n${comment.text}`;
+        let commentText = comment.text;
+        if (comment.attachments.length) {
+          const attachmentLinks = comment.attachments
+            .map(({ name, url }) => `[${name}](${url})`)
+            .join('\n');
+          commentText = `${commentText}\n${attachmentLinks}`;
+        }
+        text = `${text}\n***${comment.author.name}***\n${commentText}`;
       });
     }
     if (attachments.length) {

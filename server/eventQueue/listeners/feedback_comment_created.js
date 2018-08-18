@@ -10,7 +10,10 @@ module.exports = async ({ feedbackCommentId }) => {
       'author',
     ],
   });
-  const { feedback, text, author } = comment;
+  const { feedback, text, author, attachments } = comment;
+  const attachmentLinks = attachments
+    .map(({ name, url }) => `<${url}|${name}>`)
+    .join('\n');
   const { externalRefs } = feedback;
   const originRefId = comment.feedbackExternalRefId;
   await Promise.map(externalRefs, async externalRef => {
@@ -22,6 +25,7 @@ module.exports = async ({ feedbackCommentId }) => {
     const workspace = await SlackWorkspace.findById(workspaceId);
     const slackClient = new SlackClient(workspace.accessToken);
     await slackClient.chat.postMessage({
+      text: attachmentLinks,
       attachments: [
         {
           title: author.name,

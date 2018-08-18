@@ -1,15 +1,30 @@
+const Promise = require('bluebird');
+
 const { FeedbackExternalRef, SlackUser } = require('../../../../../models');
 const {
   FeedbackComment: FeedbackCommentService,
 } = require('../../../../../services');
+const { syncFile } = require('../../../helpers/files');
 
 module.exports = async (payload, { workspace }) => {
   const { event } = payload;
-  const { thread_ts: threadTS, channel, text, user: userSlackId } = event;
+
+  const {
+    channel,
+    text,
+    files = [],
+    user: userSlackId,
+    thread_ts: threadTS,
+  } = event;
 
   if (!threadTS || userSlackId === workspace.appUserId) {
     return;
   }
+
+  const attachments = await Promise.map(files, async file =>
+    syncFile(file, workspace.accessToken),
+  );
+
   const messageRef = `slack:${workspace.slackId}_${channel}_${threadTS}`;
 
   const feedbackExternalRef = await FeedbackExternalRef.find({
@@ -27,6 +42,7 @@ module.exports = async (payload, { workspace }) => {
   });
   await FeedbackCommentService.create({
     text,
+    attachments,
     feedbackId: feedbackExternalRef.feedbackId,
     authorId: slackUser.userId,
     feedbackExternalRefId: feedbackExternalRef.id,

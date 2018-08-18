@@ -30,7 +30,12 @@ const findOrUploadFile = async ({ name, id, url, bytes: size }) => {
       url: getURLFromKey(key),
     };
   }
-  const { Location } = await uploadFromURL({ key, url });
+  const { Location } = await uploadFromURL({
+    key,
+    url,
+    ContentDisposition: `attachment; filename: ${name}`,
+    ContentType: mimetype,
+  });
   return {
     key,
     size,

@@ -25,24 +25,26 @@ const newFeedback = ({
   let text;
   if (isCreator) {
     if (isAuthor) {
-      text = `You added a new feedback on ${product.name}`;
+      text = `You added a new feedback concerning ${product.name}`;
     } else {
-      text = `You added a feedback on ${product.name} on behalf of *${
+      text = `You added a feedback concerning ${product.name} on behalf of *${
         author.name
       }*`;
     }
   } else {
     if (isAuthor) {
-      text = `*${createdBy.name}* added a new feedback on ${
+      text = `*${createdBy.name}* added a new feedback concerning ${
         product.name
       } on your behalf`;
     } else {
       if (isOnBehalf) {
-        text = `*${createdBy.name}* added a new feedback on ${
+        text = `*${createdBy.name}* added a new feedback concerning ${
           product.name
         } on behalf of *${author.name}*`;
       } else {
-        text = `*${author.name}* added a new feedback on ${product.name}`;
+        text = `*${author.name}* added a new feedback concerning ${
+          product.name
+        }`;
       }
     }
   }

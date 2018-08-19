@@ -8,16 +8,12 @@ const { postMessage } = require('../../integrations/slack/messages');
 
 const feedbackCreated = async ({ feedbackId }) => {
   const feedback = await Feedback.findById(feedbackId, {
-    include: ['product'],
+    include: ['product', 'scope', 'author', 'createdBy', 'assignedTo'],
   });
-  const { product, createdById, authorId, assignedToId } = feedback;
-  const [assignedTo, author, createdBy] = await Promise.all([
-    User.findById(assignedToId),
-    User.findById(authorId),
-    User.findById(createdById),
-  ]);
+  const { product, createdBy, author, assignedTo, scope } = feedback;
+
   const usersTo = await User.findAll({
-    where: { id: [createdById, authorId, assignedToId] },
+    where: { id: [createdBy.id, author.id, assignedTo.id] },
     include: [{ model: SlackUser, as: 'slackUsers', include: ['workspace'] }],
   });
 
@@ -32,6 +28,7 @@ const feedbackCreated = async ({ feedbackId }) => {
         assignedTo,
         createdBy,
         author,
+        scope,
       })({ accessToken, channel: slackUser.slackId });
       await FeedbackExternalRefService.create({
         feedbackId,

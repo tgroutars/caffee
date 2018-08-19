@@ -11,6 +11,7 @@ const newFeedback = ({
   author,
   createdBy,
   assignedTo,
+  scope,
 }) => {
   const isAuthor = userTo.id === author.id;
   const isAssigned = userTo.id === assignedTo.id;
@@ -23,28 +24,33 @@ const newFeedback = ({
   );
 
   let text;
+  let scopeStr = `*${product.name}*`;
+  if (scope) {
+    scopeStr = `${scopeStr} / *${scope.name}*`;
+  }
+
   if (isCreator) {
     if (isAuthor) {
-      text = `You added a new feedback concerning ${product.name}`;
+      text = `You added a new feedback concerning ${scopeStr}`;
     } else {
-      text = `You added a feedback concerning ${product.name} on behalf of *${
+      text = `You added a feedback concerning ${scopeStr} on behalf of *${
         author.name
       }*`;
     }
   } else {
     if (isAuthor) {
-      text = `*${createdBy.name}* added a new feedback concerning ${
-        product.name
-      } on your behalf`;
+      text = `*${
+        createdBy.name
+      }* added a new feedback concerning ${scopeStr} on your behalf`;
     } else {
       if (isOnBehalf) {
-        text = `*${createdBy.name}* added a new feedback concerning ${
-          product.name
-        } on behalf of *${author.name}*`;
+        text = `*${
+          createdBy.name
+        }* added a new feedback concerning ${scopeStr} on behalf of *${
+          author.name
+        }*`;
       } else {
-        text = `*${author.name}* added a new feedback concerning ${
-          product.name
-        }`;
+        text = `*${author.name}* added a new feedback concerning ${scopeStr}`;
       }
     }
   }

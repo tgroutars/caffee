@@ -21,12 +21,15 @@ const syncFile = async (file, accessToken) => {
     .update(`slack_url:${url}`)
     .digest('hex');
   const stream = await downloadFile(url, accessToken);
-  const { Location } = await S3.upload({
+  const params = {
     key,
     body: stream,
     ContentDisposition: `attachment; filename=${name}`,
-    ContentType: mimetype,
-  });
+  };
+  if (mimetype) {
+    params.ContentType = mimetype;
+  }
+  const { Location } = await S3.upload(params);
   return { url: Location, name, mimetype, size, key };
 };
 

@@ -3,7 +3,7 @@ const pick = require('lodash/pick');
 
 const { requireAuth, findProduct, requireAdmin } = require('./middleware');
 const { Scope: ScopeService } = require('../../services');
-const { Scope } = require('../../models');
+const { Scope, Product, ProductUser } = require('../../models');
 const { APIError } = require('./errors');
 
 const router = new Router();
@@ -24,12 +24,32 @@ const serializeScope = scope => ({
 
 const findScope = async (ctx, next) => {
   const { scopeId } = ctx.request.body;
-  const scope = await Scope.findById(scopeId, { include: ['product'] });
+  const { user } = ctx.state;
+  const scope = await Scope.findById(scopeId, {
+    include: [
+      {
+        model: Product,
+        as: 'product',
+        required: true,
+        include: [
+          {
+            model: ProductUser,
+            as: 'productUsers',
+            required: true,
+            where: { userId: user.id },
+          },
+        ],
+      },
+    ],
+  });
   if (!scope) {
     throw new APIError('scope_not_found');
   }
+  const { product } = scope;
+  const [productUser] = product.productUsers;
   ctx.state.scope = scope;
-  ctx.state.product = scope.product;
+  ctx.state.product = product;
+  ctx.state.productUser = productUser;
   await next();
 };
 

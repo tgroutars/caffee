@@ -9,22 +9,25 @@ const requireAuth = async (ctx, next) => {
   await next();
 };
 
-const requireAdmin = async (ctx, next) => {
-  const { product, user } = ctx.state;
-  if (!product) {
-    throw new Error('product missing from state');
-  }
-  if (!user) {
-    throw new Error('user missing from state');
-  }
-  const productUser = await ProductUser.find({
-    where: {
-      role: 'admin',
-      userId: user.id,
-      productId: product.id,
-    },
-  });
+const requirePM = async (ctx, next) => {
+  const { productUser } = ctx.state;
   if (!productUser) {
+    throw new Error('productUser missing from state');
+  }
+
+  if (!productUser.isPM) {
+    throw new APIError('invalid_auth');
+  }
+  await next();
+};
+
+const requireAdmin = async (ctx, next) => {
+  const { productUser } = ctx.state;
+  if (!productUser) {
+    throw new Error('productUser missing from state');
+  }
+
+  if (!productUser.isAdmin) {
     throw new APIError('invalid_auth');
   }
   await next();
@@ -38,18 +41,18 @@ const findProduct = async (ctx, next) => {
       {
         model: ProductUser,
         as: 'productUsers',
-        where: {
-          userId: user.id,
-          role: 'admin',
-        },
+        required: true,
+        where: { userId: user.id },
       },
     ],
   });
   if (!product) {
     throw new APIError('product_not_found');
   }
+  const [productUser] = product.productUsers;
   ctx.state.product = product;
+  ctx.state.productUser = productUser;
   await next();
 };
 
-module.exports = { requireAuth, requireAdmin, findProduct };
+module.exports = { requireAuth, requirePM, requireAdmin, findProduct };

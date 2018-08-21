@@ -66,6 +66,7 @@ const interactiveMessage = async rawPayload => {
       user: slackUser.slackId,
       accessToken: workspace.accessToken,
     });
+    return;
   }
   const { type } = action.name;
   const interaction = interactions[type];

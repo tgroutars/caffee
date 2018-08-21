@@ -4,7 +4,12 @@ const { isUser, getUserVals } = require('../../helpers/user');
 const { SlackUser: SlackUserService } = require('../../../../services');
 
 const teamJoin = async (payload, { workspace }) => {
-  const { id: userSlackId } = payload.event.user;
+  const { id: userSlackId, team_id: userWorkspaceSlackId } = payload.event.user;
+  // We get events from users in shared channels,
+  // which are not part of the workspace
+  if (userWorkspaceSlackId !== workspace.slackId) {
+    return;
+  }
   const slackClient = new SlackClient(workspace.accessToken);
   const { user: userInfo } = await slackClient.users.info({
     user: userSlackId,

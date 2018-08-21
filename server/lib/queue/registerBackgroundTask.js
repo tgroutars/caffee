@@ -12,7 +12,9 @@ queue.process('backgroundTask', 50, async (job, done) => {
     await func(...args);
     done();
   } catch (err) {
-    winston.error(err, { func, args });
+    winston.error(`Error processing background task: ${name}`);
+    winston.error(err);
+    winston.error(JSON.stringify({ func, args }));
     done(err);
   }
 });

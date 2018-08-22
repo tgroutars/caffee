@@ -24,7 +24,7 @@ const syncFile = async (file, accessToken) => {
   const params = {
     key,
     body: stream,
-    ContentDisposition: `attachment; filename=${name}`,
+    ContentDisposition: `attachment; filename="${encodeURIComponent(name)}"`,
   };
   if (mimetype) {
     params.ContentType = mimetype;

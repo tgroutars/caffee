@@ -21,10 +21,6 @@ module.exports = async (payload, { workspace }) => {
     return;
   }
 
-  const attachments = await Promise.map(files, async file =>
-    syncFile(file, workspace.accessToken),
-  );
-
   const messageRef = `slack:${workspace.slackId}_${channel}_${threadTS}`;
 
   const feedbackExternalRef = await FeedbackExternalRef.find({
@@ -33,6 +29,10 @@ module.exports = async (payload, { workspace }) => {
   if (!feedbackExternalRef) {
     return;
   }
+
+  const attachments = await Promise.map(files, async file =>
+    syncFile(file, workspace.accessToken),
+  );
 
   const slackUser = await SlackUser.find({
     where: {

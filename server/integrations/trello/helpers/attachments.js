@@ -33,7 +33,7 @@ const findOrUploadFile = async ({ name, id, url, bytes: size }) => {
   const params = {
     key,
     url,
-    ContentDisposition: `attachment; filename: ${name}`,
+    ContentDisposition: `attachment; filename="${encodeURIComponent(name)}"`,
   };
   if (mimetype) {
     params.ContentType = mimetype;

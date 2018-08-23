@@ -15,8 +15,9 @@ const SlackUserService = (/* services */) => ({
     });
 
     const [slackUser, created] = await SlackUser.findOrCreate({
-      where: { workspaceId, userId: user.id },
+      where: { workspaceId, slackId },
       defaults: {
+        userId: user.id,
         slackId,
         image,
         name,

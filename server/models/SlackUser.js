@@ -38,10 +38,6 @@ module.exports = (sequelize, DataTypes) => {
           fields: ['workspace_id', 'slack_id'],
           unique: true,
         },
-        {
-          fields: ['workspace_id', 'user_id'],
-          unique: true,
-        },
       ],
     },
   );

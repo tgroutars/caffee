@@ -8,7 +8,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.removeIndex(
-      'feedback_ref',
+      'feedback_external_ref',
       'feedback_external_ref_ref_index',
     );
   },

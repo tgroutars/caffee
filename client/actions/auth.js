@@ -22,7 +22,7 @@ const authSuccess = userId => ({
 });
 
 const authFailure = () => async dispatch => {
-  localStorage.remove('token', null);
+  localStorage.removeItem('token', null);
   dispatch({
     type: AUTH_FAILURE,
   });

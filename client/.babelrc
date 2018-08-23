@@ -9,7 +9,7 @@
         "regenerator": true
       }
     ],
-    "transform-builtin-extend",
+    ["transform-builtin-extend", { "globals": ["Error"] }],
     [
       "import",
       {

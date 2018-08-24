@@ -33,7 +33,7 @@ const exchangeAuthCode = async (userId, authCode) => {
   return null;
 };
 
-const passwordlessURL = async (userId, { path = '' }) => {
+const getPasswordLessURL = async (userId, { path = '' } = {}) => {
   const url = new URL(path, WEB_BASE_URL);
   const authCode = await generateAuthCode(userId);
   url.searchParams.append('userId', userId);
@@ -46,5 +46,5 @@ module.exports = {
   login,
   generateAuthCode,
   exchangeAuthCode,
-  passwordlessURL,
+  getPasswordLessURL,
 };

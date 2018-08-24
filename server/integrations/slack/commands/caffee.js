@@ -4,7 +4,7 @@ const { Product, SlackWorkspace, ProductUser } = require('../../../models');
 const { postEphemeral } = require('../messages');
 const getTitleDescription = require('../../../lib/getTitleDescription');
 const { decode } = require('../helpers/encoding');
-const { passwordlessURL } = require('../../../lib/auth');
+const { getPasswordLessURL } = require('../../../lib/auth');
 
 const postChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
@@ -72,7 +72,7 @@ const caffee = async ({
     defaultAuthorId: slackUser.userId,
     createRoadmapItem: productUser.isPM,
     settingsURL: productUser.isAdmin
-      ? await passwordlessURL(slackUser.userId, {
+      ? await getPasswordLessURL(slackUser.userId, {
           path: `/p/${productId}/settings`,
         })
       : null,

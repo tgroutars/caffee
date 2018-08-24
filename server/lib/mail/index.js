@@ -15,13 +15,13 @@ const sendMail = async (template, data = {}, message = {}) => {
   if (!SENDGRID_API_KEY) {
     return;
   }
-  const text = await renderFile(
+  const html = await renderFile(
     path.join(__dirname, 'templates', `${template}.ejs`),
     data,
   );
   const msg = {
     ...pick(message, ['to', 'from', 'subject']),
-    text,
+    html,
   };
   await sgMail.send(msg);
 };

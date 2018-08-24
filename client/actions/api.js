@@ -45,6 +45,7 @@ export default {
   auth: {
     test: apiCall.bind(this, 'auth.test'),
     login: apiCall.bind(this, 'auth.login'),
+    sendPasswordlessLink: apiCall.bind(this, 'auth.sendPasswordlessLink'),
   },
   users: {
     me: apiCall.bind(this, 'users.me'),

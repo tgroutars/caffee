@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 
-import App from './containers/App';
+import Root from './containers/Root';
 import { store, history } from './store';
 
 const render = () => {
@@ -12,7 +12,7 @@ const render = () => {
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <Switch>
-          <Route path="/" component={App} />
+          <Route path="/" component={Root} />
         </Switch>
       </ConnectedRouter>
     </Provider>,

@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
+import dynamicImport from '../hoc/dynamicImport';
 import Loading from '../components/Loading';
 import Home from './Home/Home';
+
+const Manage = dynamicImport(() => import('./Manage/Manage'));
 
 const App = ({ isAuthed, isWaitingAuth }) => {
   if (isWaitingAuth) {
@@ -16,6 +19,7 @@ const App = ({ isAuthed, isWaitingAuth }) => {
   return (
     <Switch>
       <Route exact path="/" component={Home} />
+      <Route path="/manage/:productId" component={Manage} />
     </Switch>
   );
 };

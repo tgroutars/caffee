@@ -1,4 +1,4 @@
-const isUser = user => !user.is_bot && !user.deleted && user.profile.email;
+const isUser = user => !!(!user.is_bot && !user.deleted && user.profile.email);
 
 const getUserVals = userInfo => {
   const { profile, id: slackId, team_id: workspaceSlackId } = userInfo;

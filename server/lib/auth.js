@@ -33,8 +33,7 @@ const exchangeAuthCode = async (userId, authCode) => {
   return null;
 };
 
-const passwordlessURL = async (userId, { productId }) => {
-  const path = productId ? `/p/${productId}` : '';
+const passwordlessURL = async (userId, { path = '' }) => {
   const url = new URL(path, WEB_BASE_URL);
   const authCode = await generateAuthCode(userId);
   url.searchParams.append('userId', userId);

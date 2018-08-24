@@ -104,10 +104,12 @@ const channelMessage = async (payload, { workspace }) => {
     defaultRoadmapItemTitle: defaultTitle,
     defaultRoadmapItemDescription: defaultDescription,
     defaultAuthorId: slackUser.userId,
-    productId: products[0].id,
+    productId: product.id,
     createRoadmapItem: productUser.isPM,
     settingsURL: productUser.isAdmin
-      ? await passwordlessURL(slackUser.userId, { productId: product.id })
+      ? await passwordlessURL(slackUser.userId, {
+          path: `/p/${product.id}/settings`,
+        })
       : null,
   })({ accessToken, channel, user: userSlackId });
 };

@@ -69,7 +69,9 @@ const appHomeMessage = async (payload, { workspace }) => {
     productId: product.id,
     createRoadmapItem: productUser.isPM,
     settingsURL: productUser.isAdmin
-      ? await passwordlessURL(slackUser.userId, { productId: product.id })
+      ? await passwordlessURL(slackUser.userId, {
+          path: `/p/${product.id}/settings`,
+        })
       : null,
   })({ accessToken, channel, user: slackUser.slackId });
 };

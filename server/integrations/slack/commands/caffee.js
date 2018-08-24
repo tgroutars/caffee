@@ -72,7 +72,9 @@ const caffee = async ({
     defaultAuthorId: slackUser.userId,
     createRoadmapItem: productUser.isPM,
     settingsURL: productUser.isAdmin
-      ? await passwordlessURL(slackUser.userId, { productId })
+      ? await passwordlessURL(slackUser.userId, {
+          path: `/p/${productId}/settings`,
+        })
       : null,
   })({
     accessToken,

@@ -41,7 +41,7 @@ const sendMenu = async (payload, { workspace, slackUser, user }) => {
     defaultAuthorId,
     defaultAuthorName,
     settingsURL: productUser.isAdmin
-      ? await passwordlessURL(user.id, { productId })
+      ? await passwordlessURL(user.id, { path: `/p/${productId}/settings` })
       : null,
     createRoadmapItem: !!productUser,
   })({

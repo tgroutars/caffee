@@ -18,6 +18,10 @@ class Store {
     const strValue = await redisClient.get(`${this.prefix}:${key}`);
     return JSON.parse(strValue);
   }
+
+  async del(key) {
+    await redisClient.del(`${this.prefix}:${key}`);
+  }
 }
 
 module.exports = Store;

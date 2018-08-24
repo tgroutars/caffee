@@ -58,6 +58,7 @@ router.use(async (ctx, next) => {
   if (type === 'Bearer' && token) {
     const userId = await authenticate(token);
     if (userId) {
+      ctx.state.token = token;
       ctx.state.user = await User.findById(userId);
     }
   }

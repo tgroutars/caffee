@@ -4,7 +4,12 @@ import { push } from 'connected-react-router';
 
 import api, { APIError } from './api';
 import { addEntities } from './entities';
-import { AUTH_SET_TOKEN, AUTH_SUCCESS, AUTH_FAILURE } from '../types';
+import {
+  AUTH_SET_TOKEN,
+  AUTH_SUCCESS,
+  AUTH_FAILURE,
+  LOGOUT_SUCCESS,
+} from '../types';
 
 const setToken = token => ({
   type: AUTH_SET_TOKEN,
@@ -28,11 +33,18 @@ const authFailure = () => async dispatch => {
   });
 };
 
+const logoutSuccess = () => async dispatch => {
+  localStorage.removeItem('token', null);
+  dispatch({
+    type: LOGOUT_SUCCESS,
+  });
+};
+
 const testAuth = () => async dispatch => {
   try {
     const { userId } = await dispatch(api.auth.test());
-    await dispatch(authSuccess(userId));
     await dispatch(fetchAuthedUser());
+    await dispatch(authSuccess(userId));
   } catch (err) {
     if (err instanceof APIError && err.error === 'no_auth') {
       await dispatch(authFailure());
@@ -76,4 +88,10 @@ export const checkAuth = () => async (dispatch, getState) => {
     await dispatch(setToken(storedToken));
   }
   await dispatch(testAuth());
+};
+
+export const logout = () => async dispatch => {
+  await dispatch(api.auth.logout());
+  await dispatch(logoutSuccess());
+  await dispatch(checkAuth());
 };

@@ -6,7 +6,7 @@ import trim from 'lodash/trim';
 import styled from 'styled-components';
 
 import { currentProductSelector } from '../../../selectors/product';
-import { saveQuestions } from '../../../actions/product';
+import { saveQuestions } from '../../../actions/products';
 
 const { TextArea } = Input;
 

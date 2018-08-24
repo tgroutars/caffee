@@ -45,6 +45,7 @@ export default {
   auth: {
     test: apiCall.bind(this, 'auth.test'),
     login: apiCall.bind(this, 'auth.login'),
+    logout: apiCall.bind(this, 'auth.logout'),
     sendPasswordlessLink: apiCall.bind(this, 'auth.sendPasswordlessLink'),
   },
   users: {
@@ -52,6 +53,7 @@ export default {
   },
   products: {
     info: apiCall.bind(this, 'products.info'),
+    list: apiCall.bind(this, 'products.list'),
     setQuestions: apiCall.bind(this, 'products.setQuestions'),
   },
   scopes: {

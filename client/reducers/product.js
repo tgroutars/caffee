@@ -1,25 +1,14 @@
 import { combineReducers } from 'redux';
 
-import { PRODUCT_SET_PRODUCT_ID, PRODUCT_FETCH_SUCCESS } from '../types';
+import { PRODUCT_SET_PRODUCT_IDS } from '../types';
 
-const productId = (state = null, action) => {
+const productIds = (state = [], action) => {
   switch (action.type) {
-    case PRODUCT_SET_PRODUCT_ID:
-      return action.payload.productId;
+    case PRODUCT_SET_PRODUCT_IDS:
+      return action.payload.productIds;
     default:
       return state;
   }
 };
 
-const isWaiting = (state = true, action) => {
-  switch (action.type) {
-    case PRODUCT_SET_PRODUCT_ID:
-      return true;
-    case PRODUCT_FETCH_SUCCESS:
-      return false;
-    default:
-      return state;
-  }
-};
-
-export default combineReducers({ isWaiting, productId });
+export default combineReducers({ productIds });

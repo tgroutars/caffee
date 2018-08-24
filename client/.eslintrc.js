@@ -21,5 +21,6 @@ module.exports = {
         aspects: ['noHref', 'invalidHref', 'preferButton'],
       },
     ],
+    'react/no-did-mount-set-state': 'off',
   },
 };

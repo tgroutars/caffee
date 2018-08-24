@@ -6,10 +6,12 @@ export const scopes = new schema.Array(scope);
 export const product = new schema.Entity('products', {
   scopes,
 });
+export const products = new schema.Array(product);
 
 export default {
   user,
   scope,
   scopes,
   product,
+  products,
 };

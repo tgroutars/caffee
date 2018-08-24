@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { Card, Button, Input, Icon, message } from 'antd';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
+import Loading from '../../components/Loading';
 import api, { APIError } from '../../actions/api';
 
 const Container = styled.div`
@@ -51,6 +53,8 @@ const getErrorMessage = err => {
 class Login extends React.Component {
   static propTypes = {
     sendPasswordlessLink: PropTypes.func.isRequired,
+    isAuthed: PropTypes.bool.isRequired,
+    isWaitingAuth: PropTypes.bool.isRequired,
   };
 
   state = { email: '', isWaiting: false, success: false };
@@ -81,6 +85,14 @@ class Login extends React.Component {
 
   renderLoginWindow = () => {
     const { email, isWaiting, success } = this.state;
+    const { isAuthed, isWaitingAuth } = this.props;
+    if (isWaitingAuth) {
+      return <Loading />;
+    }
+    if (isAuthed) {
+      return <Redirect to="/" />;
+    }
+
     if (success) {
       return (
         <Success>
@@ -116,11 +128,16 @@ class Login extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  isAuthed: state.auth.isAuthed,
+  isWaitingAuth: state.auth.isWaiting,
+});
+
 const mapDispatchToProps = {
   sendPasswordlessLink: api.auth.sendPasswordlessLink,
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(Login);

@@ -1,7 +1,11 @@
 const Router = require('koa-router');
 
 const { APIError } = require('./errors');
-const { exchangeAuthCode, getPasswordLessURL } = require('../../lib/auth');
+const {
+  exchangeAuthCode,
+  getPasswordLessURL,
+  logout,
+} = require('../../lib/auth');
 const { requireAuth } = require('./middleware');
 const { Sequelize, User } = require('../../models');
 const { sendMail } = require('../../lib/mail');
@@ -21,6 +25,12 @@ router.post('/auth.login', async ctx => {
     throw new APIError('invalid_auth');
   }
   ctx.send({ token });
+});
+
+router.post('/auth.logout', async ctx => {
+  const { token } = ctx.state;
+  await logout(token);
+  ctx.send();
 });
 
 router.post('/auth.sendPasswordlessLink', async ctx => {

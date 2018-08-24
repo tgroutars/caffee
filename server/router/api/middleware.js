@@ -50,6 +50,7 @@ const findProduct = async (ctx, next) => {
     throw new APIError('product_not_found');
   }
   const [productUser] = product.productUsers;
+  product.userRole = productUser.role;
   ctx.state.product = product;
   ctx.state.productUser = productUser;
   await next();

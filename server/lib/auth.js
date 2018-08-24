@@ -19,6 +19,10 @@ const login = async userId => {
   return token;
 };
 
+const logout = async token => {
+  await tokenStore.del(token);
+};
+
 const generateAuthCode = async userId => {
   const authCode = (await randomBytes(16)).toString('hex');
   await authCodeStore.set(authCode, userId);
@@ -44,6 +48,7 @@ const getPasswordLessURL = async (userId, { path = '' } = {}) => {
 module.exports = {
   authenticate,
   login,
+  logout,
   generateAuthCode,
   exchangeAuthCode,
   getPasswordLessURL,

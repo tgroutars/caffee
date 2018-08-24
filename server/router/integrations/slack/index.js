@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const Router = require('koa-router');
-const Boom = require('boom');
 
 const actionsRouter = require('./actions');
 const eventsRouter = require('./events');
@@ -25,7 +24,7 @@ router.use(async (ctx, next) => {
     .update(unhashedSignature);
   const signature = `v0=${hmac.digest('hex')}`;
   if (signature !== requestSignature) {
-    throw Boom.unauthorized();
+    ctx.throw(401);
   }
   await next();
 });

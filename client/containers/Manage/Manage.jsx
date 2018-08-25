@@ -2,10 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import styled from 'styled-components';
+import { Layout as AntLayout } from 'antd';
 
-import Loading from '../../components/Loading';
 import { fetchProduct } from '../../actions/products';
-import Inbox from './Inbox';
+import Inbox from './Inbox/Inbox';
+import Nav from './Nav';
+
+const { Content: AntContent, Header: AntHeader } = AntLayout;
+
+const Layout = styled(AntLayout)``;
+const Header = styled(AntHeader)`
+  padding-left: 0;
+`;
+const Content = styled(AntContent)``;
 
 class Manage extends React.Component {
   static propTypes = {
@@ -28,15 +38,21 @@ class Manage extends React.Component {
 
   render() {
     const { isWaiting } = this.state;
-    if (isWaiting) {
-      return <Loading />;
-    }
     const { url } = this.props.match;
     return (
-      <Switch>
-        <Redirect exact from={url} to={`${url}/inbox`} />
-        <Route path={`${url}/inbox`} component={Inbox} />
-      </Switch>
+      <Layout>
+        <Header>
+          <Nav />
+        </Header>
+        <Content>
+          {!isWaiting ? (
+            <Switch>
+              <Redirect exact from={url} to={`${url}/inbox`} />
+              <Route path={`${url}/inbox`} component={Inbox} />
+            </Switch>
+          ) : null}
+        </Content>
+      </Layout>
     );
   }
 }

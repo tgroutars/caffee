@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Avatar, List } from 'antd';
 
-import Loading from '../../components/Loading';
 import { listProducts } from '../../actions/products';
 import { productsSelector } from '../../selectors/product';
 import { authedUserSelector } from '../../selectors/user';
@@ -57,28 +56,34 @@ class Home extends React.Component {
   }
 
   renderProducts = () => {
-    const { products } = this.props;
     const { isWaiting } = this.state;
-
-    if (isWaiting) {
-      return <Loading />;
-    }
-
+    const products = isWaiting ? [null] : this.props.products;
     return (
       <ProductList
         bordered
         size="large"
         itemLayout="vertical"
         dataSource={products}
-        renderItem={product => (
-          <ProductListItem
-            extra={<Avatar shape="square" size={60} src={product.image} />}
-          >
-            <Product
-              title={<Link to={`/manage/${product.id}`}>{product.name}</Link>}
-            />
-          </ProductListItem>
-        )}
+        renderItem={product => {
+          if (!product) {
+            return (
+              <ProductListItem
+                extra={<Avatar shape="square" size={60} src="" />}
+              >
+                <Product title="-" />
+              </ProductListItem>
+            );
+          }
+          return (
+            <ProductListItem
+              extra={<Avatar shape="square" size={60} src={product.image} />}
+            >
+              <Product
+                title={<Link to={`/manage/${product.id}`}>{product.name}</Link>}
+              />
+            </ProductListItem>
+          );
+        }}
       />
     );
   };

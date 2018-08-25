@@ -5,6 +5,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import Nav from './Nav';
 import Feedback from './Feedback';
+import Scopes from './Scopes/Scopes';
 
 const { Content } = Layout;
 
@@ -32,6 +33,7 @@ const ProductSettings = () => (
           path="/manage/:productId/settings/feedback"
           component={Feedback}
         />
+        <Route path="/manage/:productId/settings/scopes" component={Scopes} />
       </Switch>
     </StyledContent>
   </StyledLayout>

@@ -8,9 +8,9 @@ import {
   saveName,
   createScope,
   archiveScope,
-} from '../../../actions/scopes';
-import { scopesTreeSelector } from '../../../selectors/scope';
-import Scopes from './Scopes';
+} from '../../../../actions/scopes';
+import { scopesTreeSelector } from '../../../../selectors/scope';
+import ScopesComponent from './Component';
 
 const ScopesWrapper = styled.div`
   max-width: 700px;
@@ -18,7 +18,7 @@ const ScopesWrapper = styled.div`
   margin-top: 16px;
 `;
 
-class ProductSettingsFeedbacks extends React.Component {
+class Scopes extends React.Component {
   static propTypes = {
     productId: PropTypes.string.isRequired,
     fetchScopes: PropTypes.func.isRequired,
@@ -61,7 +61,7 @@ class ProductSettingsFeedbacks extends React.Component {
           it to the right PM
         </p>
         <ScopesWrapper>
-          <Scopes
+          <ScopesComponent
             scopes={scopesTree}
             onSave={this.handleSave}
             onArchive={this.handleArchive}
@@ -87,4 +87,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(ProductSettingsFeedbacks);
+)(Scopes);

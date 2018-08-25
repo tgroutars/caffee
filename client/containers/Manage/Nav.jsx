@@ -37,12 +37,12 @@ const Nav = ({ productId, pathname }) => {
           <HomeIcon type="home" />
         </Link>
       </HomeButton>
-      <Menu.Item key="inbox">
+      {/* <Menu.Item key="inbox">
         <Link to={`/manage/${productId}/inbox`}>Inbox</Link>
       </Menu.Item>
       <Menu.Item key="roadmap">
         <Link to={`/manage/${productId}/roadmap`}>Roadmap</Link>
-      </Menu.Item>
+      </Menu.Item> */}
       <SettingsMenuItem key="settings">
         <Link to={`/manage/${productId}/settings`}>
           <Icon type="setting" />Settings

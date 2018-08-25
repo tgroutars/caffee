@@ -34,6 +34,13 @@ export const changeCurrentProduct = productId => async (dispatch, getState) => {
   dispatch(addEntities('product', product));
 };
 
+export const saveQuestions = (productId, questions) => async dispatch => {
+  const { product } = await dispatch(
+    api.products.setQuestions({ productId, questions }),
+  );
+  await dispatch(addEntities('product', product));
+};
+
 // //
 // const setProductId = productId => ({
 //   type: PRODUCT_SET_PRODUCT_ID,
@@ -48,14 +55,6 @@ export const changeCurrentProduct = productId => async (dispatch, getState) => {
 // });
 //
 
-//
-// export const saveQuestions = (productId, questions) => async dispatch => {
-//   const { product } = await dispatch(
-//     api.products.setQuestions({ productId, questions }),
-//   );
-//   await dispatch(addEntities('product', product));
-// };
-//
 // export const listProducts = () => async dispatch => {
 //   // dispatch();
 // };

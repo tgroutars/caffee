@@ -7,6 +7,7 @@ import { Layout as AntLayout } from 'antd';
 
 import { fetchProduct } from '../../actions/products';
 import Inbox from './Inbox/Inbox';
+import Settings from './Settings/Settings';
 import Nav from './Nav';
 
 const { Content: AntContent, Header: AntHeader } = AntLayout;
@@ -14,8 +15,12 @@ const { Content: AntContent, Header: AntHeader } = AntLayout;
 const Layout = styled(AntLayout)``;
 const Header = styled(AntHeader)`
   padding-left: 0;
+  height: 64px;
 `;
-const Content = styled(AntContent)``;
+const Content = styled(AntContent)`
+  height: calc(100vh - 64px);
+  padding: 32px;
+`;
 
 class Manage extends React.Component {
   static propTypes = {
@@ -49,6 +54,7 @@ class Manage extends React.Component {
             <Switch>
               <Redirect exact from={url} to={`${url}/inbox`} />
               <Route path={`${url}/inbox`} component={Inbox} />
+              <Route path={`${url}/settings`} component={Settings} />
             </Switch>
           ) : null}
         </Content>

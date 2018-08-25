@@ -17,6 +17,11 @@ const HomeIcon = styled(Icon)`
   line-height: 64px;
   font-size: 24px;
 `;
+const SettingsMenuItem = styled(Menu.Item)`
+  && {
+    float: right;
+  }
+`;
 
 const Nav = ({ productId, pathname }) => {
   const match = matchPath(pathname, { path: '/manage/:productId/:section?' });
@@ -38,6 +43,11 @@ const Nav = ({ productId, pathname }) => {
       <Menu.Item key="roadmap">
         <Link to={`/manage/${productId}/roadmap`}>Roadmap</Link>
       </Menu.Item>
+      <SettingsMenuItem key="settings">
+        <Link to={`/manage/${productId}/settings`}>
+          <Icon type="setting" />Settings
+        </Link>
+      </SettingsMenuItem>
     </StyledMenu>
   );
 };

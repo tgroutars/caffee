@@ -5,6 +5,8 @@ import { Link, matchPath } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { isCurrentProductAdminSelector } from '../../selectors/product';
+
 const StyledMenu = styled(Menu)`
   line-height: 64px;
 `;
@@ -23,7 +25,7 @@ const SettingsMenuItem = styled(Menu.Item)`
   }
 `;
 
-const Nav = ({ productId, pathname }) => {
+const Nav = ({ productId, pathname, isUserAdmin }) => {
   const match = matchPath(pathname, { path: '/manage/:productId/:section?' });
   const { section } = match.params;
   return (
@@ -43,11 +45,13 @@ const Nav = ({ productId, pathname }) => {
       <Menu.Item key="roadmap">
         <Link to={`/manage/${productId}/roadmap`}>Roadmap</Link>
       </Menu.Item> */}
-      <SettingsMenuItem key="settings">
-        <Link to={`/manage/${productId}/settings`}>
-          <Icon type="setting" />Settings
-        </Link>
-      </SettingsMenuItem>
+      {isUserAdmin ? (
+        <SettingsMenuItem key="settings">
+          <Link to={`/manage/${productId}/settings`}>
+            <Icon type="setting" />Settings
+          </Link>
+        </SettingsMenuItem>
+      ) : null}
     </StyledMenu>
   );
 };
@@ -55,11 +59,13 @@ const Nav = ({ productId, pathname }) => {
 Nav.propTypes = {
   productId: PropTypes.string.isRequired,
   pathname: PropTypes.string.isRequired,
+  isUserAdmin: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   productId: state.product.productId,
   pathname: state.router.location.pathname,
+  product: isCurrentProductAdminSelector(state),
 });
 
 export default connect(mapStateToProps)(Nav);

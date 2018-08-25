@@ -65,7 +65,7 @@ Nav.propTypes = {
 const mapStateToProps = state => ({
   productId: state.product.productId,
   pathname: state.router.location.pathname,
-  product: isCurrentProductAdminSelector(state),
+  isUserAdmin: isCurrentProductAdminSelector(state),
 });
 
 export default connect(mapStateToProps)(Nav);

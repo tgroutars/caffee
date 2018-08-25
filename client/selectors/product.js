@@ -23,7 +23,7 @@ export const currentProductSelector = createSelector(
 );
 
 export const isCurrentProductAdminSelector = createSelector(
-  currentProductIdSelector,
+  currentProductSelector,
   product => {
     if (!product) {
       return false;

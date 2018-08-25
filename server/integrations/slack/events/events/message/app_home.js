@@ -3,6 +3,7 @@ const { postEphemeral } = require('../../../messages');
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
 const { decode } = require('../../../helpers/encoding');
 const { getPasswordLessURL } = require('../../../../../lib/auth');
+const { productSettings } = require('../../../../../lib/clientRoutes');
 
 const postMenuChooseProductMessage = postEphemeral('menu_choose_product');
 const postMenuMessage = postEphemeral('menu');
@@ -70,7 +71,7 @@ const appHomeMessage = async (payload, { workspace }) => {
     createRoadmapItem: productUser.isPM,
     settingsURL: productUser.isAdmin
       ? await getPasswordLessURL(slackUser.userId, {
-          path: `/p/${product.id}/settings`,
+          path: productSettings(product.id),
         })
       : null,
   })({ accessToken, channel, user: slackUser.slackId });

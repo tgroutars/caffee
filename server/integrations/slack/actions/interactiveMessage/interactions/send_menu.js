@@ -1,6 +1,7 @@
 const { postEphemeral } = require('../../../messages');
 const { ProductUser, Sequelize } = require('../../../../../models');
 const { getPasswordLessURL } = require('../../../../../lib/auth');
+const { productSettings } = require('../../../../../lib/clientRoutes');
 
 const { Op } = Sequelize;
 
@@ -41,7 +42,7 @@ const sendMenu = async (payload, { workspace, slackUser, user }) => {
     defaultAuthorId,
     defaultAuthorName,
     settingsURL: productUser.isAdmin
-      ? await getPasswordLessURL(user.id, { path: `/p/${productId}/settings` })
+      ? await getPasswordLessURL(user.id, { path: productSettings(productId) })
       : null,
     createRoadmapItem: !!productUser,
   })({

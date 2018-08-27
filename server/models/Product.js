@@ -101,9 +101,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Product.prototype.getFeedbackForm = function getFeedbackForm(text) {
     const { questions } = this;
-    const questionsText = questions
-      .map(question => `*${question}*`)
-      .join('\n\n');
+    const questionsText = questions.map(question => `${question}`).join('\n\n');
     let feedbackForm = `${questionsText}\n`;
     if (text && questions.length) {
       feedbackForm = `${feedbackForm}\n\n----------------------\n\n`;

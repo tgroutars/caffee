@@ -25,9 +25,9 @@ const SettingsMenuItem = styled(Menu.Item)`
   }
 `;
 
-const Nav = ({ productId, pathname, isUserAdmin }) => {
+const Nav = ({ pathname, isUserAdmin }) => {
   const match = matchPath(pathname, { path: '/manage/:productId/:section?' });
-  const { section } = match.params;
+  const { section, productId } = match.params;
   return (
     <StyledMenu
       theme="dark"
@@ -57,13 +57,11 @@ const Nav = ({ productId, pathname, isUserAdmin }) => {
 };
 
 Nav.propTypes = {
-  productId: PropTypes.string.isRequired,
   pathname: PropTypes.string.isRequired,
   isUserAdmin: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
-  productId: state.product.productId,
   pathname: state.router.location.pathname,
   isUserAdmin: isCurrentProductAdminSelector(state),
 });

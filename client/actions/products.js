@@ -40,21 +40,3 @@ export const saveQuestions = (productId, questions) => async dispatch => {
   );
   await dispatch(addEntities('product', product));
 };
-
-// //
-// const setProductId = productId => ({
-//   type: PRODUCT_SET_PRODUCT_ID,
-//   payload: { productId },
-// });
-//
-// const fetch = () => ({
-//   type: PRODUCT_FETCH_PRODUCT,
-// });
-// const fetchSuccess = () => ({
-//   type: PRODUCT_FETCH_PRODUCT_SUCCESS,
-// });
-//
-
-// export const listProducts = () => async dispatch => {
-//   // dispatch();
-// };

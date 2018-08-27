@@ -27,6 +27,7 @@ export const apiCall = (method, params = {}) => async (dispatch, getState) => {
     headers.Authorization = `Bearer ${token}`;
   }
   const baseURL = process.env.BASE_URL;
+  console.log({ method, params });
   dispatch(apiRequest(method, params));
   const response = await axios.post(`/api/${method}`, params, {
     headers,
@@ -61,5 +62,8 @@ export default {
     setName: apiCall.bind(this, 'scopes.setName'),
     create: apiCall.bind(this, 'scopes.create'),
     archive: apiCall.bind(this, 'scopes.archive'),
+  },
+  feedbacks: {
+    list: apiCall.bind(this, 'feedbacks.list'),
   },
 };

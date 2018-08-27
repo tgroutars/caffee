@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-const currentProductIdSelector = state => state.product.productId;
-const productIdsSelector = state => state.product.productIds;
+export const currentProductIdSelector = state => state.product.productId;
+export const productIdsSelector = state => state.product.productIds;
 const productMapSelector = state => state.entities.products;
 
 const isPM = product =>

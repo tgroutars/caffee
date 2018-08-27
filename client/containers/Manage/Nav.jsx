@@ -39,10 +39,10 @@ const Nav = ({ pathname, isUserAdmin }) => {
           <HomeIcon type="home" />
         </Link>
       </HomeButton>
-      {/* <Menu.Item key="inbox">
+      <Menu.Item key="inbox">
         <Link to={`/manage/${productId}/inbox`}>Inbox</Link>
       </Menu.Item>
-      <Menu.Item key="roadmap">
+      {/* <Menu.Item key="roadmap">
         <Link to={`/manage/${productId}/roadmap`}>Roadmap</Link>
       </Menu.Item> */}
       {isUserAdmin ? (

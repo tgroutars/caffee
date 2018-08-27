@@ -8,6 +8,7 @@ const authRouter = require('./auth');
 const usersRouter = require('./users');
 const productsRouter = require('./products');
 const scopesRouter = require('./scopes');
+const feedbacksRouter = require('./feedbacks');
 
 const router = new Router();
 
@@ -69,5 +70,6 @@ router.use(authRouter.routes(), authRouter.allowedMethods());
 router.use(usersRouter.routes(), usersRouter.allowedMethods());
 router.use(productsRouter.routes(), productsRouter.allowedMethods());
 router.use(scopesRouter.routes(), scopesRouter.allowedMethods());
+router.use(feedbacksRouter.routes(), feedbacksRouter.allowedMethods());
 
 module.exports = router;

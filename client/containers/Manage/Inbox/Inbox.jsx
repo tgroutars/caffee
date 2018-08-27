@@ -1,10 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { Layout } from 'antd';
-import { matchPath } from 'react-router-dom';
+import { PropTypes } from 'prop-types';
+import { connect } from 'react-redux';
 
+import { listFeedbacks } from '../../../actions/feedbacks';
+import { currentProductIdSelector } from '../../../selectors/product';
+import FeedbacksList from './FeedbacksList';
 import Nav from './Nav';
 
 const { Content } = Layout;
@@ -15,27 +17,55 @@ const StyledLayout = styled(Layout)`
 const StyledContent = styled(Content)`
   background: #fff;
   background: rgba(0, 0, 0, 0);
+  display: grid;
+  grid-template-columns: 400px auto;
+  grid-template-rows: auto;
+  overflow-x: scroll !important;
+`;
+const FeedbacksListWrapper = styled.div`
   padding: 24px;
-  padding-left: 32px;
+`;
+const FeedbackWrapper = styled.div`
+  padding: 24px;
 `;
 
-const Inbox = ({ pathname }) => {
-  const match = matchPath(pathname, { path: '/manage/:productId/inbox/:box?' });
-  const box = match.params.box || 'unprocessed';
-  return (
-    <StyledLayout>
-      <Nav />
-      <StyledContent>{box}</StyledContent>
-    </StyledLayout>
-  );
-};
+class Inbox extends React.Component {
+  static propTypes = {
+    listFeedbacks: PropTypes.func.isRequired,
+    productId: PropTypes.string.isRequired,
+  };
 
-Inbox.propTypes = {
-  pathname: PropTypes.string.isRequired,
-};
+  componentDidMount() {
+    const { productId } = this.props;
+    this.props.listFeedbacks(productId);
+  }
+
+  render() {
+    return (
+      <StyledLayout>
+        <Nav />
+        <StyledContent>
+          <FeedbacksListWrapper>
+            <FeedbacksList />
+          </FeedbacksListWrapper>
+          <FeedbackWrapper style={{ minWidth: '500px' }}>
+            coucou
+          </FeedbackWrapper>
+        </StyledContent>
+      </StyledLayout>
+    );
+  }
+}
 
 const mapStateToProps = state => ({
-  pathname: state.router.location.pathname,
+  productId: currentProductIdSelector(state),
 });
 
-export default connect(mapStateToProps)(Inbox);
+const mapDispatchToProps = {
+  listFeedbacks,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Inbox);

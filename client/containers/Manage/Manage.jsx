@@ -52,7 +52,7 @@ class Manage extends React.Component {
         <Content>
           {!isWaiting ? (
             <Switch>
-              <Redirect exact from={url} to={`${url}/settings`} />
+              <Redirect exact from={url} to={`${url}/inbox/unprocessed`} />
               <Route path={`${url}/inbox`} component={Inbox} />
               <Route path={`${url}/settings`} component={Settings} />
             </Switch>

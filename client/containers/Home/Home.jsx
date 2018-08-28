@@ -79,7 +79,11 @@ class Home extends React.Component {
               extra={<Avatar shape="square" size={60} src={product.image} />}
             >
               <Product
-                title={<Link to={`/manage/${product.id}`}>{product.name}</Link>}
+                title={
+                  <Link to={`/manage/${product.id}/inbox/unprocessed`}>
+                    {product.name}
+                  </Link>
+                }
               />
             </ProductListItem>
           );

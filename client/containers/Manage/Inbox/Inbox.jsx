@@ -3,11 +3,14 @@ import styled from 'styled-components';
 import { Layout } from 'antd';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { listFeedbacks } from '../../../actions/feedbacks';
 import { currentProductIdSelector } from '../../../selectors/product';
+import { currentInboxSelector } from '../../../selectors/feedback';
 import FeedbacksList from './FeedbacksList';
 import Nav from './Nav';
+import Feedback from './Feedback';
 
 const { Content } = Layout;
 
@@ -18,7 +21,7 @@ const StyledContent = styled(Content)`
   background: #fff;
   background: rgba(0, 0, 0, 0);
   display: grid;
-  grid-template-columns: 400px auto;
+  grid-template-columns: 500px auto;
   grid-template-rows: auto;
   overflow-x: scroll !important;
 `;
@@ -27,6 +30,7 @@ const FeedbacksListWrapper = styled.div`
 `;
 const FeedbackWrapper = styled.div`
   padding: 24px;
+  min-width: 500px;
 `;
 
 class Inbox extends React.Component {
@@ -35,9 +39,18 @@ class Inbox extends React.Component {
     productId: PropTypes.string.isRequired,
   };
 
-  componentDidMount() {
-    const { productId } = this.props;
-    this.props.listFeedbacks(productId);
+  async componentDidMount() {
+    const { productId, inbox } = this.props;
+    if (inbox) {
+      await this.props.listFeedbacks(productId);
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { productId, inbox } = this.props;
+    if (inbox && inbox !== prevProps.inbox) {
+      await this.props.listFeedbacks(productId);
+    }
   }
 
   render() {
@@ -46,10 +59,23 @@ class Inbox extends React.Component {
         <Nav />
         <StyledContent>
           <FeedbacksListWrapper>
-            <FeedbacksList />
+            <Switch>
+              <Redirect
+                exact
+                from="/manage/:productId/inbox/"
+                to="/manage/:productId/inbox/unprocessed"
+              />
+              <Route
+                path="/manage/:productId/inbox/:inbox"
+                component={FeedbacksList}
+              />
+            </Switch>
           </FeedbacksListWrapper>
-          <FeedbackWrapper style={{ minWidth: '500px' }}>
-            coucou
+          <FeedbackWrapper>
+            <Route
+              path="/manage/:productId/inbox/:inbox/:feedbackId"
+              component={Feedback}
+            />
           </FeedbackWrapper>
         </StyledContent>
       </StyledLayout>
@@ -59,6 +85,7 @@ class Inbox extends React.Component {
 
 const mapStateToProps = state => ({
   productId: currentProductIdSelector(state),
+  inbox: currentInboxSelector(state),
 });
 
 const mapDispatchToProps = {

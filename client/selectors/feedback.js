@@ -5,6 +5,8 @@ import { currentProductSelector } from './product';
 
 const filterFuncs = {
   unprocessed: feedback => !feedback.archivedAt && !feedback.roadmapItemId,
+  processed: feedback => !!feedback.roadmapItemId,
+  archived: feedback => !!feedback.archivedAt,
 };
 
 const feedbacksSelector = state => state.entities.feedbacks;
@@ -12,12 +14,13 @@ const currentPathnameSelector = state => state.router.location.pathname;
 export const currentInboxSelector = createSelector(
   currentPathnameSelector,
   pathname => {
-    const match = matchPath(pathname, '/manage/:productId/inbox/:inbox?');
+    const match = matchPath(pathname, '/manage/:productId/inbox/:inbox');
+
     if (!match) {
       return null;
     }
 
-    return match.params.inbox || 'unprocessed';
+    return match.params.inbox;
   },
 );
 
@@ -36,4 +39,25 @@ export const currentFeedbacksSelector = createSelector(
   currentInboxSelector,
   allFeedbacksSelector,
   (inbox, feedbacks) => feedbacks.filter(filterFuncs[inbox]),
+);
+
+export const currentFeedbackIdSelector = createSelector(
+  currentPathnameSelector,
+  pathname => {
+    const match = matchPath(
+      pathname,
+      '/manage/:productId/inbox/:inbox/:feedbackId',
+    );
+    if (!match) {
+      return null;
+    }
+
+    return match.params.feedbackId;
+  },
+);
+
+export const currentFeedbackSelector = createSelector(
+  feedbacksSelector,
+  currentFeedbackIdSelector,
+  (feedbacks, feedbackId) => (feedbackId ? feedbacks[feedbackId] : null),
 );

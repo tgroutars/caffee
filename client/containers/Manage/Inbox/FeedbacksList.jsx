@@ -3,9 +3,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { List, Avatar as AntAvatar } from 'antd';
 import styled from 'styled-components';
+import { push } from 'connected-react-router';
 
-import { currentFeedbacksSelector } from '../../../selectors/feedback';
+import {
+  currentFeedbacksSelector,
+  currentInboxSelector,
+} from '../../../selectors/feedback';
+import { currentProductIdSelector } from '../../../selectors/product';
 import IconText from '../../../components/IconText';
+import { manageFeedback } from '../../../lib/routes';
 
 const Avatar = styled(AntAvatar)`
   margin-right: 4px;
@@ -16,6 +22,7 @@ const ListItem = styled(List.Item)`
   border-radius: 4px;
   padding: 16px;
   cursor: pointer;
+  user-select: none;
   &:hover {
     background: rgba(0, 0, 0, 0.05);
   }
@@ -31,9 +38,10 @@ const ListItemMeta = styled(List.Item.Meta)`
   }
 `;
 
-const FeedbackItem = ({ feedback }) => (
+const FeedbackItem = ({ feedback, onClick }) => (
   <ListItem
     actions={[<IconText type="link" text={feedback.attachments.length} />]}
+    onClick={onClick}
   >
     <ListItemMeta
       title={
@@ -49,25 +57,52 @@ const FeedbackItem = ({ feedback }) => (
 
 FeedbackItem.propTypes = {
   feedback: PropTypes.shape({}).isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
-const FeedbacksList = ({ feedbacks }) => (
-  <List
-    itemLayout="vertical"
-    size="large"
-    dataSource={feedbacks}
-    renderItem={feedback => (
-      <FeedbackItem key={feedback.id} feedback={feedback} />
-    )}
-  />
-);
+class FeedbacksList extends React.Component {
+  handleNavigateFeedback = feedbackId => {
+    const { productId, inbox } = this.props;
+    this.props.push(manageFeedback({ productId, inbox, feedbackId }));
+  };
+
+  render() {
+    const { feedbacks } = this.props;
+    return (
+      <List
+        itemLayout="vertical"
+        size="large"
+        dataSource={feedbacks}
+        renderItem={feedback => (
+          <FeedbackItem
+            key={feedback.id}
+            feedback={feedback}
+            onClick={() => this.handleNavigateFeedback(feedback.id)}
+          />
+        )}
+      />
+    );
+  }
+}
 
 FeedbacksList.propTypes = {
   feedbacks: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  inbox: PropTypes.string.isRequired,
+  push: PropTypes.func.isRequired,
+  productId: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
   feedbacks: currentFeedbacksSelector(state),
+  productId: currentProductIdSelector(state),
+  inbox: currentInboxSelector(state),
 });
 
-export default connect(mapStateToProps)(FeedbacksList);
+const mapDispatchToProps = {
+  push,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(FeedbacksList);

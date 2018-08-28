@@ -16,7 +16,7 @@ const IconText = ({ type, text }) => (
 
 IconText.propTypes = {
   type: PropTypes.string.isRequired,
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 IconText.defaultProps = {

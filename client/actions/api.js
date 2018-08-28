@@ -27,7 +27,7 @@ export const apiCall = (method, params = {}) => async (dispatch, getState) => {
     headers.Authorization = `Bearer ${token}`;
   }
   const baseURL = process.env.BASE_URL;
-  console.log({ method, params });
+
   dispatch(apiRequest(method, params));
   const response = await axios.post(`/api/${method}`, params, {
     headers,

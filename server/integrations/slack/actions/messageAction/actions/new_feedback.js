@@ -1,8 +1,6 @@
-const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
+const { SlackUser, ProductUser } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
-
-const { Op } = Sequelize;
 
 const openFeedbackDialog = openDialog('feedback');
 const postChooseProductMessage = postEphemeral('feedback_choose_product');
@@ -51,7 +49,6 @@ const newFeedback = async (payload, { workspace, slackUser }) => {
     where: {
       userId: slackUser.userId,
       productId: product.id,
-      role: { [Op.in]: ['user', 'admin'] },
     },
   });
   await openFeedbackDialog({
@@ -60,7 +57,7 @@ const newFeedback = async (payload, { workspace, slackUser }) => {
     defaultAuthorName,
     product,
     defaultFeedback: text,
-    selectAuthor: !!productUser,
+    selectAuthor: productUser.isPM,
   })({
     accessToken,
     triggerId,

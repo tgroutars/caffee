@@ -1,10 +1,14 @@
 const winston = require('winston');
+const Queue = require('bee-queue');
 
-const queue = require('./queue');
+const { REDIS_URL = 'redis://127.0.0.1:6379' } = process.env;
+
+const queue = new Queue('backgroundTask', {
+  redis: REDIS_URL,
+});
 
 const jobs = {};
-
-queue.process('backgroundTask', 50, async (job, done) => {
+queue.process(50, async (job, done) => {
   const { name, args } = job.data;
   const func = jobs[name];
 
@@ -23,9 +27,6 @@ module.exports = (name, func) => {
   jobs[name] = func;
 
   return async (...args) => {
-    await queue
-      .create('backgroundTask', { name, args })
-      .removeOnComplete(true)
-      .save();
+    await queue.createJob({ name, args }).save();
   };
 };

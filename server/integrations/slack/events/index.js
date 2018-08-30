@@ -1,6 +1,6 @@
 const events = require('./events');
 const { SlackWorkspace } = require('../../../models');
-const registerBackgroundTask = require('../../../lib/queue/registerBackgroundTask');
+const registerBackgroundTask = require('../../../lib/registerBackgroundTask');
 
 const handleEvent = registerBackgroundTask(
   'slack_handle_event',

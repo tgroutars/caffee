@@ -1,6 +1,6 @@
 const SlackClient = require('@slack/client').WebClient;
 
-const registerBackgroundTask = require('../../../lib/queue/registerBackgroundTask');
+const registerBackgroundTask = require('../../../lib/registerBackgroundTask');
 const dialogs = require('./dialogs');
 const HashStore = require('../../../lib/redis/HashStore');
 

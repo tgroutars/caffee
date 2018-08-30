@@ -1,4 +1,4 @@
-const registerBackgroundTask = require('../../../lib/queue/registerBackgroundTask');
+const registerBackgroundTask = require('../../../lib/registerBackgroundTask');
 const actions = require('./actions');
 
 const handleWebhook = registerBackgroundTask(

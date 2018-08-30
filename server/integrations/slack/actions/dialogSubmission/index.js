@@ -4,7 +4,7 @@ const { SlackDialogSubmissionError } = require('../../../../lib/errors');
 const HashStore = require('../../../../lib/redis/HashStore');
 const dialogs = require('./dialogs');
 const { SlackUser, SlackWorkspace, User } = require('../../../../models');
-const registerBackgroundTask = require('../../../../lib/queue/registerBackgroundTask');
+const registerBackgroundTask = require('../../../../lib/registerBackgroundTask');
 
 const callbackIdStore = new HashStore('slack:callback_id');
 

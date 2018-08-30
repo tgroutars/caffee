@@ -1,6 +1,6 @@
 const actions = require('./actions');
 const { decode } = require('../../helpers/encoding');
-const registerBackgroundTask = require('../../../../lib/queue/registerBackgroundTask');
+const registerBackgroundTask = require('../../../../lib/registerBackgroundTask');
 const { SlackUser, SlackWorkspace } = require('../../../../models');
 
 const messageAction = registerBackgroundTask(

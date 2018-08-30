@@ -1,24 +1,27 @@
 const Promise = require('bluebird');
 const winston = require('winston');
+const Queue = require('bee-queue');
 
-const queue = require('../lib/queue/queue');
+const { REDIS_URL = 'redis://127.0.0.1:6379' } = process.env;
+
+const queue = new Queue('event', {
+  redis: REDIS_URL,
+});
 
 const listeners = {};
-queue.process('event', 50, async (job, done) => {
+queue.process(50, async job => {
   const { type, payload } = job.data;
   const eventListeners = listeners[type] || [];
 
   winston.info(`event process: ${type}`);
 
-  try {
-    await Promise.map(eventListeners, async eventListener => {
+  await Promise.map(eventListeners, async eventListener => {
+    try {
       await eventListener(payload);
-    });
-    done();
-  } catch (err) {
-    winston.error(err);
-    done(err);
-  }
+    } catch (err) {
+      winston.error(`Error processing event ${type}`);
+    }
+  });
 });
 
 const addListener = (eventType, listener) => {
@@ -28,10 +31,7 @@ const addListener = (eventType, listener) => {
 
 const trigger = (eventType, payload) => {
   winston.info(`event trigger: ${eventType}`);
-  const job = queue
-    .create('event', { type: eventType, payload })
-    .removeOnComplete(true);
-  job.save();
+  queue.createJob({ type: eventType, payload }).save();
 };
 
 module.exports = { addListener, trigger };

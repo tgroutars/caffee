@@ -5,6 +5,8 @@ import { Menu, Layout, Icon } from 'antd';
 import { Link, matchPath } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import { currentFeedbackIdSelector } from '../../../selectors/feedback';
+
 const { Sider } = Layout;
 
 const StyledSider = styled(Sider)`
@@ -32,7 +34,7 @@ const StyledMenuItem = styled(Menu.Item)`
   }
 `;
 
-const Nav = ({ pathname }) => {
+const Nav = ({ pathname, currentFeedbackId }) => {
   const match = matchPath(pathname, {
     path: '/manage/:productId/inbox/:box?',
     exact: false,
@@ -43,17 +45,29 @@ const Nav = ({ pathname }) => {
     <StyledSider>
       <StyledMenu mode="vertical" selectedKeys={[box || 'unprocessed']}>
         <StyledMenuItem key="unprocessed">
-          <Link to={`/manage/${productId}/inbox`}>
+          <Link
+            to={`/manage/${productId}/inbox/unprocessed${
+              currentFeedbackId ? `/${currentFeedbackId}` : ''
+            }`}
+          >
             <Icon type="inbox" />Inbox
           </Link>
         </StyledMenuItem>
         <StyledMenuItem key="processed">
-          <Link to={`/manage/${productId}/inbox/processed`}>
+          <Link
+            to={`/manage/${productId}/inbox/processed${
+              currentFeedbackId ? `/${currentFeedbackId}` : ''
+            }`}
+          >
             <Icon type="check" />Processed
           </Link>
         </StyledMenuItem>
         <StyledMenuItem key="archived">
-          <Link to={`/manage/${productId}/inbox/archived`}>
+          <Link
+            to={`/manage/${productId}/inbox/archived${
+              currentFeedbackId ? `/${currentFeedbackId}` : ''
+            }`}
+          >
             <Icon type="delete" />Archived
           </Link>
         </StyledMenuItem>
@@ -64,10 +78,16 @@ const Nav = ({ pathname }) => {
 
 Nav.propTypes = {
   pathname: PropTypes.string.isRequired,
+  currentFeedbackId: PropTypes.string,
+};
+
+Nav.defaultProps = {
+  currentFeedbackId: null,
 };
 
 const mapStateToProps = state => ({
   pathname: state.router.location.pathname,
+  currentFeedbackId: currentFeedbackIdSelector(state),
 });
 
 export default connect(mapStateToProps)(Nav);

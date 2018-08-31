@@ -27,8 +27,7 @@ const ListItem = styled(List.Item)`
   &:hover {
     background: rgba(0, 0, 0, 0.05);
   }
-  background: ${({ isSelected }) =>
-    isSelected ? 'rgba(0, 0, 0, 0.05)' : '#fff'};
+  background: ${({ selected }) => (selected ? 'rgba(0, 0, 0, 0.05)' : '#fff')};
 `;
 const ListItemMeta = styled(List.Item.Meta)`
   .ant-list-item-meta-content {
@@ -45,7 +44,7 @@ const FeedbackItem = ({ feedback, onClick, isSelected }) => (
   <ListItem
     actions={[<IconText type="link" text={feedback.attachments.length} />]}
     onClick={onClick}
-    isSelected={isSelected}
+    selected={isSelected}
   >
     <ListItemMeta
       title={

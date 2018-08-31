@@ -31,3 +31,8 @@ export const listFeedbacks = productId => async (dispatch, getState) => {
     );
   }
 };
+
+export const fetchFeedback = feedbackId => async dispatch => {
+  const { feedback } = await dispatch(api.feedbacks.info({ feedbackId }));
+  dispatch(addEntities('feedback', feedback));
+};

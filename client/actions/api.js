@@ -65,5 +65,6 @@ export default {
   },
   feedbacks: {
     list: apiCall.bind(this, 'feedbacks.list'),
+    info: apiCall.bind(this, 'feedbacks.info'),
   },
 };

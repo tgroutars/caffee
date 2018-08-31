@@ -37,6 +37,11 @@ const allFeedbacksSelector = createSelector(
   },
 );
 
+export const unprocessedFeedbacksSelector = createSelector(
+  allFeedbacksSelector,
+  feedbacks => feedbacks.filter(filterFuncs.unprocessed),
+);
+
 export const currentFeedbacksSelector = createSelector(
   currentInboxSelector,
   allFeedbacksSelector,
@@ -62,4 +67,9 @@ export const currentFeedbackSelector = createSelector(
   feedbacksSelector,
   currentFeedbackIdSelector,
   (feedbacks, feedbackId) => (feedbackId ? feedbacks[feedbackId] : null),
+);
+
+export const nbUnprocessedFeedbacksSelector = createSelector(
+  unprocessedFeedbacksSelector,
+  feedbacks => feedbacks.length,
 );

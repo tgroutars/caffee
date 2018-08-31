@@ -5,7 +5,10 @@ import { Menu, Layout, Icon } from 'antd';
 import { Link, matchPath } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { currentFeedbackIdSelector } from '../../../selectors/feedback';
+import {
+  currentFeedbackIdSelector,
+  nbUnprocessedFeedbacksSelector,
+} from '../../../selectors/feedback';
 
 const { Sider } = Layout;
 
@@ -34,7 +37,7 @@ const StyledMenuItem = styled(Menu.Item)`
   }
 `;
 
-const Nav = ({ pathname, currentFeedbackId }) => {
+const Nav = ({ pathname, currentFeedbackId, nbUnprocessed }) => {
   const match = matchPath(pathname, {
     path: '/manage/:productId/inbox/:box?',
     exact: false,
@@ -50,7 +53,7 @@ const Nav = ({ pathname, currentFeedbackId }) => {
               currentFeedbackId ? `/${currentFeedbackId}` : ''
             }`}
           >
-            <Icon type="inbox" />Inbox
+            <Icon type="inbox" />Inbox ({nbUnprocessed})
           </Link>
         </StyledMenuItem>
         <StyledMenuItem key="processed">
@@ -79,6 +82,7 @@ const Nav = ({ pathname, currentFeedbackId }) => {
 Nav.propTypes = {
   pathname: PropTypes.string.isRequired,
   currentFeedbackId: PropTypes.string,
+  nbUnprocessed: PropTypes.number.isRequired,
 };
 
 Nav.defaultProps = {
@@ -88,6 +92,7 @@ Nav.defaultProps = {
 const mapStateToProps = state => ({
   pathname: state.router.location.pathname,
   currentFeedbackId: currentFeedbackIdSelector(state),
+  nbUnprocessed: nbUnprocessedFeedbacksSelector(state),
 });
 
 export default connect(mapStateToProps)(Nav);

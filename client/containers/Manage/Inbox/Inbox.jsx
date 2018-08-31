@@ -16,6 +16,7 @@ const { Content } = Layout;
 
 const StyledLayout = styled(Layout)`
   background: #fff;
+  max-height: 100%;
 `;
 const StyledContent = styled(Content)`
   background: #fff;
@@ -24,9 +25,11 @@ const StyledContent = styled(Content)`
   grid-template-columns: 500px auto;
   grid-template-rows: auto;
   overflow-x: scroll !important;
+  overflow-y: hidden !important;
 `;
 const FeedbacksListWrapper = styled.div`
   padding: 24px;
+  overflow-y: scroll;
 `;
 const FeedbackWrapper = styled.div`
   padding: 24px;

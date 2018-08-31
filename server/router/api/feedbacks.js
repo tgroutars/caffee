@@ -19,6 +19,7 @@ const serializeFeedback = feedback => ({
     'archiveReason',
     'attachments',
     'scopeId',
+    'commentsCount',
   ]),
   author: pick(feedback.author, ['id', 'name', 'image']),
   createdBy: pick(feedback.createdBy, ['id', 'name', 'image']),

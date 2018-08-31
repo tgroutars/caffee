@@ -42,7 +42,10 @@ const ListItemMeta = styled(List.Item.Meta)`
 
 const FeedbackItem = ({ feedback, onClick, isSelected }) => (
   <ListItem
-    actions={[<IconText type="link" text={feedback.attachments.length} />]}
+    actions={[
+      <IconText type="message" text={feedback.commentsCount} />,
+      <IconText type="link" text={feedback.attachments.length} />,
+    ]}
     onClick={onClick}
     selected={isSelected}
   >

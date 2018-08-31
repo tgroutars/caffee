@@ -55,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
       field: 'assigned_to_id',
       allowNull: true,
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'created_at',
+    },
   });
 
   /**

@@ -31,7 +31,9 @@ const allFeedbacksSelector = createSelector(
     if (!product || !product.feedbacks) {
       return [];
     }
-    return product.feedbacks.map(feedbackId => feedbacks[feedbackId]);
+    return product.feedbacks
+      .map(feedbackId => feedbacks[feedbackId])
+      .sort((f1, f2) => (f1.createdAt > f2.createdAt ? 1 : -1));
   },
 );
 

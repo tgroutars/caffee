@@ -37,6 +37,7 @@ router.post(
     const feedbacks = await Feedback.findAll({
       where: { productId: product.id },
       include: ['author', 'createdBy', 'assignedTo', 'roadmapItem', 'scope'],
+      order: [['createdAt', 'desc']],
     });
     ctx.send({
       feedbacks: feedbacks.map(serializeFeedback),

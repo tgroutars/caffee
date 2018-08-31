@@ -1,5 +1,10 @@
 import { createSelector } from 'reselect';
 import { matchPath } from 'react-router-dom';
+import { denormalize } from 'normalizr';
+import {
+  feedbacks as feedbacksSchema,
+  feedback as feedbackSchema,
+} from '../schemas';
 
 import { currentProductSelector } from './product';
 
@@ -9,7 +14,7 @@ const filterFuncs = {
   archived: feedback => !!feedback.archivedAt,
 };
 
-const feedbacksSelector = state => state.entities.feedbacks;
+const entitiesSelector = state => state.entities;
 const currentPathnameSelector = state => state.router.location.pathname;
 export const currentInboxSelector = createSelector(
   currentPathnameSelector,
@@ -24,27 +29,27 @@ export const currentInboxSelector = createSelector(
   },
 );
 
-const allFeedbacksSelector = createSelector(
+const feedbacksSelector = createSelector(
+  entitiesSelector,
   currentProductSelector,
-  feedbacksSelector,
-  (product, feedbacks) => {
+  (entities, product) => {
     if (!product || !product.feedbacks) {
       return [];
     }
-    return product.feedbacks
-      .map(feedbackId => feedbacks[feedbackId])
-      .sort((f1, f2) => (f1.createdAt > f2.createdAt ? 1 : -1));
+    return denormalize(product.feedbacks, feedbacksSchema, entities).sort(
+      (f1, f2) => (f1.createdAt > f2.createdAt ? 1 : -1),
+    );
   },
 );
 
 export const unprocessedFeedbacksSelector = createSelector(
-  allFeedbacksSelector,
+  feedbacksSelector,
   feedbacks => feedbacks.filter(filterFuncs.unprocessed),
 );
 
 export const currentFeedbacksSelector = createSelector(
   currentInboxSelector,
-  allFeedbacksSelector,
+  feedbacksSelector,
   (inbox, feedbacks) => feedbacks.filter(filterFuncs[inbox]),
 );
 
@@ -64,9 +69,9 @@ export const currentFeedbackIdSelector = createSelector(
 );
 
 export const currentFeedbackSelector = createSelector(
-  feedbacksSelector,
+  entitiesSelector,
   currentFeedbackIdSelector,
-  (feedbacks, feedbackId) => (feedbackId ? feedbacks[feedbackId] : null),
+  (entities, feedbackId) => denormalize(feedbackId, feedbackSchema, entities),
 );
 
 export const nbUnprocessedFeedbacksSelector = createSelector(

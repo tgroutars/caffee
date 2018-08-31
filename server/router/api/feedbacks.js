@@ -2,7 +2,12 @@ const Router = require('koa-router');
 const pick = require('lodash/pick');
 
 const { requireAuth, findProduct, requirePM } = require('./middleware');
-const { Feedback, Product, ProductUser } = require('../../models');
+const {
+  Feedback,
+  Product,
+  ProductUser,
+  FeedbackComment,
+} = require('../../models');
 
 const router = new Router();
 
@@ -27,12 +32,17 @@ const serializeFeedback = feedback => ({
   roadmapItem: pick(feedback.roadmapItem, ['id', 'title']),
   scope: pick(feedback.roadmapItem, ['id', 'name']),
 });
+const serializeComment = comment => ({
+  ...pick(comment, ['id', 'text', 'authorId', 'attachments']),
+  author: pick(comment.author, ['id', 'name', 'image']),
+});
 
 const findFeedback = async (ctx, next) => {
   const { user } = ctx.state;
   const { feedbackId } = ctx.request.body;
   const feedback = await Feedback.findById(feedbackId, {
     include: [
+      'comments',
       'author',
       'createdBy',
       'assignedTo',
@@ -86,7 +96,16 @@ router.post(
   requirePM,
   async ctx => {
     const { feedback } = ctx.state;
-    ctx.send({ feedback: serializeFeedback(feedback) });
+    const comments = await FeedbackComment.findAll({
+      where: { feedbackId: feedback.id },
+      include: ['author'],
+    });
+    ctx.send({
+      feedback: {
+        ...serializeFeedback(feedback),
+        comments: comments.map(serializeComment),
+      },
+    });
   },
 );
 

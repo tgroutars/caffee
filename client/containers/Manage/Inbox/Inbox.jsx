@@ -10,7 +10,7 @@ import { currentProductIdSelector } from '../../../selectors/product';
 import { currentInboxSelector } from '../../../selectors/feedback';
 import FeedbacksList from './FeedbacksList';
 import Nav from './Nav';
-import Feedback from './Feedback';
+import Feedback from './Feedback/Feedback';
 
 const { Content } = Layout;
 
@@ -34,6 +34,7 @@ const FeedbacksListWrapper = styled.div`
 const FeedbackWrapper = styled.div`
   padding: 24px;
   min-width: 500px;
+  overflow-y: scroll;
 `;
 
 class Inbox extends React.Component {

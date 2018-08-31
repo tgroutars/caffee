@@ -4,11 +4,21 @@ import PropTypes from 'prop-types';
 import { Avatar } from 'antd';
 import styled from 'styled-components';
 
-import { currentFeedbackSelector } from '../../../selectors/feedback';
-import { fetchFeedback } from '../../../actions/feedbacks';
+import { currentFeedbackSelector } from '../../../../selectors/feedback';
+import { fetchFeedback } from '../../../../actions/feedbacks';
 
 const Wrapper = styled.div`
   width: 100%;
+  height: calc(100% - 48px);
+  position: relative;
+`;
+const FeedbackMessage = styled.div`
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.05);
+  white-space: pre-wrap;
 `;
 const Author = styled.div`
   font-size: 16px;
@@ -18,19 +28,14 @@ const Author = styled.div`
   }
 `;
 const Description = styled.div`
-  width: 100%;
-  border-radius: 10px;
-  margin: 16px 8px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.05);
-  white-space: pre-wrap;
+  margin-top: 16px;
+  margin-bottom: 16px;
 `;
 const Attachments = styled.div`
   display: flex;
   overflow-x: scroll;
-  height: 120px;
-  padding: 9px;
-  ${'' /* border: 1px solid #e8e8e8; */} ${'' /* border-right: 5px solid #e8e8e8; */};
+  height: 100px;
+  margin-top: 8px;
 `;
 const Attachment = styled.a`
   display: block;
@@ -91,26 +96,30 @@ class Feedback extends React.Component {
     if (!feedback) {
       return <div>Loading...</div>;
     }
+
     const { attachments, author, description } = feedback;
     return (
       <Wrapper>
-        <Author>
-          <Avatar size="small" src={author.image} />
-          {author.name}
-        </Author>
-        <Description>{description}</Description>
-        <h2>Attachments</h2>
-        <Attachments>
-          {attachments.map(({ key, url, mimetype }) => (
-            <Attachment key={key} href={url} target="blank">
-              {mimetype && mimetype.startsWith('image/') ? (
-                <img src={url} alt="" />
-              ) : (
-                <AttachmentText>No preview</AttachmentText>
-              )}
-            </Attachment>
-          ))}
-        </Attachments>
+        <FeedbackMessage>
+          <Author>
+            <Avatar size="small" src={author.image} />
+            {author.name}
+          </Author>
+          <Description>{description}</Description>
+          {feedback.attachments.length ? (
+            <Attachments>
+              {attachments.map(({ key, url, mimetype }) => (
+                <Attachment key={key} href={url} target="blank">
+                  {mimetype && mimetype.startsWith('image/') ? (
+                    <img src={url} alt="" />
+                  ) : (
+                    <AttachmentText>No preview</AttachmentText>
+                  )}
+                </Attachment>
+              ))}
+            </Attachments>
+          ) : null}
+        </FeedbackMessage>
       </Wrapper>
     );
   }

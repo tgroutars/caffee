@@ -8,6 +8,7 @@ import { push } from 'connected-react-router';
 import {
   currentFeedbacksSelector,
   currentInboxSelector,
+  currentFeedbackIdSelector,
 } from '../../../selectors/feedback';
 import { currentProductIdSelector } from '../../../selectors/product';
 import IconText from '../../../components/IconText';
@@ -17,15 +18,17 @@ const Avatar = styled(AntAvatar)`
   margin-right: 4px;
 `;
 const ListItem = styled(List.Item)`
-  border: 1px solid #e8e8e8 !important;
+  border: none !important;
+  border-left: 4px solid #e8e8e8 !important;
   margin-bottom: 8px;
-  border-radius: 4px;
   padding: 16px;
   cursor: pointer;
   user-select: none;
   &:hover {
     background: rgba(0, 0, 0, 0.05);
   }
+  background: ${({ isSelected }) =>
+    isSelected ? 'rgba(0, 0, 0, 0.05)' : '#fff'};
 `;
 const ListItemMeta = styled(List.Item.Meta)`
   .ant-list-item-meta-content {
@@ -38,10 +41,11 @@ const ListItemMeta = styled(List.Item.Meta)`
   }
 `;
 
-const FeedbackItem = ({ feedback, onClick }) => (
+const FeedbackItem = ({ feedback, onClick, isSelected }) => (
   <ListItem
     actions={[<IconText type="link" text={feedback.attachments.length} />]}
     onClick={onClick}
+    isSelected={isSelected}
   >
     <ListItemMeta
       title={
@@ -58,6 +62,7 @@ const FeedbackItem = ({ feedback, onClick }) => (
 FeedbackItem.propTypes = {
   feedback: PropTypes.shape({}).isRequired,
   onClick: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool.isRequired,
 };
 
 class FeedbacksList extends React.Component {
@@ -67,7 +72,7 @@ class FeedbacksList extends React.Component {
   };
 
   render() {
-    const { feedbacks } = this.props;
+    const { feedbacks, currentFeedbackId } = this.props;
     return (
       <List
         itemLayout="vertical"
@@ -76,6 +81,7 @@ class FeedbacksList extends React.Component {
         renderItem={feedback => (
           <FeedbackItem
             key={feedback.id}
+            isSelected={feedback.id === currentFeedbackId}
             feedback={feedback}
             onClick={() => this.handleNavigateFeedback(feedback.id)}
           />
@@ -86,6 +92,7 @@ class FeedbacksList extends React.Component {
 }
 
 FeedbacksList.propTypes = {
+  currentFeedbackId: PropTypes.string.isRequired,
   feedbacks: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   inbox: PropTypes.string.isRequired,
   push: PropTypes.func.isRequired,
@@ -96,6 +103,7 @@ const mapStateToProps = state => ({
   feedbacks: currentFeedbacksSelector(state),
   productId: currentProductIdSelector(state),
   inbox: currentInboxSelector(state),
+  currentFeedbackId: currentFeedbackIdSelector(state),
 });
 
 const mapDispatchToProps = {

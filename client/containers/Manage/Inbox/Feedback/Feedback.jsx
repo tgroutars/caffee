@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import { currentFeedbackSelector } from '../../../../selectors/feedback';
 import { fetchFeedback } from '../../../../actions/feedbacks';
+import FeedbackComments from './FeedbackComments';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -120,6 +121,7 @@ class Feedback extends React.Component {
             </Attachments>
           ) : null}
         </FeedbackMessage>
+        <FeedbackComments feedback={feedback} />
       </Wrapper>
     );
   }

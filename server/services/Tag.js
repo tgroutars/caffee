@@ -11,6 +11,13 @@ const TagService = (/* services */) => ({
   async destroyByTrelloRef(trelloRef) {
     Tag.destroy({ where: { trelloRef } });
   },
+
+  async findOrCreate({ name, trelloRef, productId }) {
+    return Tag.findOrCreate({
+      where: { productId, trelloRef },
+      defaults: { name },
+    });
+  },
 });
 
 module.exports = TagService;

@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
 const { Product } = require('../../../../models');
-const { Product: ProductService } = require('../../../../services');
+const { Tag: TagService } = require('../../../../services');
 
 const createLabel = async payload => {
   const { label, board } = payload.action.data;
@@ -10,9 +10,10 @@ const createLabel = async payload => {
   });
 
   await Promise.map(products, async product => {
-    await ProductService.createTag(product.id, {
-      name: label.name || label.color,
+    await TagService.findOrCreate({
+      productId: product.id,
       trelloRef: label.id,
+      name: label.name || label.color,
     });
   });
 };

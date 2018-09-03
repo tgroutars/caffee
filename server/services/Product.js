@@ -36,13 +36,6 @@ const DEFAULT_STAGES = [
 ];
 
 const ProductService = services => ({
-  async createTag(productId, { name, trelloRef }) {
-    return Tag.findOrCreate({
-      where: { productId, trelloRef },
-      defaults: { name },
-    });
-  },
-
   async setName(productId, { name }) {
     await Product.update({ name }, { where: { id: productId } });
   },

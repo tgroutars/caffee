@@ -68,6 +68,18 @@ FeedbackItem.propTypes = {
 };
 
 class FeedbacksList extends React.Component {
+  static propTypes = {
+    currentFeedbackId: PropTypes.string,
+    feedbacks: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+    inbox: PropTypes.string.isRequired,
+    push: PropTypes.func.isRequired,
+    productId: PropTypes.string.isRequired,
+  };
+
+  static defaultProps = {
+    currentFeedbackId: null,
+  };
+
   handleNavigateFeedback = feedbackId => {
     const { productId, inbox } = this.props;
     this.props.push(manageFeedback({ productId, inbox, feedbackId }));
@@ -92,14 +104,6 @@ class FeedbacksList extends React.Component {
     );
   }
 }
-
-FeedbacksList.propTypes = {
-  currentFeedbackId: PropTypes.string.isRequired,
-  feedbacks: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  inbox: PropTypes.string.isRequired,
-  push: PropTypes.func.isRequired,
-  productId: PropTypes.string.isRequired,
-};
 
 const mapStateToProps = state => ({
   feedbacks: currentFeedbacksSelector(state),

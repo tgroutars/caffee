@@ -5,6 +5,7 @@ const { REDIS_URL = 'redis://127.0.0.1:6379' } = process.env;
 
 const queue = new Queue('backgroundTask', {
   redis: REDIS_URL,
+  removeOnSuccess: true,
 });
 
 const jobs = {};

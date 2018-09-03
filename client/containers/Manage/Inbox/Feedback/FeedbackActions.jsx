@@ -14,7 +14,6 @@ const List = styled.div`
 const ListItem = styled.div`
   width: 100%;
   margin-bottom: 12px;
-  ${'' /* height: 24px; */};
 `;
 const Button = styled(AntButton)`
   width: 100%;

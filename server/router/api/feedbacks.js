@@ -27,6 +27,7 @@ const serializeFeedback = feedback => ({
     'attachments',
     'scopeId',
     'commentsCount',
+    'isArchived',
   ]),
   author: pick(feedback.author, ['id', 'name', 'image']),
   createdBy: pick(feedback.createdBy, ['id', 'name', 'image']),
@@ -131,6 +132,35 @@ router.post(
     await FeedbackService.setRoadmapItem(feedback.id, {
       roadmapItemId,
       processedById: user.id,
+    });
+    await feedback.reload({
+      include: [
+        'comments',
+        'author',
+        'createdBy',
+        'assignedTo',
+        'roadmapItem',
+        'scope',
+      ],
+    });
+    ctx.send({ feedback: serializeFeedback(feedback) });
+  },
+);
+
+router.post(
+  '/feedbacks.archive',
+  requireAuth,
+  findFeedback,
+  requirePM,
+  async ctx => {
+    const { feedback, user } = ctx.state;
+    const { archiveReason } = ctx.request.body;
+    if (feedback.isArchived || feedback.roadmapItemId) {
+      throw new APIError('feedback_already_processed');
+    }
+    await FeedbackService.archive(feedback.id, {
+      archiveReason,
+      archivedById: user.id,
     });
     await feedback.reload({
       include: [

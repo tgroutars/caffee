@@ -5,6 +5,7 @@ import {
   Input,
   List as AntList,
   Popover as AntPopover,
+  message,
 } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -33,10 +34,7 @@ const ListItem = styled(AntList.Item)`
     white-space: nowrap;
   }
 `;
-const Popover = styled(AntPopover)`
-  .ant-popover-inner {
-  }
-`;
+const Popover = styled(AntPopover)``;
 
 const createFuse = roadmapItems =>
   new Fuse(roadmapItems, {
@@ -106,6 +104,7 @@ class Add extends React.Component {
   handleRoadmapItemClick = async roadmapItem => {
     const { feedback } = this.props;
     await this.props.setRoadmapItem(feedback.id, roadmapItem.id);
+    message.success('Feedback added to roadmap item!');
   };
 
   renderRoadmapItem = roadmapItem => (

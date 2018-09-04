@@ -43,3 +43,13 @@ export const setRoadmapItem = (feedbackId, roadmapItemId) => async dispatch => {
   );
   dispatch(addEntities('feedback', feedback));
 };
+
+export const archiveFeedback = (
+  feedbackId,
+  { archiveReason },
+) => async dispatch => {
+  const { feedback } = await dispatch(
+    api.feedbacks.archive({ feedbackId, archiveReason }),
+  );
+  dispatch(addEntities('feedback', feedback));
+};

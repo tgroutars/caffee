@@ -22,7 +22,7 @@ const ConfirmButton = styled(AntButton)`
   margin-right: 4px;
 `;
 
-class Add extends React.Component {
+class Archive extends React.Component {
   static propTypes = {
     feedback: PropTypes.shape({}).isRequired,
     archiveFeedback: PropTypes.func.isRequired,
@@ -104,4 +104,4 @@ const mapDispatchToProps = {
 export default connect(
   null,
   mapDispatchToProps,
-)(Add);
+)(Archive);

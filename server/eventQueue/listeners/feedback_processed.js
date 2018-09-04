@@ -9,6 +9,7 @@ const {
   RoadmapItem,
   FeedbackComment,
 } = require('../../models');
+const { RoadmapItem: RoadmapItemService } = require('../../services');
 const { postMessage } = require('../../integrations/slack/messages');
 const { addComment } = require('../../integrations/trello/helpers/api');
 
@@ -81,6 +82,9 @@ const feedbackProcessed = async ({ feedbackId, processedById }) => {
       text,
     });
   }
+  await Promise.map(feedback.attachments, async attachment =>
+    RoadmapItemService.addAttachmentAndSync(roadmapItem.id, attachment),
+  );
 };
 
 module.exports = feedbackProcessed;

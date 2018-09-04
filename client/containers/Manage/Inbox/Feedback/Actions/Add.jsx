@@ -1,70 +1,174 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button as AntButton, Modal, Input } from 'antd';
-import debounce from 'lodash/debounce';
+import {
+  Button as AntButton,
+  Input,
+  List as AntList,
+  Popover as AntPopover,
+} from 'antd';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Fuse from 'fuse.js';
 
-// import { searchRoadmapItems } from '../../../../../actions/roadmapItems';
+import { listRoadmapItems } from '../../../../../actions/roadmapItems';
+import { setRoadmapItem } from '../../../../../actions/feedbacks';
+import { currentProductIdSelector } from '../../../../../selectors/product';
+import { roadmapItemsSelector } from '../../../../../selectors/roadmapItem';
 
 const Button = styled(AntButton)`
   width: 100%;
 `;
+const List = styled(AntList)`
+  max-height: 500px;
+  overflow-y: scroll;
+  width: 300px;
+`;
+const ListItem = styled(AntList.Item)`
+  padding-left: 16px;
+  cursor: pointer;
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  .ant-list-item-meta-description {
+    white-space: nowrap;
+  }
+`;
+const Popover = styled(AntPopover)`
+  .ant-popover-inner {
+  }
+`;
+
+const createFuse = roadmapItems =>
+  new Fuse(roadmapItems, {
+    keys: [
+      {
+        name: 'title',
+        weight: 0.7,
+      },
+      {
+        name: 'description',
+        weight: 0.3,
+      },
+    ],
+  });
+
+const searchRoadmapItems = (roadmapItems, query) => {
+  const fuse = createFuse(roadmapItems);
+  return fuse.search(query);
+};
 
 class Add extends React.Component {
-  state = {
-    isModalVisible: false,
+  static propTypes = {
+    listRoadmapItems: PropTypes.func.isRequired,
+    setRoadmapItem: PropTypes.func.isRequired,
+    feedback: PropTypes.shape({}).isRequired,
+    productId: PropTypes.string.isRequired,
+    roadmapItems: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  state = {
+    isLoading: true,
+    searchQuery: '',
+  };
+
+  async componentDidMount() {
+    const { productId } = this.props;
+    await this.props.listRoadmapItems(productId);
+    this.setState({ isLoading: false });
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { productId, feedback } = this.props;
+
     if (
-      prevState.isModalVisible === false &&
-      this.state.isModalVisible === true &&
-      this.inputRef.current
+      productId !== prevProps.productId ||
+      feedback.id !== prevProps.feedback.id
     ) {
-      this.inputRef.current.input.focus();
+      this.setState({ isLoading: true, searchQuery: '' });
+      await this.props.listRoadmapItems(productId);
+      this.setState({ isLoading: false });
     }
   }
 
   inputRef = React.createRef();
 
   handleQueryChange = evt => {
-    this.searchRoadmapItems(evt.target.value);
+    const searchQuery = evt.target.value;
+    this.setState({ searchQuery });
   };
 
-  searchRoadmapItems = debounce(searchQuery => {
-    // TODO
-  }, 500);
-
-  openModal = () => {
-    this.setState({ isModalVisible: true });
+  handlePopoverVisibilityChange = isVisible => {
+    if (isVisible && this.inputRef.current) {
+      setTimeout(() => this.inputRef.current.input.focus());
+    }
   };
 
-  closeModal = () => {
-    this.setState({ isModalVisible: false });
+  handleRoadmapItemClick = async roadmapItem => {
+    const { feedback } = this.props;
+    await this.props.setRoadmapItem(feedback.id, roadmapItem.id);
+  };
+
+  renderRoadmapItem = roadmapItem => (
+    <ListItem
+      key={roadmapItem.id}
+      onClick={() => this.handleRoadmapItemClick(roadmapItem)}
+    >
+      {roadmapItem.title}
+    </ListItem>
+  );
+
+  renderPopoverContent = () => {
+    const { isLoading, searchQuery } = this.state;
+
+    const { roadmapItems } = this.props;
+    const filteredRoadmapItems = searchRoadmapItems(roadmapItems, searchQuery);
+
+    return (
+      <div>
+        <Input
+          placeholder="Search roadmap items"
+          ref={this.inputRef}
+          autoFocus
+          onChange={this.handleQueryChange}
+          value={searchQuery}
+        />
+        <List
+          size="small"
+          loading={isLoading}
+          itemLayout="horizontal"
+          dataSource={filteredRoadmapItems}
+          renderItem={this.renderRoadmapItem}
+        />
+      </div>
+    );
   };
 
   render() {
-    const { isModalVisible } = this.state;
     return (
-      <div>
+      <Popover
+        placement="bottomRight"
+        trigger="click"
+        onVisibleChange={this.handlePopoverVisibilityChange}
+        content={this.renderPopoverContent()}
+      >
         <Button type="primary" onClick={this.openModal}>
           Add to roadmap item
         </Button>
-        <Modal
-          closable={false}
-          visible={isModalVisible}
-          footer={null}
-          onCancel={this.closeModal}
-        >
-          <Input
-            placeholder="Search roadmap items"
-            ref={this.inputRef}
-            autoFocus
-            onChange={this.handleQueryChange}
-          />
-        </Modal>
-      </div>
+      </Popover>
     );
   }
 }
 
-export default Add;
+const matchStateToProps = state => ({
+  productId: currentProductIdSelector(state),
+  roadmapItems: roadmapItemsSelector(state),
+});
+const mapDispatchToProps = {
+  listRoadmapItems,
+  setRoadmapItem,
+};
+
+export default connect(
+  matchStateToProps,
+  mapDispatchToProps,
+)(Add);

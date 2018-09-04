@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const pick = require('lodash/pick');
 
+const { APIError } = require('./errors');
 const { requireAuth, findProduct, requirePM } = require('./middleware');
 const {
   Feedback,
@@ -8,6 +9,7 @@ const {
   ProductUser,
   FeedbackComment,
 } = require('../../models');
+const { Feedback: FeedbackService } = require('../../services');
 
 const router = new Router();
 
@@ -106,6 +108,41 @@ router.post(
         comments: comments.map(serializeComment),
       },
     });
+  },
+);
+
+router.post(
+  '/feedbacks.setRoadmapItem',
+  requireAuth,
+  findFeedback,
+  requirePM,
+  async ctx => {
+    const { feedback, product, user } = ctx.state;
+    if (feedback.isArchived || feedback.roadmapItemId) {
+      throw new APIError('feedback_already_processed');
+    }
+    const { roadmapItemId } = ctx.request.body;
+    const [roadmapItem] = await product.getRoadmapItems({
+      where: { id: roadmapItemId },
+    });
+    if (!roadmapItem) {
+      throw new APIError('roadmap_item_not_found');
+    }
+    await FeedbackService.setRoadmapItem(feedback.id, {
+      roadmapItemId,
+      processedById: user.id,
+    });
+    await feedback.reload({
+      include: [
+        'comments',
+        'author',
+        'createdBy',
+        'assignedTo',
+        'roadmapItem',
+        'scope',
+      ],
+    });
+    ctx.send({ feedback: serializeFeedback(feedback) });
   },
 );
 

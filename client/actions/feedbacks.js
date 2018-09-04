@@ -36,3 +36,10 @@ export const fetchFeedback = feedbackId => async dispatch => {
   const { feedback } = await dispatch(api.feedbacks.info({ feedbackId }));
   dispatch(addEntities('feedback', feedback));
 };
+
+export const setRoadmapItem = (feedbackId, roadmapItemId) => async dispatch => {
+  const { feedback } = await dispatch(
+    api.feedbacks.setRoadmapItem({ feedbackId, roadmapItemId }),
+  );
+  dispatch(addEntities('feedback', feedback));
+};

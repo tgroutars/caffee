@@ -66,5 +66,9 @@ export default {
   feedbacks: {
     list: apiCall.bind(this, 'feedbacks.list'),
     info: apiCall.bind(this, 'feedbacks.info'),
+    setRoadmapItem: apiCall.bind(this, 'feedbacks.setRoadmapItem'),
+  },
+  roadmapItems: {
+    list: apiCall.bind(this, 'roadmapItems.list'),
   },
 };

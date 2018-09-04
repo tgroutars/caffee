@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Button as AntButton, Modal, Input } from 'antd';
+import { Button as AntButton } from 'antd';
 import PropTypes from 'prop-types';
 
 import AddAction from './Actions/Add';
@@ -24,32 +24,6 @@ class FeedbackActions extends React.Component {
     feedback: PropTypes.shape({}).isRequired,
   };
 
-  state = {
-    currentModal: null,
-  };
-
-  getAddAction = () => {
-    const { currentModal } = this.state;
-    return (
-      <div>
-        <Button
-          type="primary"
-          onClick={() => this.setState({ currentModal: 'add' })}
-        >
-          Add to roadmap item
-        </Button>
-        <Modal
-          closable={false}
-          visible={currentModal === 'add'}
-          footer={null}
-          onCancel={this.closeModal}
-        >
-          <Input placeholder="Search roadmap items" autoFocus />
-        </Modal>
-      </div>
-    );
-  };
-
   getActions = () => {
     const { feedback } = this.props;
     const actions = [];
@@ -61,16 +35,18 @@ class FeedbackActions extends React.Component {
     return actions;
   };
 
-  closeModal = () => {
-    this.setState({ currentModal: null });
-  };
-
   render() {
+    const { feedback } = this.props;
+    const isUnprocessed = !feedback.roadmapItemId && !feedback.isArchived;
     return (
       <div>
         <h3>Actions</h3>
         <List>
-          {this.getActions().map(action => <ListItem>{action}</ListItem>)}
+          {isUnprocessed ? (
+            <ListItem>
+              <AddAction feedback={feedback} />
+            </ListItem>
+          ) : null}
         </List>
       </div>
     );

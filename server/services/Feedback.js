@@ -1,5 +1,3 @@
-const Promise = require('bluebird');
-
 const { Feedback, Scope, Product, sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 

@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import { matchPath } from 'react-router-dom';
 import { denormalize } from 'normalizr';
 import { roadmapItems as roadmapItemsSchema } from '../schemas';
 

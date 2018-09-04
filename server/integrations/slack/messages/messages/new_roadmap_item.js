@@ -7,14 +7,12 @@ const newRoadmapItem = ({
   stage,
   isPM,
   trelloCardURL,
-  suggestFollowers = false,
   follow = true,
 }) => {
   const attachments = [
     getRoadmapItemAttachment({
       roadmapItem,
       openCard,
-      suggestFollowers,
       follow,
       stage,
       isPM,

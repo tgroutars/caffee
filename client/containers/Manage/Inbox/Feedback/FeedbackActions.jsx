@@ -40,7 +40,6 @@ class FeedbackActions extends React.Component {
     const isUnprocessed = !feedback.roadmapItemId && !feedback.isArchived;
     return (
       <div>
-        <h3>Actions</h3>
         <List>
           {isUnprocessed ? (
             <ListItem>

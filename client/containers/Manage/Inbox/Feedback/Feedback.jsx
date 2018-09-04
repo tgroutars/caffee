@@ -17,13 +17,15 @@ const Wrapper = styled.div`
 `;
 const ConversationWrapper = styled.div`
   flex-grow: 1;
+  overflow-y: scroll;
 `;
 const ActionsWrapper = styled.div`
-  width: 300px;
-  padding: 0 24px;
+  width: 200px;
+  padding-left: 24px;
   flex-shrink: 0;
 `;
 const FeedbackMessage = styled.div`
+  word-wrap: break-word;
   width: 100%;
   border-radius: 10px;
   margin-bottom: 24px;

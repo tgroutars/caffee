@@ -19,7 +19,6 @@ const Avatar = styled(AntAvatar)`
 `;
 const ListItem = styled(List.Item)`
   border: none !important;
-  border-left: 4px solid #e8e8e8 !important;
   margin-bottom: 8px;
   padding: 16px;
   cursor: pointer;
@@ -27,7 +26,8 @@ const ListItem = styled(List.Item)`
   &:hover {
     background: rgba(0, 0, 0, 0.05);
   }
-  background: ${({ selected }) => (selected ? 'rgba(0, 0, 0, 0.05)' : '#fff')};
+  border-left: ${({ selected }) =>
+    selected ? '4px solid #1890ff !important' : '4px solid #e8e8e8 !important'};
 `;
 const ListItemMeta = styled(List.Item.Meta)`
   .ant-list-item-meta-content {

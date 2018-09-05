@@ -32,6 +32,7 @@ const serializeFeedback = feedback => ({
     'scopeId',
     'commentsCount',
     'isArchived',
+    'createdAt',
   ]),
   author: pick(feedback.author, ['id', 'name', 'image']),
   createdBy: pick(feedback.createdBy, ['id', 'name', 'image']),
@@ -40,7 +41,7 @@ const serializeFeedback = feedback => ({
   scope: pick(feedback.roadmapItem, ['id', 'name']),
 });
 const serializeComment = comment => ({
-  ...pick(comment, ['id', 'text', 'authorId', 'attachments']),
+  ...pick(comment, ['id', 'text', 'authorId', 'attachments', 'createdAt']),
   author: pick(comment.author, ['id', 'name', 'image']),
 });
 

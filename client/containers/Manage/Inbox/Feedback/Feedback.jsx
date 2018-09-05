@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Avatar } from 'antd';
 import styled from 'styled-components';
+import moment from 'moment';
 
 import { currentFeedbackSelector } from '../../../../selectors/feedback';
 import { fetchFeedback } from '../../../../actions/feedbacks';
@@ -82,6 +83,10 @@ const AttachmentText = styled.div`
   background: rgba(0, 0, 0, 0.05);
   line-height: 100px;
 `;
+const Timestamp = styled.span`
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+`;
 
 class Feedback extends React.Component {
   static propTypes = {
@@ -125,6 +130,7 @@ class Feedback extends React.Component {
               <Author>
                 <Avatar size="small" src={author.image} />
                 {author.name}
+                <Timestamp> - {moment(feedback.createdAt).fromNow()}</Timestamp>
               </Author>
               <Description>{description}</Description>
               {feedback.attachments.length ? (

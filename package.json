@@ -54,6 +54,7 @@
     "less": "^2.7.2",
     "lodash": "^4.17.10",
     "mime-types": "^2.1.19",
+    "moment": "^2.22.2",
     "normalizr": "^3.2.4",
     "oauth": "^0.9.15",
     "parcel-bundler": "^1.9.7",

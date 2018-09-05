@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Avatar } from 'antd';
+import moment from 'moment';
 
 const FeedbackCommentDiv = styled.div`
   width: 100%;
@@ -53,34 +54,41 @@ const AttachmentText = styled.div`
   background: rgba(0, 0, 0, 0.05);
   line-height: 100px;
 `;
+const Timestamp = styled.span`
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+`;
 
 const FeedbackComments = ({ feedback }) => {
   if (!feedback || !feedback.comments) {
     return null;
   }
 
-  return feedback.comments.map(({ id, author, text, attachments }) => (
-    <FeedbackCommentDiv key={id}>
-      <Author>
-        <Avatar size="small" src={author.image} />
-        {author.name}
-      </Author>
-      <Description>{text}</Description>
-      {attachments.length ? (
-        <Attachments>
-          {attachments.map(({ key, url, mimetype }) => (
-            <Attachment key={key} href={url} target="blank">
-              {mimetype && mimetype.startsWith('image/') ? (
-                <img src={url} alt="" />
-              ) : (
-                <AttachmentText>No preview</AttachmentText>
-              )}
-            </Attachment>
-          ))}
-        </Attachments>
-      ) : null}
-    </FeedbackCommentDiv>
-  ));
+  return feedback.comments.map(
+    ({ id, author, text, attachments, createdAt }) => (
+      <FeedbackCommentDiv key={id}>
+        <Author>
+          <Avatar size="small" src={author.image} />
+          {author.name}
+          <Timestamp> - {moment(createdAt).fromNow()}</Timestamp>
+        </Author>
+        <Description>{text}</Description>
+        {attachments.length ? (
+          <Attachments>
+            {attachments.map(({ key, url, mimetype }) => (
+              <Attachment key={key} href={url} target="blank">
+                {mimetype && mimetype.startsWith('image/') ? (
+                  <img src={url} alt="" />
+                ) : (
+                  <AttachmentText>No preview</AttachmentText>
+                )}
+              </Attachment>
+            ))}
+          </Attachments>
+        ) : null}
+      </FeedbackCommentDiv>
+    ),
+  );
 };
 
 export default FeedbackComments;

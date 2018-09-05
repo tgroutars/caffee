@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { List, Avatar as AntAvatar } from 'antd';
 import styled from 'styled-components';
 import { push } from 'connected-react-router';
+import moment from 'moment';
 
 import {
   currentFeedbacksSelector,
@@ -39,6 +40,10 @@ const ListItemMeta = styled(List.Item.Meta)`
     }
   }
 `;
+const Timestamp = styled.span`
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+`;
 
 const FeedbackItem = ({ feedback, onClick, isSelected }) => (
   <ListItem
@@ -54,6 +59,7 @@ const FeedbackItem = ({ feedback, onClick, isSelected }) => (
         <span>
           <Avatar size="small" src={feedback.author.image} />
           {feedback.author.name}
+          <Timestamp> - {moment(feedback.createdAt).fromNow()}</Timestamp>
         </span>
       }
       description={feedback.description}

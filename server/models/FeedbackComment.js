@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: [],
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        field: 'created_at',
+      },
     },
     {},
   );

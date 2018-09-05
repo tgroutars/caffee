@@ -7,7 +7,7 @@ module.exports = () => ({
     text,
     feedbackId,
     feedbackExternalRefId,
-    attachments,
+    attachments = [],
   }) {
     const comment = await FeedbackComment.create({
       authorId,
@@ -20,5 +20,6 @@ module.exports = () => ({
     await trigger('feedback_comment_created', {
       feedbackCommentId: comment.id,
     });
+    return comment;
   },
 });

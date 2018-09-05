@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const pick = require('lodash/pick');
+const trim = require('lodash/trim');
 
 const { APIError } = require('./errors');
 const { requireAuth, findProduct, requirePM } = require('./middleware');
@@ -9,7 +10,10 @@ const {
   ProductUser,
   FeedbackComment,
 } = require('../../models');
-const { Feedback: FeedbackService } = require('../../services');
+const {
+  Feedback: FeedbackService,
+  FeedbackComment: FeedbackCommentService,
+} = require('../../services');
 
 const router = new Router();
 
@@ -175,5 +179,20 @@ router.post(
     ctx.send({ feedback: serializeFeedback(feedback) });
   },
 );
+
+router.post('/feedbacks.addComment', requireAuth, findFeedback, async ctx => {
+  const { feedback, user } = ctx.state;
+  const text = trim(ctx.request.body.text);
+  if (!text) {
+    throw new APIError('no_text');
+  }
+  const comment = await FeedbackCommentService.create({
+    text,
+    authorId: user.id,
+    feedbackId: feedback.id,
+  });
+  await comment.reload({ include: ['author'] });
+  ctx.send({ comment: serializeComment(comment) });
+});
 
 module.exports = router;

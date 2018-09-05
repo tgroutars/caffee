@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { listFeedbacks } from '../../../actions/feedbacks';
+import { listRoadmapItems } from '../../../actions/roadmapItems';
 import { currentProductIdSelector } from '../../../selectors/product';
 import { currentInboxSelector } from '../../../selectors/feedback';
 import FeedbacksList from './FeedbacksList';
@@ -36,15 +37,21 @@ const FeedbackWrapper = styled.div`
   min-width: 500px;
   overflow-y: scroll;
 `;
+const FeedbackPlaceholder = styled.div`
+  text-align: center;
+  width: 100%;
+`;
 
 class Inbox extends React.Component {
   static propTypes = {
     listFeedbacks: PropTypes.func.isRequired,
+    listRoadmapItems: PropTypes.func.isRequired,
     productId: PropTypes.string.isRequired,
   };
 
   async componentDidMount() {
     const { productId, inbox } = this.props;
+    await this.props.listRoadmapItems(productId);
     if (inbox) {
       await this.props.listFeedbacks(productId);
     }
@@ -76,10 +83,15 @@ class Inbox extends React.Component {
             </Switch>
           </FeedbacksListWrapper>
           <FeedbackWrapper>
-            <Route
-              path="/manage/:productId/inbox/:inbox/:feedbackId"
-              component={Feedback}
-            />
+            <Switch>
+              <Route exact path="/manage/:productId/inbox/:inbox">
+                <FeedbackPlaceholder>Select a feedback</FeedbackPlaceholder>
+              </Route>
+              <Route
+                path="/manage/:productId/inbox/:inbox/:feedbackId"
+                component={Feedback}
+              />
+            </Switch>
           </FeedbackWrapper>
         </StyledContent>
       </StyledLayout>
@@ -94,6 +106,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   listFeedbacks,
+  listRoadmapItems,
 };
 
 export default connect(

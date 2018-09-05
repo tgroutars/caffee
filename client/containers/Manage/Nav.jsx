@@ -10,16 +10,18 @@ import { isCurrentProductAdminSelector } from '../../selectors/product';
 const StyledMenu = styled(Menu)`
   line-height: 64px;
 `;
-const HomeButton = styled(Menu.Item)`
+const IconButton = styled(Menu.Item)`
   width: 64px;
   padding-left: 20px;
   padding-right: 20px;
 `;
-const HomeIcon = styled(Icon)`
-  line-height: 64px;
-  font-size: 24px;
+const NavIcon = styled(Icon)`
+  svg {
+    height: 64px;
+    font-size: 24px;
+  }
 `;
-const SettingsMenuItem = styled(Menu.Item)`
+const SettingsMenuItem = styled(IconButton)`
   && {
     float: right;
   }
@@ -34,21 +36,18 @@ const Nav = ({ pathname, isUserAdmin }) => {
       mode="horizontal"
       selectedKeys={[section, section]}
     >
-      <HomeButton key={null}>
+      <IconButton key={null}>
         <Link to="/">
-          <HomeIcon type="home" />
+          <NavIcon type="home" />
         </Link>
-      </HomeButton>
+      </IconButton>
       <Menu.Item key="inbox">
         <Link to={`/manage/${productId}/inbox`}>Inbox</Link>
       </Menu.Item>
-      {/* <Menu.Item key="roadmap">
-        <Link to={`/manage/${productId}/roadmap`}>Roadmap</Link>
-      </Menu.Item> */}
       {isUserAdmin ? (
         <SettingsMenuItem key="settings">
           <Link to={`/manage/${productId}/settings`}>
-            <Icon type="setting" />Settings
+            <NavIcon type="setting" />
           </Link>
         </SettingsMenuItem>
       ) : null}

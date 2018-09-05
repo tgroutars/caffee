@@ -20,6 +20,11 @@ const ListItem = styled.div`
 const ArchivedMessage = styled(IconText)`
   color: #f5222d;
 `;
+const Link = styled.a`
+  &:focus {
+    text-decoration: none;
+  }
+`;
 
 class FeedbackActions extends React.Component {
   static propTypes = {
@@ -34,6 +39,14 @@ class FeedbackActions extends React.Component {
     return (
       <div>
         <List>
+          {isProcessed ? (
+            <div>
+              <div>Associated roadmap item:</div>
+              <Link href={feedback.roadmapItem.trelloCardURL} target="_blank">
+                {feedback.roadmapItem.title}
+              </Link>
+            </div>
+          ) : null}
           {isArchived ? (
             <ArchivedMessage type="delete" text="This feedback is archived" />
           ) : null}

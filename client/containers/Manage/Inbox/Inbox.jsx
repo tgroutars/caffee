@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { listFeedbacks } from '../../../actions/feedbacks';
+import { listRoadmapItems } from '../../../actions/roadmapItems';
 import { currentProductIdSelector } from '../../../selectors/product';
 import { currentInboxSelector } from '../../../selectors/feedback';
 import FeedbacksList from './FeedbacksList';
@@ -40,11 +41,13 @@ const FeedbackWrapper = styled.div`
 class Inbox extends React.Component {
   static propTypes = {
     listFeedbacks: PropTypes.func.isRequired,
+    listRoadmapItems: PropTypes.func.isRequired,
     productId: PropTypes.string.isRequired,
   };
 
   async componentDidMount() {
     const { productId, inbox } = this.props;
+    await this.props.listRoadmapItems(productId);
     if (inbox) {
       await this.props.listFeedbacks(productId);
     }
@@ -94,6 +97,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   listFeedbacks,
+  listRoadmapItems,
 };
 
 export default connect(

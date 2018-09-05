@@ -6,6 +6,7 @@ const initialState = {
   users: {},
   products: {},
   scopes: {},
+  feedbacks: {},
 };
 
 const entities = (state = initialState, action) => {

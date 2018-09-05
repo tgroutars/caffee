@@ -7,11 +7,19 @@ const { Product: ProductService } = require('../../services');
 
 const router = new Router();
 
-const serializeProduct = product =>
-  pick(product, ['id', 'name', 'image', 'questions', 'userRole']);
+const serializeProduct = product => ({
+  ...pick(product, ['id', 'name', 'image', 'questions', 'userRole']),
+  roadmapStages: product.roadmapStages
+    ? product.roadmapStages.map(stage => pick(stage, 'id', 'name'))
+    : undefined,
+  tags: product.tags
+    ? product.tags.map(tag => pick(tag, 'id', 'name'))
+    : undefined,
+});
 
 router.post('/products.info', requireAuth, findProduct, async ctx => {
   const { product } = ctx.state;
+  await product.reload({ include: ['roadmapStages', 'tags'] });
   ctx.send({ product: serializeProduct(product) });
 });
 

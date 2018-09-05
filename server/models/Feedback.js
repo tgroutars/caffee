@@ -55,6 +55,16 @@ module.exports = (sequelize, DataTypes) => {
       field: 'assigned_to_id',
       allowNull: true,
     },
+    commentsCount: {
+      type: DataTypes.INTEGER,
+      field: 'comments_count',
+      allowNull: false,
+      defaultValue: 0,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'created_at',
+    },
   });
 
   /**

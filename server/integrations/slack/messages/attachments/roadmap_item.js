@@ -9,7 +9,6 @@ module.exports = ({
 }) => {
   const isArchived = !!roadmapItem.archivedAt;
   const follow = !hideFollow && !isArchived;
-  const suggestFollowers = isPM && !isArchived;
   const showDescription = showMore;
   const showShowMore = !showMore && !isArchived;
   const openCard = isPM;
@@ -24,17 +23,6 @@ module.exports = ({
         roadmapItemId: roadmapItem.id,
       },
       text: 'Follow',
-    });
-  }
-  if (suggestFollowers) {
-    actions.push({
-      type: 'select',
-      data_source: 'external',
-      name: {
-        type: 'roadmap_item_suggest_follower',
-        roadmapItemId: roadmapItem.id,
-      },
-      text: 'Suggest followers',
     });
   }
   if (openCard) {

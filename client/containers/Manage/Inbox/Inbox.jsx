@@ -1,41 +1,102 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { Layout } from 'antd';
-import { matchPath } from 'react-router-dom';
+import { PropTypes } from 'prop-types';
+import { connect } from 'react-redux';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
+import { listFeedbacks } from '../../../actions/feedbacks';
+import { currentProductIdSelector } from '../../../selectors/product';
+import { currentInboxSelector } from '../../../selectors/feedback';
+import FeedbacksList from './FeedbacksList';
 import Nav from './Nav';
+import Feedback from './Feedback/Feedback';
 
 const { Content } = Layout;
 
 const StyledLayout = styled(Layout)`
   background: #fff;
+  max-height: 100%;
 `;
 const StyledContent = styled(Content)`
   background: #fff;
   background: rgba(0, 0, 0, 0);
+  display: grid;
+  grid-template-columns: 500px auto;
+  grid-template-rows: auto;
+  overflow-x: scroll !important;
+  overflow-y: hidden !important;
+`;
+const FeedbacksListWrapper = styled.div`
   padding: 24px;
-  padding-left: 32px;
+  overflow-y: scroll;
+`;
+const FeedbackWrapper = styled.div`
+  padding: 24px;
+  min-width: 500px;
+  overflow-y: scroll;
 `;
 
-const Inbox = ({ pathname }) => {
-  const match = matchPath(pathname, { path: '/manage/:productId/inbox/:box?' });
-  const box = match.params.box || 'unprocessed';
-  return (
-    <StyledLayout>
-      <Nav />
-      <StyledContent>{box}</StyledContent>
-    </StyledLayout>
-  );
-};
+class Inbox extends React.Component {
+  static propTypes = {
+    listFeedbacks: PropTypes.func.isRequired,
+    productId: PropTypes.string.isRequired,
+  };
 
-Inbox.propTypes = {
-  pathname: PropTypes.string.isRequired,
-};
+  async componentDidMount() {
+    const { productId, inbox } = this.props;
+    if (inbox) {
+      await this.props.listFeedbacks(productId);
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { productId, inbox } = this.props;
+    if (inbox && inbox !== prevProps.inbox) {
+      await this.props.listFeedbacks(productId);
+    }
+  }
+
+  render() {
+    return (
+      <StyledLayout>
+        <Nav />
+        <StyledContent>
+          <FeedbacksListWrapper>
+            <Switch>
+              <Redirect
+                exact
+                from="/manage/:productId/inbox/"
+                to="/manage/:productId/inbox/unprocessed"
+              />
+              <Route
+                path="/manage/:productId/inbox/:inbox"
+                component={FeedbacksList}
+              />
+            </Switch>
+          </FeedbacksListWrapper>
+          <FeedbackWrapper>
+            <Route
+              path="/manage/:productId/inbox/:inbox/:feedbackId"
+              component={Feedback}
+            />
+          </FeedbackWrapper>
+        </StyledContent>
+      </StyledLayout>
+    );
+  }
+}
 
 const mapStateToProps = state => ({
-  pathname: state.router.location.pathname,
+  productId: currentProductIdSelector(state),
+  inbox: currentInboxSelector(state),
 });
 
-export default connect(mapStateToProps)(Inbox);
+const mapDispatchToProps = {
+  listFeedbacks,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Inbox);

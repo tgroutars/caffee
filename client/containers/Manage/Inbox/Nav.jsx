@@ -5,6 +5,11 @@ import { Menu, Layout, Icon } from 'antd';
 import { Link, matchPath } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import {
+  currentFeedbackIdSelector,
+  nbUnprocessedFeedbacksSelector,
+} from '../../../selectors/feedback';
+
 const { Sider } = Layout;
 
 const StyledSider = styled(Sider)`
@@ -32,7 +37,7 @@ const StyledMenuItem = styled(Menu.Item)`
   }
 `;
 
-const Nav = ({ pathname }) => {
+const Nav = ({ pathname, currentFeedbackId, nbUnprocessed }) => {
   const match = matchPath(pathname, {
     path: '/manage/:productId/inbox/:box?',
     exact: false,
@@ -43,17 +48,29 @@ const Nav = ({ pathname }) => {
     <StyledSider>
       <StyledMenu mode="vertical" selectedKeys={[box || 'unprocessed']}>
         <StyledMenuItem key="unprocessed">
-          <Link to={`/manage/${productId}/inbox`}>
-            <Icon type="inbox" />Inbox
+          <Link
+            to={`/manage/${productId}/inbox/unprocessed${
+              currentFeedbackId ? `/${currentFeedbackId}` : ''
+            }`}
+          >
+            <Icon type="inbox" />Inbox ({nbUnprocessed})
           </Link>
         </StyledMenuItem>
         <StyledMenuItem key="processed">
-          <Link to={`/manage/${productId}/inbox/processed`}>
+          <Link
+            to={`/manage/${productId}/inbox/processed${
+              currentFeedbackId ? `/${currentFeedbackId}` : ''
+            }`}
+          >
             <Icon type="check" />Processed
           </Link>
         </StyledMenuItem>
         <StyledMenuItem key="archived">
-          <Link to={`/manage/${productId}/inbox/archived`}>
+          <Link
+            to={`/manage/${productId}/inbox/archived${
+              currentFeedbackId ? `/${currentFeedbackId}` : ''
+            }`}
+          >
             <Icon type="delete" />Archived
           </Link>
         </StyledMenuItem>
@@ -64,10 +81,18 @@ const Nav = ({ pathname }) => {
 
 Nav.propTypes = {
   pathname: PropTypes.string.isRequired,
+  currentFeedbackId: PropTypes.string,
+  nbUnprocessed: PropTypes.number.isRequired,
+};
+
+Nav.defaultProps = {
+  currentFeedbackId: null,
 };
 
 const mapStateToProps = state => ({
   pathname: state.router.location.pathname,
+  currentFeedbackId: currentFeedbackIdSelector(state),
+  nbUnprocessed: nbUnprocessedFeedbacksSelector(state),
 });
 
 export default connect(mapStateToProps)(Nav);

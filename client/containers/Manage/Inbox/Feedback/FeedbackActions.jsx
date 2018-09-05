@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import AddAction from './Actions/Add';
 import ArchiveAction from './Actions/Archive';
 import CreateAction from './Actions/Create';
+import IconText from '../../../../components/IconText';
 
 const List = styled.div`
   display: flex;
@@ -16,6 +17,9 @@ const ListItem = styled.div`
   width: 100%;
   margin-bottom: 12px;
 `;
+const ArchivedMessage = styled(IconText)`
+  color: #f5222d;
+`;
 
 class FeedbackActions extends React.Component {
   static propTypes = {
@@ -24,10 +28,15 @@ class FeedbackActions extends React.Component {
 
   render() {
     const { feedback } = this.props;
-    const isUnprocessed = !feedback.roadmapItemId && !feedback.archivedAt;
+    const isArchived = !!feedback.archivedAt;
+    const isProcessed = !!feedback.roadmapItemId;
+    const isUnprocessed = !isProcessed && !isArchived;
     return (
       <div>
         <List>
+          {isArchived ? (
+            <ArchivedMessage type="delete" text="This feedback is archived" />
+          ) : null}
           {isUnprocessed ? (
             <ListItem>
               <AddAction feedback={feedback} />

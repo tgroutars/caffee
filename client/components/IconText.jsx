@@ -7,8 +7,8 @@ const Icon = styled(AntIcon)`
   margin-right: 8px;
 `;
 
-const IconText = ({ type, text }) => (
-  <span>
+const IconText = ({ type, text, className }) => (
+  <span className={className}>
     <Icon type={type} />
     {text}
   </span>
@@ -17,10 +17,12 @@ const IconText = ({ type, text }) => (
 IconText.propTypes = {
   type: PropTypes.string.isRequired,
   text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  className: PropTypes.string,
 };
 
 IconText.defaultProps = {
   text: '',
+  className: '',
 };
 
 export default IconText;

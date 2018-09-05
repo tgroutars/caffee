@@ -89,5 +89,12 @@ export const addComment = (feedbackId, { text }) => async (
   dispatch(addEntities('feedbackComment', comment));
   const { comments } = getState().entities.feedbacks[feedbackId];
   const newComments = [...comments, comment.id];
-  dispatch(addEntities('feedback', { id: feedbackId, comments: newComments }));
+  const commentsCount = newComments.length;
+  dispatch(
+    addEntities('feedback', {
+      id: feedbackId,
+      comments: newComments,
+      commentsCount,
+    }),
+  );
 };

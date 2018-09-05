@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import AddAction from './Actions/Add';
 import ArchiveAction from './Actions/Archive';
+import CreateAction from './Actions/Create';
 
 const List = styled.div`
   display: flex;
@@ -30,6 +31,11 @@ class FeedbackActions extends React.Component {
           {isUnprocessed ? (
             <ListItem>
               <AddAction feedback={feedback} />
+            </ListItem>
+          ) : null}
+          {isUnprocessed ? (
+            <ListItem>
+              <CreateAction feedback={feedback} />
             </ListItem>
           ) : null}
           {isUnprocessed ? (

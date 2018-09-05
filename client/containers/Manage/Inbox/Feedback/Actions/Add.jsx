@@ -150,9 +150,7 @@ class Add extends React.Component {
         onVisibleChange={this.handlePopoverVisibilityChange}
         content={this.renderPopoverContent()}
       >
-        <Button type="primary" onClick={this.openModal}>
-          Add to roadmap item
-        </Button>
+        <Button type="primary">Add to roadmap item</Button>
       </Popover>
     );
   }

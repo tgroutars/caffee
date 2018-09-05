@@ -52,8 +52,8 @@ const run = async (payload, { workspace, slackUser }) => {
     description,
     productId,
     stageId,
-    tagId,
     attachments,
+    tagIds: [tagId],
   });
 
   if (feedbackId) {

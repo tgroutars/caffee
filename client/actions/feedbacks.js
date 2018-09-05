@@ -30,11 +30,13 @@ export const listFeedbacks = productId => async (dispatch, getState) => {
       ),
     );
   }
+  return feedbacks;
 };
 
 export const fetchFeedback = feedbackId => async dispatch => {
   const { feedback } = await dispatch(api.feedbacks.info({ feedbackId }));
   dispatch(addEntities('feedback', feedback));
+  return feedback;
 };
 
 export const setRoadmapItem = (feedbackId, roadmapItemId) => async dispatch => {
@@ -42,6 +44,7 @@ export const setRoadmapItem = (feedbackId, roadmapItemId) => async dispatch => {
     api.feedbacks.setRoadmapItem({ feedbackId, roadmapItemId }),
   );
   dispatch(addEntities('feedback', feedback));
+  return feedback;
 };
 
 export const archiveFeedback = (
@@ -50,6 +53,28 @@ export const archiveFeedback = (
 ) => async dispatch => {
   const { feedback } = await dispatch(
     api.feedbacks.archive({ feedbackId, archiveReason }),
+  );
+  dispatch(addEntities('feedback', feedback));
+  return feedback;
+};
+
+export const setNewRoadmapItem = (
+  feedbackId,
+  { productId, title, description, tagIds, stageId },
+) => async dispatch => {
+  const { roadmapItem } = await dispatch(
+    api.roadmapItems.create({
+      productId,
+      title,
+      description,
+      tagIds,
+      stageId,
+    }),
+  );
+  const feedback = await dispatch(setRoadmapItem(feedbackId, roadmapItem.id));
+  dispatch(addEntities('roadmapItem', roadmapItem));
+  dispatch(
+    addEntities('product', { id: productId, roadmapItems: [roadmapItem] }),
   );
   dispatch(addEntities('feedback', feedback));
 };

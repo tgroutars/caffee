@@ -71,5 +71,6 @@ export default {
   },
   roadmapItems: {
     list: apiCall.bind(this, 'roadmapItems.list'),
+    create: apiCall.bind(this, 'roadmapItems.create'),
   },
 };

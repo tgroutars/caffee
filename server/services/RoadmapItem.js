@@ -13,8 +13,11 @@ const {
   RoadmapItemFollow,
   RoadmapStage,
   sequelize,
+  Sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
+
+const { Op } = Sequelize;
 
 const RoadmapItemService = (/* services */) => ({
   async addFollower(roadmapItemId, userId) {
@@ -149,15 +152,15 @@ const RoadmapItemService = (/* services */) => ({
   async createAndSync({
     title,
     description,
-    attachments,
     productId,
-    tagId,
     stageId,
+    attachments = [],
+    tagIds = [],
   }) {
     const product = await Product.findById(productId);
     const { trelloAccessToken } = product;
+    const tags = await Tag.findAll({ where: { id: { [Op.in]: tagIds } } });
 
-    const tag = tagId ? await Tag.findById(tagId) : null;
     const stage = await RoadmapStage.findById(stageId);
     const trelloAttachments = attachments.map(attachment => ({
       ...attachment,
@@ -167,7 +170,7 @@ const RoadmapItemService = (/* services */) => ({
       title,
       description,
       listId: stage.trelloRef,
-      labelIds: tag ? [tag.trelloRef] : [],
+      labelIds: tags.map(tag => tag.trelloRef),
       attachments: trelloAttachments,
     });
 
@@ -177,7 +180,7 @@ const RoadmapItemService = (/* services */) => ({
       productId,
       stageId,
       trelloRef: card.id,
-      tagIds: tag && [tag.id],
+      tagIds: tags.map(tag => tag.id),
     });
   },
 

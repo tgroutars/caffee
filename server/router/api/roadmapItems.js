@@ -3,6 +3,7 @@ const pick = require('lodash/pick');
 
 const { requireAuth, findProduct, requirePM } = require('./middleware');
 const { Sequelize, RoadmapItem } = require('../../models');
+const { RoadmapItem: RoadmapItemService } = require('../../services');
 
 const { Op } = Sequelize;
 
@@ -22,7 +23,9 @@ const serializeRoadmapItem = roadmapItem => ({
     'attachments',
     'createdAt',
   ]),
-  stage: pick(roadmapItem.stage, ['id', 'name']),
+  stage: roadmapItem.stage
+    ? pick(roadmapItem.stage, ['id', 'name'])
+    : undefined,
 });
 
 router.post(
@@ -54,6 +57,26 @@ router.post(
     });
     ctx.send({
       roadmapItems: roadmapItems.map(serializeRoadmapItem),
+    });
+  },
+);
+
+router.post(
+  '/roadmapItems.create',
+  requireAuth,
+  findProduct,
+  requirePM,
+  async ctx => {
+    const { productId, title, description, tagIds, stageId } = ctx.request.body;
+    const roadmapItem = await RoadmapItemService.createAndSync({
+      productId,
+      title,
+      description,
+      tagIds,
+      stageId,
+    });
+    ctx.send({
+      roadmapItem: serializeRoadmapItem(roadmapItem),
     });
   },
 );

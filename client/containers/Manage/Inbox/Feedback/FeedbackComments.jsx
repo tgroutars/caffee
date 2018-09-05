@@ -59,8 +59,8 @@ const FeedbackComments = ({ feedback }) => {
     return null;
   }
 
-  return feedback.comments.map(({ author, text, attachments }) => (
-    <FeedbackCommentDiv>
+  return feedback.comments.map(({ id, author, text, attachments }) => (
+    <FeedbackCommentDiv key={id}>
       <Author>
         <Avatar size="small" src={author.image} />
         {author.name}

@@ -78,3 +78,16 @@ export const setNewRoadmapItem = (
   );
   dispatch(addEntities('feedback', feedback));
 };
+
+export const addComment = (feedbackId, { text }) => async (
+  dispatch,
+  getState,
+) => {
+  const { comment } = await dispatch(
+    api.feedbacks.addComment({ feedbackId, text }),
+  );
+  dispatch(addEntities('feedbackComment', comment));
+  const { comments } = getState().entities.feedbacks[feedbackId];
+  const newComments = [...comments, comment.id];
+  dispatch(addEntities('feedback', { id: feedbackId, comments: newComments }));
+};

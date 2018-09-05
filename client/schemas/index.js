@@ -18,9 +18,12 @@ export const roadmapItem = new schema.Entity('roadmapItems', {
   tags,
 });
 export const roadmapItems = new schema.Array(roadmapItem);
+export const feedbackComment = new schema.Entity('feedbackComments');
+export const feedbackComments = new schema.Array(feedbackComment);
 export const feedback = new schema.Entity('feedbacks', {
   attachments,
   roadmapItem,
+  comments: feedbackComments,
 });
 export const feedbacks = new schema.Array(feedback);
 export const product = new schema.Entity('products', {
@@ -38,6 +41,8 @@ export default {
   scopes,
   product,
   products,
+  feedbackComment,
+  feedbackComments,
   feedback,
   feedbacks,
   attachment,

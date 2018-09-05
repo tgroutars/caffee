@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { currentFeedbackSelector } from '../../../../selectors/feedback';
 import { fetchFeedback } from '../../../../actions/feedbacks';
 import FeedbackComments from './FeedbackComments';
+import NewFeedbackComment from './NewFeedbackComment';
 import FeedbackActions from './FeedbackActions';
 
 const Wrapper = styled.div`
@@ -17,7 +18,12 @@ const Wrapper = styled.div`
 `;
 const ConversationWrapper = styled.div`
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+`;
+const MessagesWrapper = styled.div`
   overflow-y: scroll;
+  position: relative;
 `;
 const ActionsWrapper = styled.div`
   width: 200px;
@@ -114,27 +120,30 @@ class Feedback extends React.Component {
     return (
       <Wrapper>
         <ConversationWrapper>
-          <FeedbackMessage>
-            <Author>
-              <Avatar size="small" src={author.image} />
-              {author.name}
-            </Author>
-            <Description>{description}</Description>
-            {feedback.attachments.length ? (
-              <Attachments>
-                {attachments.map(({ key, url, mimetype }) => (
-                  <Attachment key={key} href={url} target="blank">
-                    {mimetype && mimetype.startsWith('image/') ? (
-                      <img src={url} alt="" />
-                    ) : (
-                      <AttachmentText>No preview</AttachmentText>
-                    )}
-                  </Attachment>
-                ))}
-              </Attachments>
-            ) : null}
-          </FeedbackMessage>
-          <FeedbackComments feedback={feedback} />
+          <MessagesWrapper>
+            <FeedbackMessage>
+              <Author>
+                <Avatar size="small" src={author.image} />
+                {author.name}
+              </Author>
+              <Description>{description}</Description>
+              {feedback.attachments.length ? (
+                <Attachments>
+                  {attachments.map(({ key, url, mimetype }) => (
+                    <Attachment key={key} href={url} target="blank">
+                      {mimetype && mimetype.startsWith('image/') ? (
+                        <img src={url} alt="" />
+                      ) : (
+                        <AttachmentText>No preview</AttachmentText>
+                      )}
+                    </Attachment>
+                  ))}
+                </Attachments>
+              ) : null}
+            </FeedbackMessage>
+            <FeedbackComments feedback={feedback} />
+          </MessagesWrapper>
+          <NewFeedbackComment feedback={feedback} />
         </ConversationWrapper>
         <ActionsWrapper>
           <FeedbackActions feedback={feedback} />

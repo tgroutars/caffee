@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
 import { matchPath } from 'react-router-dom';
 import { denormalize } from 'normalizr';
+
 import {
   feedbacks as feedbacksSchema,
   feedback as feedbackSchema,
 } from '../schemas';
-
 import { currentProductSelector } from './product';
 
 const filterFuncs = {

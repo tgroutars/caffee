@@ -1,6 +1,7 @@
 import { schema } from 'normalizr';
 
 export const user = new schema.Entity('users');
+export const users = new schema.Array(user);
 export const scope = new schema.Entity('scopes');
 export const scopes = new schema.Array(scope);
 export const attachment = new schema.Entity(
@@ -32,11 +33,13 @@ export const product = new schema.Entity('products', {
   roadmapItems,
   roadmapStages,
   tags,
+  users,
 });
 export const products = new schema.Array(product);
 
 export default {
   user,
+  users,
   scope,
   scopes,
   product,

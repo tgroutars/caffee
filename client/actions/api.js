@@ -74,4 +74,7 @@ export default {
     list: apiCall.bind(this, 'roadmapItems.list'),
     create: apiCall.bind(this, 'roadmapItems.create'),
   },
+  productUsers: {
+    list: apiCall.bind(this, 'productUsers.list'),
+  },
 };

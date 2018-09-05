@@ -42,6 +42,9 @@ const Nav = ({ pathname }) => {
   return (
     <StyledSider>
       <StyledMenu mode="vertical" selectedKeys={[setting]}>
+        <StyledMenuItem key="users">
+          <Link to={`/manage/${productId}/settings/users`}>Users</Link>
+        </StyledMenuItem>
         <StyledMenuItem key="feedback">
           <Link to={`/manage/${productId}/settings/feedback`}>
             Feedback form

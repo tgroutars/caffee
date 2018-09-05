@@ -89,6 +89,7 @@ class FeedbacksList extends React.Component {
     const { feedbacks, currentFeedbackId } = this.props;
     return (
       <List
+        locale={{ emptyText: 'No feedback in this list' }}
         itemLayout="vertical"
         size="large"
         dataSource={feedbacks}

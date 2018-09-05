@@ -37,6 +37,10 @@ const FeedbackWrapper = styled.div`
   min-width: 500px;
   overflow-y: scroll;
 `;
+const FeedbackPlaceholder = styled.div`
+  text-align: center;
+  width: 100%;
+`;
 
 class Inbox extends React.Component {
   static propTypes = {
@@ -79,10 +83,15 @@ class Inbox extends React.Component {
             </Switch>
           </FeedbacksListWrapper>
           <FeedbackWrapper>
-            <Route
-              path="/manage/:productId/inbox/:inbox/:feedbackId"
-              component={Feedback}
-            />
+            <Switch>
+              <Route exact path="/manage/:productId/inbox/:inbox">
+                <FeedbackPlaceholder>Select a feedback</FeedbackPlaceholder>
+              </Route>
+              <Route
+                path="/manage/:productId/inbox/:inbox/:feedbackId"
+                component={Feedback}
+              />
+            </Switch>
           </FeedbackWrapper>
         </StyledContent>
       </StyledLayout>

@@ -20,11 +20,9 @@ export const currentInboxSelector = createSelector(
   currentPathnameSelector,
   pathname => {
     const match = matchPath(pathname, '/manage/:productId/inbox/:inbox');
-
     if (!match) {
       return null;
     }
-
     return match.params.inbox;
   },
 );

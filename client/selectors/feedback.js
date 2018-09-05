@@ -37,7 +37,7 @@ const feedbacksSelector = createSelector(
       return [];
     }
     return denormalize(product.feedbacks, feedbacksSchema, entities).sort(
-      (f1, f2) => (f1.createdAt > f2.createdAt ? 1 : -1),
+      (f1, f2) => (f1.createdAt < f2.createdAt ? 1 : -1),
     );
   },
 );

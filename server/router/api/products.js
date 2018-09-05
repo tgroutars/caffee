@@ -10,7 +10,7 @@ const router = new Router();
 const serializeProduct = product => ({
   ...pick(product, ['id', 'name', 'image', 'questions', 'userRole']),
   roadmapStages: product.roadmapStages
-    ? product.roadmapStages.map(stage => pick(stage, 'id', 'name'))
+    ? product.roadmapStages.map(stage => pick(stage, 'id', 'name', 'position'))
     : undefined,
   tags: product.tags
     ? product.tags.map(tag => pick(tag, 'id', 'name'))

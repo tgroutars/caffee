@@ -8,8 +8,8 @@ import Editable from '../../../../components/Editable';
 
 const SelectUser = styled(Select)`
   margin-left: 6px;
+  width: 200px;
 `;
-
 const ScopeInfo = styled.div`
   display: flex;
   justify-content: space-between;

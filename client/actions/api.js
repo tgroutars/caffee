@@ -69,6 +69,7 @@ export default {
     setName: apiCall.bind(this, 'scopes.setName'),
     create: apiCall.bind(this, 'scopes.create'),
     archive: apiCall.bind(this, 'scopes.archive'),
+    setResponsible: apiCall.bind(this, 'scopes.setResponsible'),
   },
   feedbacks: {
     list: apiCall.bind(this, 'feedbacks.list'),

@@ -27,6 +27,10 @@ const ScopeService = (/* services */) => ({
     await Scope.update({ name }, { where: { id: scopeId } });
   },
 
+  async setResponsible(scopeId, responsibleId) {
+    await Scope.update({ responsibleId }, { where: { id: scopeId } });
+  },
+
   async archive(scopeId) {
     // TODO: Do this in transaction
     const children = await Scope.findAll({

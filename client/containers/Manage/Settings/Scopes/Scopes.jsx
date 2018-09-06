@@ -8,8 +8,11 @@ import {
   saveName,
   createScope,
   archiveScope,
+  setResponsible,
 } from '../../../../actions/scopes';
+import { listProductUsers } from '../../../../actions/productUsers';
 import { scopesTreeSelector } from '../../../../selectors/scope';
+import { pmsSelector } from '../../../../selectors/user';
 import ScopesComponent from './Component';
 
 const ScopesWrapper = styled.div`
@@ -21,17 +24,25 @@ const ScopesWrapper = styled.div`
 class Scopes extends React.Component {
   static propTypes = {
     productId: PropTypes.string.isRequired,
+    setResponsible: PropTypes.func.isRequired,
     fetchScopes: PropTypes.func.isRequired,
     createScope: PropTypes.func.isRequired,
     archiveScope: PropTypes.func.isRequired,
     saveName: PropTypes.func.isRequired,
+    listProductUsers: PropTypes.func.isRequired,
     scopesTree: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+    pms: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   };
 
   async componentDidMount() {
     const { productId } = this.props;
     await this.props.fetchScopes(productId);
+    await this.props.listProductUsers(productId);
   }
+
+  setResponsible = async (scopeId, userId) => {
+    await this.props.setResponsible(scopeId, userId);
+  };
 
   handleSave = async (scope, name) => {
     const { productId } = this.props;
@@ -47,11 +58,11 @@ class Scopes extends React.Component {
   };
 
   handleArchive = async scope => {
-    await this.props.archiveScope(scope.id);
+    await this.props.archiveScope(scope);
   };
 
   render() {
-    const { scopesTree } = this.props;
+    const { scopesTree, pms } = this.props;
 
     return (
       <div>
@@ -62,9 +73,11 @@ class Scopes extends React.Component {
         </p>
         <ScopesWrapper>
           <ScopesComponent
+            pms={pms}
             scopes={scopesTree}
             onSave={this.handleSave}
             onArchive={this.handleArchive}
+            setResponsible={this.setResponsible}
           />
         </ScopesWrapper>
       </div>
@@ -75,6 +88,7 @@ class Scopes extends React.Component {
 const mapStateToProps = state => ({
   productId: state.product.productId,
   scopesTree: scopesTreeSelector(state),
+  pms: pmsSelector(state),
 });
 
 const mapDispatchToProps = {
@@ -82,6 +96,8 @@ const mapDispatchToProps = {
   saveName,
   createScope,
   archiveScope,
+  listProductUsers,
+  setResponsible,
 };
 
 export default connect(

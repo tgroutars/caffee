@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import uuidv4 from 'uuid/v4';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { currentProductSelector } from './product';
 
@@ -19,7 +20,8 @@ export const currentScopesSelector = createSelector(
 
 export const scopesTreeSelector = createSelector(
   currentScopesSelector,
-  scopes => {
+  entitiesScopes => {
+    const scopes = cloneDeep(entitiesScopes);
     const map = {};
     const roots = [];
     scopes.forEach(scope => {

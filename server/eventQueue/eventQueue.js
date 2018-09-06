@@ -20,7 +20,9 @@ queue.process(50, async job => {
     try {
       await eventListener(payload);
     } catch (err) {
-      winston.error(`Error processing event ${type}`);
+      winston.error(`Error processing event ${type}:`);
+      winston.error(err);
+      winston.error(`payload: ${payload}`);
     }
   });
 });

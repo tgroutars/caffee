@@ -1,8 +1,6 @@
 const SlackClient = require('@slack/client').WebClient;
-const Promise = require('bluebird');
 
 const { isUser, getUserVals } = require('../../helpers/user');
-const { SlackInstall } = require('../../../../models');
 const { SlackUser: SlackUserService } = require('../../../../services');
 
 const teamJoin = async (payload, { workspace }) => {
@@ -15,18 +13,12 @@ const teamJoin = async (payload, { workspace }) => {
     return;
   }
   const { email, name, slackId, image } = getUserVals(userInfo);
-  const [slackUser] = await SlackUserService.findOrCreate({
+  await SlackUserService.findOrCreate({
     email,
     name,
     slackId,
     image,
     workspaceId: workspace.id,
-  });
-  const slackInstalls = await SlackInstall.findAll({
-    where: { workspaceId: workspace.id },
-  });
-  await Promise.map(slackInstalls, async ({ productId }) => {
-    await slackUser.user.addProduct(productId);
   });
 };
 

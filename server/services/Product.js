@@ -1,13 +1,12 @@
 const Promise = require('bluebird');
 const winston = require('winston');
-const SlackClient = require('@slack/client').WebClient;
-const { getUserVals } = require('../integrations/slack/helpers/user');
 
 const {
   Product,
   RoadmapItem,
   Tag,
   RoadmapStage,
+  ProductUser,
   Sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
@@ -35,7 +34,7 @@ const DEFAULT_STAGES = [
   { name: 'Released' },
 ];
 
-const ProductService = services => ({
+const ProductService = () => ({
   async setName(productId, { name }) {
     await Product.update({ name }, { where: { id: productId } });
   },
@@ -49,65 +48,14 @@ const ProductService = services => ({
     });
   },
 
-  async createFromSlackInstall({ accessToken, userSlackId, appId, appUserId }) {
-    const slackClient = new SlackClient(accessToken);
-    const { user: userInfo } = await slackClient.users.info({
-      user: userSlackId,
-    });
-    const { team: workspaceInfo } = await slackClient.team.info();
-    const {
-      id: workspaceSlackId,
-      name: workspaceName,
-      icon: { image_132: workspaceImage },
-      domain,
-    } = workspaceInfo;
-
-    const [workspace] = await services.SlackWorkspace.findOrCreate({
-      accessToken,
-      domain,
-      appId,
-      appUserId,
-      slackId: workspaceSlackId,
-      name: workspaceName,
-      image: workspaceImage,
-    });
-
-    const userVals = getUserVals(userInfo);
-
-    const [slackUser] = await services.SlackUser.findOrCreate({
-      ...userVals,
-      workspaceId: workspace.id,
-    });
-
-    const { user } = slackUser;
-
-    const product = await this.create({
-      name: workspaceName,
-      image: workspaceImage,
-      ownerId: user.id,
-    });
-
-    await product.addUser(user, { through: { role: 'admin' } });
-
-    await services.SlackInstall.create({
-      productId: product.id,
-      workspaceId: workspace.id,
-    });
-
-    await this.doOnboarding(product.id, {
-      onboardingStep: Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME'],
-      slackUserId: slackUser.id,
-    });
-
-    return product;
-  },
-
   async create({ name, image, ownerId }) {
-    return Product.create({
+    const product = await Product.create({
       name,
       image,
       ownerId,
     });
+    await product.addUser(ownerId, { through: { role: 'admin' } });
+    return product;
   },
 
   async setQuestions(productId, questions) {
@@ -258,6 +206,20 @@ const ProductService = services => ({
         await roadmapItem.addTags(itemTags);
       },
     );
+  },
+
+  async addUser(productId, userId) {
+    const [productUser] = await ProductUser.findOrCreate({
+      where: { productId, userId },
+      defaults: { role: 'author' },
+    });
+    return productUser;
+  },
+
+  async removeUser(productId, userId) {
+    await ProductUser.destroy({
+      where: { productId, userId },
+    });
   },
 });
 

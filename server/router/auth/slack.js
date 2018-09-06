@@ -1,8 +1,17 @@
 const Router = require('koa-router');
 const axios = require('axios');
 const querystring = require('querystring');
+const SlackClient = require('@slack/client').WebClient;
+const Promise = require('bluebird');
 
-const { Product: ProductService } = require('../../services');
+const { getUserVals } = require('../../integrations/slack/helpers/user');
+const { Product } = require('../../models');
+const {
+  Product: ProductService,
+  SlackWorkspace: SlackWorkspaceService,
+  SlackUser: SlackUserService,
+  SlackInstall: SlackInstallService,
+} = require('../../services');
 
 const SCOPES = [
   'channels:history',
@@ -94,11 +103,48 @@ router.get('/install/callback', async ctx => {
     app_id: appId,
   } = access;
 
-  await ProductService.createFromSlackInstall({
+  const slackClient = new SlackClient(accessToken);
+  const [{ user: userInfo }, { team: workspaceInfo }] = await Promise.all([
+    slackClient.users.info({
+      user: userSlackId,
+    }),
+    slackClient.team.info(),
+  ]);
+
+  const {
+    id: workspaceSlackId,
+    name: workspaceName,
+    icon: { image_132: workspaceImage },
+    domain,
+  } = workspaceInfo;
+  const [workspace] = await SlackWorkspaceService.findOrCreate({
     accessToken,
-    userSlackId,
+    domain,
     appId,
     appUserId,
+    slackId: workspaceSlackId,
+    name: workspaceName,
+    image: workspaceImage,
+  });
+
+  const userVals = getUserVals(userInfo);
+  const [slackUser] = await SlackUserService.findOrCreate({
+    ...userVals,
+    workspaceId: workspace.id,
+  });
+  const { user } = slackUser;
+  const product = await ProductService.create({
+    name: workspaceName,
+    image: workspaceImage,
+    ownerId: user.id,
+  });
+  await SlackInstallService.create({
+    productId: product.id,
+    workspaceId: workspace.id,
+  });
+  await ProductService.doOnboarding(product.id, {
+    onboardingStep: Product.ONBOARDING_STEPS['01_CHOOSE_PRODUCT_NAME'],
+    slackUserId: slackUser.id,
   });
 
   ctx.redirect(`https://slack.com/app_redirect?channel=${appHome}`);

@@ -56,6 +56,13 @@ export default {
     info: apiCall.bind(this, 'products.info'),
     list: apiCall.bind(this, 'products.list'),
     setQuestions: apiCall.bind(this, 'products.setQuestions'),
+    users: {
+      list: apiCall.bind(this, 'products.users.list'),
+      getSuggestions: apiCall.bind(this, 'products.users.getSuggestions'),
+      add: apiCall.bind(this, 'products.users.add'),
+      remove: apiCall.bind(this, 'products.users.remove'),
+      setRole: apiCall.bind(this, 'products.users.setRole'),
+    },
   },
   scopes: {
     list: apiCall.bind(this, 'scopes.list'),

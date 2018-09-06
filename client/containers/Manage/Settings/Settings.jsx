@@ -6,6 +6,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import Nav from './Nav';
 import Feedback from './Feedback';
 import Scopes from './Scopes/Scopes';
+import Users from './Users/Users';
 
 const { Content } = Layout;
 
@@ -27,8 +28,9 @@ const ProductSettings = () => (
         <Redirect
           exact
           from="/manage/:productId/settings"
-          to="/manage/:productId/settings/feedback"
+          to="/manage/:productId/settings/users"
         />
+        <Route path="/manage/:productId/settings/users" component={Users} />
         <Route
           path="/manage/:productId/settings/feedback"
           component={Feedback}

@@ -1,4 +1,5 @@
-import merge from 'lodash/merge';
+import mergeWith from 'lodash/mergeWith';
+import isArray from 'lodash/isArray';
 
 import { ADD_ENTITIES } from '../types';
 
@@ -12,7 +13,17 @@ const initialState = {
 const entities = (state = initialState, action) => {
   switch (action.type) {
     case ADD_ENTITIES:
-      return merge({}, state, action.payload.entities);
+      return mergeWith(
+        {},
+        state,
+        action.payload.entities,
+        (objValue, srcValue) => {
+          if (isArray(objValue)) {
+            return srcValue;
+          }
+          return undefined;
+        },
+      );
     default:
       return state;
   }

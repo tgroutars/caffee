@@ -65,7 +65,11 @@ class Users extends React.Component {
         <Select.Option value="admin">Admin</Select.Option>
       </RoleSelect>,
     ];
-    if (!isAuthedUser) {
+    if (isAuthedUser) {
+      actions.push(
+        <Icon theme="twoTone" type="delete" twoToneColor="#e8e8e8" />,
+      );
+    } else {
       actions.push(
         <Popconfirm
           title="Remove this user?"
@@ -73,7 +77,7 @@ class Users extends React.Component {
           okText="Yes"
           cancelText="No"
         >
-          <Icon type="delete" />
+          <Icon theme="twoTone" type="delete" twoToneColor="#f5222d" />
         </Popconfirm>,
       );
     }

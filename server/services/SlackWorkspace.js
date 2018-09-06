@@ -1,9 +1,11 @@
 const SlackClient = require('@slack/client').WebClient;
 const Promise = require('bluebird');
 
-const { SlackWorkspace } = require('../models');
+const { SlackWorkspace, SlackUser, Sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
 const { isUser, getUserVals } = require('../integrations/slack/helpers/user');
+
+const { Op } = Sequelize;
 
 const SlackWorkspaceService = services => ({
   async findOrCreate({
@@ -39,7 +41,7 @@ const SlackWorkspaceService = services => ({
     const usersList = await slackClient.users.list();
     const userInfos = usersList.members.filter(userInfo => isUser(userInfo));
 
-    return Promise.map(userInfos, async userInfo => {
+    const slackUsers = await Promise.map(userInfos, async userInfo => {
       const { email, name, image, slackId } = getUserVals(userInfo);
       const [slackUser] = await services.SlackUser.findOrCreate({
         email,
@@ -49,6 +51,9 @@ const SlackWorkspaceService = services => ({
         workspaceId: workspace.id,
       });
       return slackUser;
+    });
+    await SlackUser.destroy({
+      where: { id: { [Op.notIn]: slackUsers.map(su => su.id) } },
     });
   },
 });

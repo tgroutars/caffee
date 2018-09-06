@@ -37,9 +37,15 @@ class AddUser extends React.Component {
   };
 
   handleSelect = async userId => {
-    this.setState({ isLoading: true });
     const { productId } = this.props;
+    this.setState({ isLoading: true });
     await this.props.addUser(productId, userId);
+    await this.reloadSuggestions();
+    this.setState({ isLoading: false });
+  };
+
+  handleFocus = async () => {
+    this.setState({ isLoading: true });
     await this.reloadSuggestions();
     this.setState({ isLoading: false });
   };
@@ -55,6 +61,7 @@ class AddUser extends React.Component {
         disabled={isLoading}
         onSelect={this.handleSelect}
         optionFilterProp="title"
+        onFocus={this.handleFocus}
       >
         {users.map(user => (
           <Select.Option key={user.id} title={user.name}>

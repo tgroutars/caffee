@@ -6,6 +6,7 @@ const {
   RoadmapItem,
   Tag,
   RoadmapStage,
+  ProductUser,
   Sequelize,
 } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
@@ -205,6 +206,14 @@ const ProductService = () => ({
         await roadmapItem.addTags(itemTags);
       },
     );
+  },
+
+  async addUser(productId, userId) {
+    const [productUser] = await ProductUser.findOrCreate({
+      where: { productId, userId },
+      defaults: { role: 'author' },
+    });
+    return productUser;
   },
 });
 

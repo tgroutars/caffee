@@ -10,6 +10,7 @@ import {
   authedUserIdSelector,
 } from '../../../../selectors/user';
 import { currentProductIdSelector } from '../../../../selectors/product';
+import AddUser from './AddUser';
 
 const ListContainer = styled.div`
   max-width: 700px;
@@ -63,7 +64,7 @@ class Users extends React.Component {
   };
 
   render() {
-    const { users } = this.props;
+    const { users, productId } = this.props;
     const { isLoading } = this.state;
     return (
       <div>
@@ -72,7 +73,7 @@ class Users extends React.Component {
           Configure who can report a feedback on your product, and who can edit
           the roadmap
         </p>
-        <div>Add user</div>
+        <AddUser productId={productId} />
         <ListContainer>
           <List
             loading={isLoading}

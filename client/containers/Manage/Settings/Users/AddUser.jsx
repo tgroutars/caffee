@@ -25,11 +25,6 @@ class AddUser extends React.Component {
     isLoading: false,
   };
 
-  async componentDidMount() {
-    await this.reloadSuggestions();
-    this.setState({ isLoading: false });
-  }
-
   reloadSuggestions = async () => {
     const { productId } = this.props;
     const users = await this.props.getSuggestedUsers(productId);
@@ -40,14 +35,12 @@ class AddUser extends React.Component {
     const { productId } = this.props;
     this.setState({ isLoading: true });
     await this.props.addUser(productId, userId);
-    await this.reloadSuggestions();
     this.setState({ isLoading: false });
+    await this.reloadSuggestions();
   };
 
   handleFocus = async () => {
-    this.setState({ isLoading: true });
     await this.reloadSuggestions();
-    this.setState({ isLoading: false });
   };
 
   render() {
@@ -55,6 +48,7 @@ class AddUser extends React.Component {
     return (
       <Select
         placeholder="Add a user"
+        notFoundContent="No other users"
         showSearch
         showArrow={false}
         value={undefined}

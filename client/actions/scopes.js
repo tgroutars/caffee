@@ -1,6 +1,6 @@
 import api from './api';
 import { addEntities } from './entities';
-import { currentScopeIdsSelector } from '../selectors/scope';
+import { currentScopesSelector } from '../selectors/scope';
 
 export const fetchScopes = productId => async (dispatch, getState) => {
   const { scopes } = await dispatch(api.scopes.list({ productId }));
@@ -24,7 +24,7 @@ export const createScope = ({ productId, parentId, name }) => async (
     api.scopes.create({ productId, parentId, name }),
   );
   dispatch(addEntities('scope', scope));
-  const scopeIds = currentScopeIdsSelector(getState());
+  const scopeIds = currentScopesSelector(getState()).map(({ id }) => id);
   dispatch(
     addEntities('product', { id: productId, scopes: [...scopeIds, scope.id] }),
   );

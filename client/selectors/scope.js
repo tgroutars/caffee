@@ -3,32 +3,22 @@ import uuidv4 from 'uuid/v4';
 
 import { currentProductSelector } from './product';
 
-const scopesSelector = state => state.entities.scopes;
-export const currentScopeIdsSelector = createSelector(
+export const currentScopesSelector = createSelector(
   currentProductSelector,
-  product => product.scopes || [],
-);
-
-export const currentScopessSelector = createSelector(
-  currentScopeIdsSelector,
-  scopesSelector,
-  (scopeIds, scopes) =>
-    scopeIds
-      .map(scopeId => scopes[scopeId])
-      .filter(scope => !scope.isArchived)
-      .sort((s1, s2) => {
-        if (s1.level === s2.level) {
-          if (s1.createdAt < s2.createdAt) {
-            return -1;
-          }
-          return 1;
+  product =>
+    (product.scopes || []).filter(scope => !scope.isArchived).sort((s1, s2) => {
+      if (s1.level === s2.level) {
+        if (s1.createdAt < s2.createdAt) {
+          return -1;
         }
-        return s1.level - s2.level;
-      }),
+        return 1;
+      }
+      return s1.level - s2.level;
+    }),
 );
 
 export const scopesTreeSelector = createSelector(
-  currentScopessSelector,
+  currentScopesSelector,
   scopes => {
     const map = {};
     const roots = [];

@@ -56,6 +56,8 @@ export default {
     info: apiCall.bind(this, 'products.info'),
     list: apiCall.bind(this, 'products.list'),
     setQuestions: apiCall.bind(this, 'products.setQuestions'),
+    listTrelloBoards: apiCall.bind(this, 'products.listTrelloBoards'),
+    setTrelloBoard: apiCall.bind(this, 'products.setTrelloBoard'),
     users: {
       list: apiCall.bind(this, 'products.users.list'),
       getSuggestions: apiCall.bind(this, 'products.users.getSuggestions'),

@@ -40,3 +40,17 @@ export const saveQuestions = (productId, questions) => async dispatch => {
   );
   await dispatch(addEntities('product', product));
 };
+
+export const listTrelloBoards = productId => async dispatch => {
+  const { boards } = await dispatch(
+    api.products.listTrelloBoards({ productId }),
+  );
+  return boards;
+};
+
+export const setTrelloBoard = (productId, boardId) => async dispatch => {
+  const { product } = await dispatch(
+    api.products.setTrelloBoard({ productId, boardId }),
+  );
+  dispatch(addEntities('product', product));
+};

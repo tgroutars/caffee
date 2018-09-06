@@ -7,6 +7,7 @@ import Nav from './Nav';
 import Feedback from './Feedback';
 import Scopes from './Scopes/Scopes';
 import Users from './Users/Users';
+import Trello from './Trello';
 
 const { Content } = Layout;
 
@@ -36,6 +37,7 @@ const ProductSettings = () => (
           component={Feedback}
         />
         <Route path="/manage/:productId/settings/scopes" component={Scopes} />
+        <Route path="/manage/:productId/settings/trello" component={Trello} />
       </Switch>
     </StyledContent>
   </StyledLayout>

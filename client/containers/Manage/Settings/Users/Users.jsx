@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { List, Avatar, Select } from 'antd';
+import { List, Avatar, Select, Icon, Popconfirm } from 'antd';
 import styled from 'styled-components';
 
-import { listProductUsers } from '../../../../actions/productUsers';
+import { listProductUsers, removeUser } from '../../../../actions/productUsers';
 import {
   productUsersSelector,
   authedUserIdSelector,
@@ -19,6 +19,7 @@ const ListContainer = styled.div`
 class Users extends React.Component {
   static propTypes = {
     listProductUsers: PropTypes.func.isRequired,
+    removeUser: PropTypes.func.isRequired,
     users: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     productId: PropTypes.string.isRequired,
     authedUserId: PropTypes.string.isRequired,
@@ -36,10 +37,15 @@ class Users extends React.Component {
     // TODO
   };
 
+  removeUser = async userId => {
+    const { productId } = this.props;
+    await this.props.removeUser(productId, userId);
+  };
+
   renderUserItem = user => {
     const { authedUserId } = this.props;
     const isAuthedUser = user.id === authedUserId;
-    const select = (
+    const actions = [
       <Select
         value={user.role}
         onChange={role => this.handleRoleChange(user, role)}
@@ -48,10 +54,22 @@ class Users extends React.Component {
         <Select.Option value="author">Author</Select.Option>
         <Select.Option value="user">PM</Select.Option>
         <Select.Option value="admin">Admin</Select.Option>
-      </Select>
-    );
+      </Select>,
+    ];
+    if (!isAuthedUser) {
+      actions.push(
+        <Popconfirm
+          title="Remove this user?"
+          onConfirm={() => this.removeUser(user.id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Icon type="delete" />
+        </Popconfirm>,
+      );
+    }
     return (
-      <List.Item actions={[select]}>
+      <List.Item actions={actions}>
         <List.Item.Meta
           avatar={
             user.image ? <Avatar src={user.image} /> : <Avatar icon="user" />
@@ -92,6 +110,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   listProductUsers,
+  removeUser,
 };
 
 export default connect(

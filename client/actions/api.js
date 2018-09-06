@@ -60,6 +60,7 @@ export default {
       list: apiCall.bind(this, 'products.users.list'),
       getSuggestions: apiCall.bind(this, 'products.users.getSuggestions'),
       add: apiCall.bind(this, 'products.users.add'),
+      remove: apiCall.bind(this, 'products.users.remove'),
     },
   },
   scopes: {

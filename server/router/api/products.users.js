@@ -54,6 +54,22 @@ router.post(
 );
 
 router.post(
+  '/products.users.remove',
+  requireAuth,
+  findProduct,
+  requireAdmin,
+  async ctx => {
+    const { product, user } = ctx.state;
+    const { userId } = ctx.request.body;
+    if (userId === user.id) {
+      throw new Error('invalid_user');
+    }
+    await ProductService.removeUser(product.id, userId);
+    ctx.send();
+  },
+);
+
+router.post(
   '/products.users.getSuggestions',
   requireAuth,
   findProduct,

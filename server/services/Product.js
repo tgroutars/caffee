@@ -215,6 +215,12 @@ const ProductService = () => ({
     });
     return productUser;
   },
+
+  async removeUser(productId, userId) {
+    await ProductUser.destroy({
+      where: { productId, userId },
+    });
+  },
 });
 
 module.exports = ProductService;

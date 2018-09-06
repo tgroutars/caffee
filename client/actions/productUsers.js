@@ -25,3 +25,11 @@ export const addUser = (productId, userId) => async (dispatch, getState) => {
   dispatch(addEntities('product', { id: productId, users }));
   return newUser;
 };
+
+export const removeUser = (productId, userId) => async (dispatch, getState) => {
+  await dispatch(api.products.users.remove({ productId, userId }));
+  const users = productUsersSelector(getState()).filter(
+    user => user.id !== userId,
+  );
+  dispatch(addEntities('product', { id: productId, users }));
+};

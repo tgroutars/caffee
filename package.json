@@ -18,6 +18,9 @@
     "build": "parcel build ./client/index.html",
     "heroku-postbuild": "npm run build"
   },
+  "engines": {
+    "node": "8.x"
+  },
   "repository": "https://github.com/tgroutars/caffee-old/settings",
   "license": "MIT",
   "dependencies": {

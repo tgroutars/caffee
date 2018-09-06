@@ -79,6 +79,20 @@ router.post(
 );
 
 router.post(
+  '/scopes.setResponsible',
+  requireAuth,
+  findScope,
+  requireAdmin,
+  async ctx => {
+    const { scope } = ctx.state;
+    const { responsibleId } = ctx.request.body;
+    await ScopeService.setResponsible(scope.id, responsibleId);
+    await scope.reload({ include: ['responsible'] });
+    ctx.send({ scope: serializeScope(scope) });
+  },
+);
+
+router.post(
   '/scopes.create',
   requireAuth,
   findProduct,

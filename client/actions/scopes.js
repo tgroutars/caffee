@@ -40,12 +40,22 @@ const archiveRecursive = scope => dispatch => {
       isArchived: true,
     }),
   );
-  scope.subscopes.forEach(subscope => dispatch(archiveRecursive(subscope)));
+  if (scope.subscopes) {
+    scope.subscopes.forEach(subscope => dispatch(archiveRecursive(subscope)));
+  }
 };
 
-export const archiveScope = scopeId => async (dispatch, getState) => {
-  const { scope } = await dispatch(api.scopes.archive({ scopeId, name }));
+export const archiveScope = scope => async dispatch => {
+  const { scope: newScope } = await dispatch(
+    api.scopes.archive({ scopeId: scope.id, name }),
+  );
+  dispatch(addEntities('scope', newScope));
+  dispatch(archiveRecursive(scope));
+};
+
+export const setResponsible = (scopeId, userId) => async dispatch => {
+  const { scope } = await dispatch(
+    api.scopes.setResponsible({ scopeId, responsibleId: userId }),
+  );
   dispatch(addEntities('scope', scope));
-  const scopeEntity = getState().entities.scopes[scope.id];
-  dispatch(archiveRecursive(scopeEntity));
 };

@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Dropdown, Menu, Icon, Popconfirm, Avatar } from 'antd';
+import { Select, Icon, Popconfirm } from 'antd';
 
 import Clickable from '../../../../components/Clickable';
 import Editable from '../../../../components/Editable';
+
+const SelectUser = styled(Select)`
+  margin-left: 6px;
+`;
 
 const ScopeInfo = styled.div`
   display: flex;
@@ -31,11 +35,10 @@ const ArchiveIcon = styled(Icon)`
   }
   margin-left: 32px;
   font-size: 16px;
-  color: #f5222d;
   cursor: pointer;
 `;
 
-const Scopes = ({ scopes, level, onSave, onArchive }) => (
+const Scopes = ({ scopes, level, onSave, onArchive, pms, setResponsible }) => (
   <div level={level}>
     {scopes.map(scope => (
       <Scopes.Item
@@ -44,6 +47,8 @@ const Scopes = ({ scopes, level, onSave, onArchive }) => (
         scope={scope}
         onSave={onSave}
         onArchive={onArchive}
+        pms={pms}
+        setResponsible={setResponsible}
       />
     ))}
   </div>
@@ -53,6 +58,8 @@ Scopes.propTypes = {
   level: PropTypes.number,
   onSave: PropTypes.func.isRequired,
   onArchive: PropTypes.func.isRequired,
+  setResponsible: PropTypes.func.isRequired,
+  pms: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 Scopes.defaultProps = {
   level: 0,
@@ -64,6 +71,8 @@ class ScopeItem extends React.Component {
     level: PropTypes.number.isRequired,
     onSave: PropTypes.func.isRequired,
     onArchive: PropTypes.func.isRequired,
+    setResponsible: PropTypes.func.isRequired,
+    pms: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   };
 
   state = { isCreating: false };
@@ -88,35 +97,35 @@ class ScopeItem extends React.Component {
     this.props.onArchive(this.props.scope);
   };
 
-  renderActions() {
+  handleSelectResponsible = userId => {
     const { scope } = this.props;
+    this.props.setResponsible(scope.id, userId);
+  };
+
+  renderActions() {
+    const { scope, pms } = this.props;
     const isNew = !scope.id;
     if (isNew) {
       return null;
     }
     return (
       <Actions>
-        {scope.responsible ? (
+        {pms && pms.length ? (
           <div>
             Responsible:
-            <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item key="1">
-                    {/* TODO: Set responsible */}
-                    <Avatar size="small" src={scope.responsible.image} />{' '}
-                    {scope.responsible.name}
-                  </Menu.Item>
-                </Menu>
-              }
-              trigger={['click']}
+            <SelectUser
+              value={scope.responsible.id}
+              onSelect={this.handleSelectResponsible}
             >
-              <Clickable>
-                {scope.responsible.name} <Icon type="down" />
-              </Clickable>
-            </Dropdown>
+              {pms.map(pm => (
+                <Select.Option value={pm.id} key={pm.id}>
+                  {pm.name}
+                </Select.Option>
+              ))}
+            </SelectUser>
           </div>
         ) : null}
+
         {!isNew ? (
           <Popconfirm
             title="Delete this scope?"
@@ -124,7 +133,7 @@ class ScopeItem extends React.Component {
             okText="Yes"
             cancelText="No"
           >
-            <ArchiveIcon type="delete" />
+            <ArchiveIcon type="delete" theme="twoTone" twoToneColor="#f5222d" />
           </Popconfirm>
         ) : null}
       </Actions>
@@ -132,7 +141,7 @@ class ScopeItem extends React.Component {
   }
 
   render() {
-    const { scope, level } = this.props;
+    const { scope, level, pms, setResponsible } = this.props;
     const { isCreating } = this.state;
     const isNew = !scope.id;
     if (isNew && !isCreating) {
@@ -142,7 +151,6 @@ class ScopeItem extends React.Component {
         </AddScope>
       );
     }
-
     return (
       // TODO: Use fragments <></> (need babel 7)
       <div>
@@ -160,6 +168,8 @@ class ScopeItem extends React.Component {
           onArchive={this.props.onArchive}
           scopes={scope.subscopes}
           level={level + 1}
+          pms={pms}
+          setResponsible={setResponsible}
         />
       </div>
     );

@@ -17,3 +17,8 @@ export const productUsersSelector = createSelector(
   currentProductSelector,
   product => product.users || [],
 );
+
+const isPM = user => user.role === 'admin' || user.role === 'user';
+export const pmsSelector = createSelector(productUsersSelector, users =>
+  users.filter(isPM),
+);

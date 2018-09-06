@@ -6,6 +6,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import dynamicImport from '../hoc/dynamicImport';
 import Loading from '../components/Loading';
 import Home from './Home/Home';
+import Intercom from './Intercom';
 
 const Manage = dynamicImport(() => import('./Manage/Manage'));
 
@@ -17,10 +18,13 @@ const App = ({ isAuthed, isWaitingAuth }) => {
     return <Redirect to="/login" />;
   }
   return (
-    <Switch>
-      <Route exact path="/" component={Home} />
-      <Route path="/manage/:productId" component={Manage} />
-    </Switch>
+    <div>
+      <Intercom />
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/manage/:productId" component={Manage} />
+      </Switch>
+    </div>
   );
 };
 

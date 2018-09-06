@@ -28,7 +28,7 @@ const ProductSettings = () => (
         <Redirect
           exact
           from="/manage/:productId/settings"
-          to="/manage/:productId/settings/feedback"
+          to="/manage/:productId/settings/users"
         />
         <Route path="/manage/:productId/settings/users" component={Users} />
         <Route

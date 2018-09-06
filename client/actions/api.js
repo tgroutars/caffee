@@ -84,4 +84,9 @@ export default {
     list: apiCall.bind(this, 'roadmapItems.list'),
     create: apiCall.bind(this, 'roadmapItems.create'),
   },
+  slackInstalls: {
+    list: apiCall.bind(this, 'slackInstalls.list'),
+    listChannels: apiCall.bind(this, 'slackInstalls.listChannels'),
+    setChannel: apiCall.bind(this, 'slackInstalls.setChannel'),
+  },
 };

@@ -56,6 +56,9 @@ export default {
     info: apiCall.bind(this, 'products.info'),
     list: apiCall.bind(this, 'products.list'),
     setQuestions: apiCall.bind(this, 'products.setQuestions'),
+    users: {
+      list: apiCall.bind(this, 'products.users.list'),
+    },
   },
   scopes: {
     list: apiCall.bind(this, 'scopes.list'),
@@ -73,8 +76,5 @@ export default {
   roadmapItems: {
     list: apiCall.bind(this, 'roadmapItems.list'),
     create: apiCall.bind(this, 'roadmapItems.create'),
-  },
-  productUsers: {
-    list: apiCall.bind(this, 'productUsers.list'),
   },
 };

@@ -10,7 +10,7 @@ const productsRouter = require('./products');
 const scopesRouter = require('./scopes');
 const feedbacksRouter = require('./feedbacks');
 const roadmapItemsRouter = require('./roadmapItems');
-const productUsersRouter = require('./productUsers');
+const productsUsersRouter = require('./products.users');
 
 const router = new Router();
 
@@ -74,6 +74,6 @@ router.use(productsRouter.routes(), productsRouter.allowedMethods());
 router.use(scopesRouter.routes(), scopesRouter.allowedMethods());
 router.use(feedbacksRouter.routes(), feedbacksRouter.allowedMethods());
 router.use(roadmapItemsRouter.routes(), roadmapItemsRouter.allowedMethods());
-router.use(productUsersRouter.routes(), productUsersRouter.allowedMethods());
+router.use(productsUsersRouter.routes(), productsUsersRouter.allowedMethods());
 
 module.exports = router;

@@ -12,7 +12,7 @@ const serializeProductUser = productUser => ({
 });
 
 router.post(
-  '/productUsers.list',
+  '/products.users.list',
   requireAuth,
   findProduct,
   requireAdmin,

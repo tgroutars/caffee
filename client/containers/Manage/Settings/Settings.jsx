@@ -8,6 +8,7 @@ import Feedback from './Feedback';
 import Scopes from './Scopes/Scopes';
 import Users from './Users/Users';
 import Trello from './Trello';
+import Slack from './Slack/Slack';
 
 const { Content } = Layout;
 
@@ -38,6 +39,7 @@ const ProductSettings = () => (
         />
         <Route path="/manage/:productId/settings/scopes" component={Scopes} />
         <Route path="/manage/:productId/settings/trello" component={Trello} />
+        <Route path="/manage/:productId/settings/slack" component={Slack} />
       </Switch>
     </StyledContent>
   </StyledLayout>

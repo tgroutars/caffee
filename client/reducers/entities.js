@@ -8,6 +8,9 @@ const initialState = {
   products: {},
   scopes: {},
   feedbacks: {},
+  slackInstalls: {},
+  roadmapStages: {},
+  tags: {},
 };
 
 const entities = (state = initialState, action) => {

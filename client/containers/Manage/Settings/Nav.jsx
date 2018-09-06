@@ -53,6 +53,9 @@ const Nav = ({ pathname }) => {
         <StyledMenuItem key="scopes">
           <Link to={`/manage/${productId}/settings/scopes`}>Scopes</Link>
         </StyledMenuItem>
+        <StyledMenuItem key="trello">
+          <Link to={`/manage/${productId}/settings/trello`}>Trello</Link>
+        </StyledMenuItem>
       </StyledMenu>
     </StyledSider>
   );

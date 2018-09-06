@@ -33,3 +33,11 @@ export const removeUser = (productId, userId) => async (dispatch, getState) => {
   );
   dispatch(addEntities('product', { id: productId, users }));
 };
+
+export const setRole = (productId, userId, role) => async dispatch => {
+  const { user } = await dispatch(
+    api.products.users.setRole({ productId, userId, role }),
+  );
+  dispatch(addEntities('user', user));
+  return user;
+};

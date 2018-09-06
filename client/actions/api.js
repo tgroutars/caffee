@@ -61,6 +61,7 @@ export default {
       getSuggestions: apiCall.bind(this, 'products.users.getSuggestions'),
       add: apiCall.bind(this, 'products.users.add'),
       remove: apiCall.bind(this, 'products.users.remove'),
+      setRole: apiCall.bind(this, 'products.users.setRole'),
     },
   },
   scopes: {

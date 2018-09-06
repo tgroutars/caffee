@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import { List, Avatar, Select, Icon, Popconfirm } from 'antd';
 import styled from 'styled-components';
 
-import { listProductUsers, removeUser } from '../../../../actions/productUsers';
+import {
+  listProductUsers,
+  removeUser,
+  setRole,
+} from '../../../../actions/productUsers';
 import {
   productUsersSelector,
   authedUserIdSelector,
@@ -15,11 +19,15 @@ import AddUser from './AddUser';
 const ListContainer = styled.div`
   max-width: 700px;
 `;
+const RoleSelect = styled(Select)`
+  width: 100px;
+`;
 
 class Users extends React.Component {
   static propTypes = {
     listProductUsers: PropTypes.func.isRequired,
     removeUser: PropTypes.func.isRequired,
+    setRole: PropTypes.func.isRequired,
     users: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     productId: PropTypes.string.isRequired,
     authedUserId: PropTypes.string.isRequired,
@@ -33,8 +41,9 @@ class Users extends React.Component {
     this.setState({ isLoading: false });
   }
 
-  handleRoleChange = async () => {
-    // TODO
+  handleRoleChange = async (userId, role) => {
+    const { productId } = this.props;
+    await this.props.setRole(productId, userId, role);
   };
 
   removeUser = async userId => {
@@ -46,15 +55,15 @@ class Users extends React.Component {
     const { authedUserId } = this.props;
     const isAuthedUser = user.id === authedUserId;
     const actions = [
-      <Select
+      <RoleSelect
         value={user.role}
-        onChange={role => this.handleRoleChange(user, role)}
+        onChange={role => this.handleRoleChange(user.id, role)}
         disabled={isAuthedUser}
       >
         <Select.Option value="author">Author</Select.Option>
         <Select.Option value="user">PM</Select.Option>
         <Select.Option value="admin">Admin</Select.Option>
-      </Select>,
+      </RoleSelect>,
     ];
     if (!isAuthedUser) {
       actions.push(
@@ -111,6 +120,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   listProductUsers,
   removeUser,
+  setRole,
 };
 
 export default connect(

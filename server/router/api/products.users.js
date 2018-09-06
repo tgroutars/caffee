@@ -2,6 +2,7 @@ const Router = require('koa-router');
 const pick = require('lodash/pick');
 const Promise = require('bluebird');
 
+const { APIError } = require('./errors');
 const { requireAuth, requireAdmin, findProduct } = require('./middleware');
 const {
   ProductUser,
@@ -10,7 +11,10 @@ const {
   User,
   Sequelize,
 } = require('../../models');
-const { Product: ProductService } = require('../../services');
+const {
+  Product: ProductService,
+  ProductUser: ProductUserService,
+} = require('../../services');
 
 const { Op } = Sequelize;
 
@@ -54,6 +58,29 @@ router.post(
 );
 
 router.post(
+  '/products.users.setRole',
+  requireAuth,
+  findProduct,
+  requireAdmin,
+  async ctx => {
+    const { product, user } = ctx.state;
+    const { userId, role } = ctx.request.body;
+    if (userId === user.id) {
+      throw new APIError('invalid_user');
+    }
+    const productUser = await ProductUser.find({
+      where: { productId: product.id, userId },
+    });
+    if (!productUser) {
+      throw new APIError('user_not_found');
+    }
+    await ProductUserService.setRole(productUser.id, role);
+    await productUser.reload({ include: ['user'] });
+    ctx.send({ user: serializeProductUser(productUser) });
+  },
+);
+
+router.post(
   '/products.users.remove',
   requireAuth,
   findProduct,
@@ -62,7 +89,7 @@ router.post(
     const { product, user } = ctx.state;
     const { userId } = ctx.request.body;
     if (userId === user.id) {
-      throw new Error('invalid_user');
+      throw new APIError('invalid_user');
     }
     await ProductService.removeUser(product.id, userId);
     ctx.send();

@@ -57,7 +57,6 @@ class Users extends React.Component {
             user.image ? <Avatar src={user.image} /> : <Avatar icon="user" />
           }
           title={user.name}
-          description={user.email}
         />
       </List.Item>
     );

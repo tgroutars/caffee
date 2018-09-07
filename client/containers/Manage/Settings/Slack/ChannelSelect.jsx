@@ -38,19 +38,21 @@ class ChannelSelect extends React.Component {
   render() {
     const { slackInstall } = this.props;
     const { channels, isLoading } = this.state;
-    if (isLoading) {
-      return null;
-    }
+
     return (
       <div>
         Post updates in:
-        <Select value={slackInstall.channel} onSelect={this.handleSelect}>
-          {channels.map(channel => (
-            <Select.Option key={channel.id} value={channel.id}>
-              #{channel.name}
-            </Select.Option>
-          ))}
-        </Select>
+        {isLoading ? (
+          <Select disabled />
+        ) : (
+          <Select value={slackInstall.channel} onSelect={this.handleSelect}>
+            {channels.map(channel => (
+              <Select.Option key={channel.id} value={channel.id}>
+                #{channel.name}
+              </Select.Option>
+            ))}
+          </Select>
+        )}
       </div>
     );
   }

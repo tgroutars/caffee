@@ -40,23 +40,24 @@ class Trello extends React.Component {
   renderSelect() {
     const { boards, isLoading } = this.state;
     const { product } = this.props;
-    if (isLoading) {
-      return null;
-    }
     return (
       <div>
         Trello board:
-        <BoardSelect
-          disabled={isLoading}
-          value={product.trelloBoardId}
-          onSelect={this.handleSelect}
-        >
-          {boards.map(board => (
-            <Select.Option value={board.id} key={board.id}>
-              {board.name}
-            </Select.Option>
-          ))}
-        </BoardSelect>
+        {isLoading ? (
+          <BoardSelect disabled />
+        ) : (
+          <BoardSelect
+            disabled={isLoading}
+            value={product.trelloBoardId}
+            onSelect={this.handleSelect}
+          >
+            {boards.map(board => (
+              <Select.Option value={board.id} key={board.id}>
+                {board.name}
+              </Select.Option>
+            ))}
+          </BoardSelect>
+        )}
       </div>
     );
   }

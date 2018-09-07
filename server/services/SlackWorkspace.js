@@ -53,7 +53,7 @@ const SlackWorkspaceService = services => ({
       return slackUser;
     });
     await SlackUser.destroy({
-      where: { id: { [Op.notIn]: slackUsers.map(su => su.id) } },
+      where: { id: { [Op.notIn]: slackUsers.map(su => su.id) }, workspaceId },
     });
   },
 });

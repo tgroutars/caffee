@@ -56,6 +56,13 @@ const SlackWorkspaceService = services => ({
       where: { id: { [Op.notIn]: slackUsers.map(su => su.id) }, workspaceId },
     });
   },
+
+  async syncAll() {
+    const workspaces = await SlackWorkspace.findAll();
+    await Promise.map(workspaces, async workspace =>
+      this.syncUsers(workspace.id),
+    );
+  },
 });
 
 module.exports = SlackWorkspaceService;

@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const { Feedback, User, SlackUser } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 
+// TODO: send the message in threads instead of just to author
 const feedbackArchived = async ({ feedbackId, archivedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [

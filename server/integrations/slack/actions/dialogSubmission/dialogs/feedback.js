@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 const { syncFile } = require('../../../helpers/files');
 const {
   SlackDialogSubmissionError,
-  SlackUserError,
+  SlackPermissionError,
 } = require('../../../../../lib/errors');
 const { Feedback: FeedbackService } = require('../../../../../services');
 const { ProductUser } = require('../../../../../models');
@@ -37,9 +37,7 @@ const run = async (payload, { slackUser, workspace, user }) => {
     where: { productId, userId: user.id },
   });
   if (!productUser) {
-    throw new SlackUserError(
-      `You don't have the permission to send a feedback on this product`,
-    );
+    throw new SlackPermissionError();
   }
 
   const { accessToken } = workspace;

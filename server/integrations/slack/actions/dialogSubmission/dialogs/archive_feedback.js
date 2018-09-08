@@ -2,7 +2,10 @@ const trim = require('lodash/trim');
 
 const { Feedback: FeedbackService } = require('../../../../../services');
 const { SlackUser, Feedback, ProductUser } = require('../../../../../models');
-const { SlackUserError } = require('../../../../../lib/errors');
+const {
+  SlackUserError,
+  SlackPermissionError,
+} = require('../../../../../lib/errors');
 
 module.exports = async (payload, { user }) => {
   const {
@@ -19,9 +22,7 @@ module.exports = async (payload, { user }) => {
     where: { userId: user.id, productId: feedback.productId },
   });
   if (!productUser || !productUser.isPM) {
-    throw new SlackUserError(
-      `You don't have the permission to archive this feedback. Contact an admin if you think you should`,
-    );
+    throw new SlackPermissionError();
   }
 
   const archivedBySlackUser = await SlackUser.find({

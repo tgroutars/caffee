@@ -13,7 +13,7 @@ module.exports = async (payload, { slackUser, user }) => {
     where: { productId, userId: user.id },
   });
   if (!productUser || !productUser.isAdmin) {
-    throw new SlackPermissionError(`You don't have the permission to `);
+    throw new SlackPermissionError();
   }
 
   await ProductService.setName(productId, {

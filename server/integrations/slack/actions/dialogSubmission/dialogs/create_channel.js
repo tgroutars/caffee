@@ -9,7 +9,7 @@ const {
 const { SlackInstall, Product, ProductUser } = require('../../../../../models');
 const {
   SlackDialogSubmissionError,
-  SlackUserError,
+  SlackPermissionError,
 } = require('../../../../../lib/errors');
 
 const handleError = err => {
@@ -55,7 +55,7 @@ const validate = async (payload, { slackUser, workspace, user }) => {
     where: { productId: product.id, userId: user.id },
   });
   if (!productUser || !productUser.isAdmin) {
-    throw new SlackUserError(`Only admins can create a new channel`);
+    throw new SlackPermissionError();
   }
 
   try {

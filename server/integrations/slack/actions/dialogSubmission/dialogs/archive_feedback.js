@@ -1,15 +1,29 @@
 const trim = require('lodash/trim');
 
 const { Feedback: FeedbackService } = require('../../../../../services');
-const { SlackUser } = require('../../../../../models');
+const { SlackUser, Feedback, ProductUser } = require('../../../../../models');
+const { SlackUserError } = require('../../../../../lib/errors');
 
-module.exports = async payload => {
+module.exports = async (payload, { user }) => {
   const {
     submission,
     callback_id: callbackId,
     user: { id: userSlackId },
   } = payload;
   const { feedbackId } = callbackId;
+  const feedback = await Feedback.findById(feedbackId);
+  if (feedback.archivedAt) {
+    throw new SlackUserError(`This feedback is already archived`);
+  }
+  const productUser = await ProductUser.find({
+    where: { userId: user.id, productId: feedback.productId },
+  });
+  if (!productUser || !productUser.isPM) {
+    throw new SlackUserError(
+      `You don't have the permission to archive this feedback. Contact an admin if you think you should`,
+    );
+  }
+
   const archivedBySlackUser = await SlackUser.find({
     where: { slackId: userSlackId },
   });

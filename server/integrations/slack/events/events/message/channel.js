@@ -31,9 +31,7 @@ const channelMessage = async (payload, { workspace }) => {
   }
 
   const rawText = event.text || '';
-
   const { accessToken, appUserId } = workspace;
-
   const appMention = `<@${appUserId}>`;
   if (!rawText.includes(appMention)) {
     return;
@@ -43,7 +41,12 @@ const channelMessage = async (payload, { workspace }) => {
     await decode(workspace)(rawText.replace(appMentionRE, ' ')),
   );
 
-  const products = await workspace.getProducts();
+  const slackUser = await SlackUser.find({
+    where: { slackId: userSlackId, workspaceId: workspace.id },
+    include: ['user'],
+  });
+  const { user } = slackUser;
+  const products = await user.getProducts();
   if (!products.length) {
     return;
   }
@@ -67,9 +70,6 @@ const channelMessage = async (payload, { workspace }) => {
     files = messageFiles;
   }
 
-  const slackUser = await SlackUser.find({
-    where: { slackId: userSlackId, workspaceId: workspace.id },
-  });
   if (!slackUser) {
     return;
   }

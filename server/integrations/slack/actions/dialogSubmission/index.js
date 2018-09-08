@@ -1,6 +1,10 @@
 const Promise = require('bluebird');
+const SlackClient = require('@slack/client').WebClient;
 
-const { SlackDialogSubmissionError } = require('../../../../lib/errors');
+const {
+  SlackDialogSubmissionError,
+  SlackUserError,
+} = require('../../../../lib/errors');
 const HashStore = require('../../../../lib/redis/HashStore');
 const dialogs = require('./dialogs');
 const { SlackUser, SlackWorkspace, User } = require('../../../../models');
@@ -30,7 +34,12 @@ const validateDialog = async (payload, state) => {
 const runDialog = registerBackgroundTask(
   'run_dialog',
   async (payload, { workspaceId, slackUserId, userId }) => {
-    const { type } = payload.callback_id;
+    const {
+      callback_id: callbackId,
+      user: { id: userSlackId },
+      channel: { id: channel },
+    } = payload;
+    const { type } = callbackId;
     const dialog = dialogs[type];
     const run = dialog.run || dialog;
 
@@ -39,7 +48,20 @@ const runDialog = registerBackgroundTask(
       SlackUser.findById(slackUserId),
       User.findById(userId),
     ]);
-    await run(payload, { workspace, slackUser, user });
+    try {
+      await run(payload, { workspace, slackUser, user });
+    } catch (err) {
+      if (err instanceof SlackUserError) {
+        const slackClient = new SlackClient(workspace.accessToken);
+        await slackClient.chat.postEphemeral({
+          ...err.userMessage,
+          channel,
+          user: userSlackId,
+        });
+        return;
+      }
+      throw err;
+    }
   },
 );
 
@@ -55,6 +77,7 @@ const dialogSubmission = async rawPayload => {
   const {
     team: { id: workspaceSlackId },
     user: { id: userSlackId },
+    channel: { id: channel },
   } = payload;
 
   const slackUser = await SlackUser.find({
@@ -72,11 +95,21 @@ const dialogSubmission = async rawPayload => {
     return null;
   }
   const { workspace, user } = slackUser;
+
   try {
     await validateDialog(payload, { workspace, slackUser, user });
   } catch (err) {
     if (err instanceof SlackDialogSubmissionError) {
       return { errors: err.errors };
+    }
+    if (err instanceof SlackUserError) {
+      const slackClient = new SlackClient(workspace.accessToken);
+      await slackClient.chat.postMessage({
+        ...err.userMessage,
+        channel,
+        user: userSlackId,
+      });
+      return null;
     }
     throw err;
   }
@@ -86,6 +119,7 @@ const dialogSubmission = async rawPayload => {
     slackUserId: slackUser.id,
     userId: user.id,
   });
+
   return null;
 };
 

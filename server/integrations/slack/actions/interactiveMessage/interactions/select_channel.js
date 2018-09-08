@@ -5,15 +5,26 @@ const {
   SlackInstall: SlackInstallService,
   Product: ProductService,
 } = require('../../../../../services');
-const { SlackInstall, Product } = require('../../../../../models');
+const { SlackInstall, Product, ProductUser } = require('../../../../../models');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
-module.exports = async (payload, { workspace, slackUser }) => {
+module.exports = async (payload, { workspace, slackUser, user }) => {
   const {
     action,
     channel: { id: channel },
   } = payload;
   const { slackInstallId } = action.name;
   const [{ value: selectedChannel }] = action.selected_options;
+
+  const slackInstall = await SlackInstall.findById(slackInstallId, {
+    include: ['product'],
+  });
+  const productUser = await ProductUser.find({
+    where: { productId: slackInstall.productId, userId: user.id },
+  });
+  if (!productUser || !productUser.isAdmin) {
+    throw new SlackPermissionError();
+  }
 
   const { accessToken, appUserId } = workspace;
   const slackClient = new SlackClient(accessToken);
@@ -28,9 +39,7 @@ module.exports = async (payload, { workspace, slackUser }) => {
       return;
     }
   }
-  const slackInstall = await SlackInstall.findById(slackInstallId, {
-    include: ['product'],
-  });
+
   const { product } = slackInstall;
   await SlackInstallService.setChannel(slackInstallId, {
     channel: selectedChannel,

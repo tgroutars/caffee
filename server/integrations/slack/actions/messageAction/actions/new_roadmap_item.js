@@ -1,65 +1,42 @@
 const Promise = require('bluebird');
 
 const getTitleDescription = require('../../../../../lib/getTitleDescription');
-const { ProductUser, Sequelize } = require('../../../../../models');
+const { Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 const { listBoards } = require('../../../../trello/helpers/api');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 const { Op } = Sequelize;
 
 const openRoadmapItemDialog = openDialog('roadmap_item');
 const postChooseProductMessage = postEphemeral('roadmap_item_choose_product');
-const postForbiddenMessage = postEphemeral('forbidden');
 const postInstallTrelloMessage = postEphemeral('install_trello');
 const postChooseBoardMessage = postEphemeral('choose_board');
 
-const newRoadmapItem = async (payload, { workspace, slackUser }) => {
+const newRoadmapItem = async (payload, { workspace, slackUser, user }) => {
   const {
     team: { domain },
     channel: { id: channel },
     message: { text, files },
     trigger_id: triggerId,
   } = payload;
-
-  const [products, adminProducts] = await Promise.all([
-    workspace.getProducts(),
-    workspace.getProducts({
-      include: [
-        {
-          model: ProductUser,
-          as: 'productUsers',
-          where: {
-            userId: slackUser.userId,
-            role: { [Op.in]: ['user', 'admin'] },
-          },
-        },
-      ],
-    }),
-  ]);
-
-  if (!products.length) {
-    return;
-  }
-
   const { accessToken } = workspace;
-
   const { title, description } = getTitleDescription(text);
 
-  if (!adminProducts.length) {
-    await postForbiddenMessage()({
-      accessToken,
-      channel,
-      user: slackUser.slackId,
-    });
-    return;
+  const products = await user.getProducts({
+    through: { where: { role: { [Op.in]: ['user', 'admin'] } } },
+  });
+
+  if (!products.length) {
+    throw new SlackPermissionError();
   }
 
   if (products.length > 1) {
     await postChooseProductMessage({
       files,
-      products: adminProducts,
+      products,
       defaultTitle: title,
       defaultDescription: description,
     })({
@@ -69,7 +46,7 @@ const newRoadmapItem = async (payload, { workspace, slackUser }) => {
     });
     return;
   }
-  const product = adminProducts[0];
+  const [product] = products;
 
   if (!product.trelloAccessToken) {
     const returnTo = `https://${domain}.slack.com/app_redirect?channel=${
@@ -88,10 +65,6 @@ const newRoadmapItem = async (payload, { workspace, slackUser }) => {
     return;
   }
 
-  // TODO: load boards from external url
-  // => cleaner
-  // => Respond faster
-  // => Can include more boards if too many
   if (!product.trelloBoardId) {
     const boards = await listBoards(product.trelloAccessToken);
     await postChooseBoardMessage({

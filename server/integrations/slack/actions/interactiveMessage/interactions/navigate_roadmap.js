@@ -1,5 +1,7 @@
 const { updateMessage } = require('../../../messages');
 const getRoadmap = require('../../../helpers/getRoadmap');
+const { ProductUser } = require('../../../../../models');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 module.exports = async (payload, { workspace, user }) => {
   const {
@@ -9,6 +11,13 @@ module.exports = async (payload, { workspace, user }) => {
   } = payload;
 
   const { productId, stageId, order, page = 0 } = name;
+
+  const productUser = await ProductUser.find({
+    where: { productId, userId: user.id },
+  });
+  if (!productUser) {
+    throw new SlackPermissionError();
+  }
 
   const options = { page, stageId, order };
   if (selectedOptions) {

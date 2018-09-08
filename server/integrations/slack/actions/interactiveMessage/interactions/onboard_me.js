@@ -3,6 +3,7 @@ const SlackClient = require('@slack/client').WebClient;
 const { Product } = require('../../../../../models');
 const { postMessage, postEphemeral } = require('../../../messages');
 
+// TODO: Remove this
 module.exports = async (payload, { slackUser, workspace }) => {
   const {
     action,

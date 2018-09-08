@@ -1,6 +1,7 @@
 const { postMessage } = require('../../../messages');
 const { SlackInstall } = require('../../../../../models');
 
+// TODO: remove this
 module.exports = async (payload, { workspace, slackUser }) => {
   const { action } = payload;
   const { slackInstallId } = action.name;

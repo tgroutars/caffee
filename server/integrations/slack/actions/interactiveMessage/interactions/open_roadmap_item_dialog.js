@@ -1,16 +1,20 @@
 const Promise = require('bluebird');
 
-const { Product } = require('../../../../../models');
+const { Product, ProductUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 const { getInstallURL } = require('../../../../trello/helpers/auth');
 const { openDialog } = require('../../../dialogs');
 const { listBoards } = require('../../../../trello/helpers/api');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 const openRoadmapItemDialogHelper = openDialog('roadmap_item');
 const postInstallTrelloMessage = postEphemeral('install_trello');
 const postChooseBoardMessage = postEphemeral('choose_board');
 
-const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
+const openRoadmapItemDialog = async (
+  payload,
+  { workspace, slackUser, user },
+) => {
   const {
     action,
     trigger_id: triggerId,
@@ -20,6 +24,13 @@ const openRoadmapItemDialog = async (payload, { workspace, slackUser }) => {
   const { accessToken, appUserId, domain } = workspace;
 
   const { productId, files, defaultTitle, defaultDescription } = action.name;
+
+  const productUser = await ProductUser.find({
+    where: { productId, userId: user.id },
+  });
+  if (!productUser || !productUser.isPM) {
+    throw new SlackPermissionError();
+  }
 
   const product = await Product.findById(productId);
 

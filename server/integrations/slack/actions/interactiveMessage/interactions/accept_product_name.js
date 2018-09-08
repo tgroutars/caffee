@@ -1,10 +1,17 @@
 const { Product: ProductService } = require('../../../../../services');
-const { Product } = require('../../../../../models');
+const { Product, ProductUser } = require('../../../../../models');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
-module.exports = async (payload, { slackUser }) => {
+module.exports = async (payload, { slackUser, user }) => {
   const { action } = payload;
   const { productId } = action.name;
 
+  const productUser = await ProductUser.find({
+    where: { userId: user.id, productId },
+  });
+  if (!productUser || !productUser.isAdmin) {
+    throw new SlackPermissionError();
+  }
   const product = await Product.findById(productId);
   if (
     product.onboardingStep ===

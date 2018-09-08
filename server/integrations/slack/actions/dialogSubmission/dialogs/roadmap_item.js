@@ -2,11 +2,15 @@ const trim = require('lodash/trim');
 const Promise = require('bluebird');
 
 const { syncFile } = require('../../../helpers/files');
-const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
+const {
+  SlackDialogSubmissionError,
+  SlackPermissionError,
+} = require('../../../../../lib/errors');
 const {
   RoadmapItem: RoadmapItemService,
   Feedback: FeedbackService,
 } = require('../../../../../services');
+const { ProductUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const validate = async payload => {
@@ -22,7 +26,7 @@ const validate = async payload => {
   }
 };
 
-const run = async (payload, { workspace, slackUser }) => {
+const run = async (payload, { workspace, slackUser, user }) => {
   const {
     submission,
     callback_id: callbackId,
@@ -32,6 +36,13 @@ const run = async (payload, { workspace, slackUser }) => {
   const { stageId, tagId } = submission;
   const title = trim(submission.title);
   const description = trim(submission.description);
+
+  const productUser = await ProductUser.find({
+    where: { productId, userId: user.id },
+  });
+  if (!productUser || !productUser.isPM) {
+    throw new SlackPermissionError();
+  }
 
   const { accessToken } = workspace;
 

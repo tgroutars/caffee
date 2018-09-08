@@ -1,10 +1,11 @@
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
-const { Feedback } = require('../../../../../models');
+const { Feedback, ProductUser } = require('../../../../../models');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
-const openArchiveReasonDialog = openDialog('archive_feedback_reason');
+const openArchiveReasonDialog = openDialog('archive_feedback');
 
-const archiveFeedback = async (payload, { workspace, slackUser }) => {
+const archiveFeedback = async (payload, { workspace, slackUser, user }) => {
   const {
     trigger_id: triggerId,
     action,
@@ -16,6 +17,13 @@ const archiveFeedback = async (payload, { workspace, slackUser }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: ['product', 'author'],
   });
+
+  const productUser = await ProductUser.find({
+    where: { productId: feedback.productId, userId: user.id },
+  });
+  if (!productUser || !productUser.isPM) {
+    throw new SlackPermissionError();
+  }
 
   if (feedback.roadmapItemId || feedback.archivedAt) {
     await postEphemeral('feedback_already_processed')({ feedback })({

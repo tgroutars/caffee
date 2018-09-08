@@ -18,18 +18,28 @@ const appHomeMessage = async (payload, { workspace }) => {
     subtype,
     thread_ts: threadTS,
   } = event;
-
-  if (subtype === 'message_changed' || channelType !== 'app_home' || threadTS) {
-    return;
-  }
+  const { accessToken, appUserId } = workspace;
   const rawText = event.text || '';
 
-  const products = await workspace.getProducts();
-  const { accessToken, appUserId } = workspace;
-
-  if (userSlackId === appUserId) {
+  if (
+    // Not a DM to Caffee
+    channelType !== 'app_home' ||
+    // A message was updated
+    subtype === 'message_changed' ||
+    // Message in thread
+    threadTS ||
+    // Message from Caffee itself
+    userSlackId === appUserId
+  ) {
     return;
   }
+
+  const slackUser = await SlackUser.find({
+    where: { slackId: userSlackId, workspaceId: workspace.id },
+    include: ['user'],
+  });
+  const { user } = slackUser;
+  const products = await user.getProducts();
 
   if (!products.length) {
     return;
@@ -38,8 +48,6 @@ const appHomeMessage = async (payload, { workspace }) => {
   const text = await decode(workspace)(rawText);
 
   const { title, description } = getTitleDescription(text);
-
-  const slackUser = await SlackUser.find({ where: { slackId: userSlackId } });
 
   if (products.length > 1) {
     await postMenuChooseProductMessage({

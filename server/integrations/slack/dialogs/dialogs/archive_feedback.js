@@ -1,6 +1,6 @@
-const archiveReason = ({ feedbackId }) => {
+module.exports = ({ feedbackId }) => {
   const callbackId = {
-    type: 'archive_feedback_reason',
+    type: 'archive_feedback',
     feedbackId,
   };
 
@@ -22,5 +22,3 @@ const archiveReason = ({ feedbackId }) => {
     elements,
   };
 };
-
-module.exports = archiveReason;

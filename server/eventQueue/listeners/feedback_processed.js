@@ -13,6 +13,7 @@ const { RoadmapItem: RoadmapItemService } = require('../../services');
 const { postMessage } = require('../../integrations/slack/messages');
 const { addComment } = require('../../integrations/trello/helpers/api');
 
+// TODO: send the message in threads instead of just to author
 const feedbackProcessed = async ({ feedbackId, processedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [

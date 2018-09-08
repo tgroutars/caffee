@@ -1,5 +1,6 @@
 const { postEphemeral } = require('../../../messages');
 const { RoadmapItem, ProductUser } = require('../../../../../models');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 module.exports = async (payload, { workspace, slackUser, user }) => {
   const {
@@ -14,6 +15,10 @@ module.exports = async (payload, { workspace, slackUser, user }) => {
   const productUser = await ProductUser.find({
     where: { productId: roadmapItem.productId, userId: user.id },
   });
+  if (!productUser) {
+    throw new SlackPermissionError();
+  }
+
   const { isPM } = productUser;
   const { followers, stage } = roadmapItem;
   const { accessToken } = workspace;

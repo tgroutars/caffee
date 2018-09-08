@@ -3,7 +3,7 @@ const trim = require('lodash/trim');
 const { Feedback: FeedbackService } = require('../../../../../services');
 const { SlackUser } = require('../../../../../models');
 
-const archiveFeedbackReason = async payload => {
+module.exports = async payload => {
   const {
     submission,
     callback_id: callbackId,
@@ -20,5 +20,3 @@ const archiveFeedbackReason = async payload => {
     archivedById: archivedBySlackUser.userId,
   });
 };
-
-module.exports = archiveFeedbackReason;

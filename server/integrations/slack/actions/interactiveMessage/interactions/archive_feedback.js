@@ -2,7 +2,7 @@ const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
 const { Feedback } = require('../../../../../models');
 
-const openArchiveReasonDialog = openDialog('archive_feedback_reason');
+const openArchiveReasonDialog = openDialog('archive_feedback');
 
 const archiveFeedback = async (payload, { workspace, slackUser }) => {
   const {

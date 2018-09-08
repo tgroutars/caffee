@@ -1,6 +1,7 @@
 const { Product, ProductUser, Scope } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 const openFeedbackDialogHelper = openDialog('feedback');
 
@@ -57,6 +58,10 @@ module.exports = async (payload, { slackUser, workspace }) => {
     },
     include: ['product'],
   });
+
+  if (!productUser) {
+    throw new SlackPermissionError();
+  }
 
   await openFeedbackDialogHelper({
     files,

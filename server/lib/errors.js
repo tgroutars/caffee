@@ -5,6 +5,15 @@ class SlackDialogSubmissionError extends Error {
   }
 }
 
+class SlackUserError extends Error {
+  constructor(message) {
+    super('Slack user error');
+    this.userMessage =
+      typeof message === 'object' ? message : { text: message };
+  }
+}
+
 module.exports = {
   SlackDialogSubmissionError,
+  SlackUserError,
 };

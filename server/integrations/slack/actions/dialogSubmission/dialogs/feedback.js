@@ -2,8 +2,12 @@ const trim = require('lodash/trim');
 const Promise = require('bluebird');
 
 const { syncFile } = require('../../../helpers/files');
-const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
+const {
+  SlackDialogSubmissionError,
+  SlackUserError,
+} = require('../../../../../lib/errors');
 const { Feedback: FeedbackService } = require('../../../../../services');
+const { ProductUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
 
 const validate = async payload => {
@@ -19,7 +23,7 @@ const validate = async payload => {
   }
 };
 
-const run = async (payload, { slackUser, workspace }) => {
+const run = async (payload, { slackUser, workspace, user }) => {
   const {
     channel: { id: channel },
     submission,
@@ -28,6 +32,15 @@ const run = async (payload, { slackUser, workspace }) => {
   const { productId, defaultAuthorId, files = [], scopeId } = callbackId;
   const authorId = submission.authorId || defaultAuthorId;
   const description = trim(submission.description);
+
+  const productUser = await ProductUser.find({
+    where: { productId, userId: user.id },
+  });
+  if (!productUser) {
+    throw new SlackUserError(
+      `You don't have the permission to send a feedback on this product`,
+    );
+  }
 
   const { accessToken } = workspace;
 

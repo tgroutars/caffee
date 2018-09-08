@@ -2,6 +2,7 @@ const { postEphemeral } = require('../../../messages');
 const { ProductUser } = require('../../../../../models');
 const { getPasswordLessURL } = require('../../../../../lib/auth');
 const { productSettings } = require('../../../../../lib/clientRoutes');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 const postMenuMessage = postEphemeral('menu');
 
@@ -30,8 +31,9 @@ const sendMenu = async (payload, { workspace, slackUser, user }) => {
     },
   });
   if (!productUser) {
-    return;
+    throw new SlackPermissionError();
   }
+
   await postMenuMessage({
     productId,
     files,

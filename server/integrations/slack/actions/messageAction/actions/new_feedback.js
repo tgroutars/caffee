@@ -5,14 +5,15 @@ const { postEphemeral } = require('../../../messages');
 const openFeedbackDialog = openDialog('feedback');
 const postChooseProductMessage = postEphemeral('feedback_choose_product');
 
-const newFeedback = async (payload, { workspace, slackUser }) => {
+const newFeedback = async (payload, { workspace, slackUser, user }) => {
   const {
     channel: { id: channel },
     message: { text, user: messageUserSlackId, files },
     trigger_id: triggerId,
   } = payload;
 
-  const products = await workspace.getProducts();
+  const products = await user.getProducts();
+
   if (!products.length) {
     return;
   }

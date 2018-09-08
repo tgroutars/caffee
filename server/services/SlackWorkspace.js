@@ -1,5 +1,6 @@
 const SlackClient = require('@slack/client').WebClient;
 const Promise = require('bluebird');
+const winston = require('winston');
 
 const { SlackWorkspace, SlackUser, Sequelize } = require('../models');
 const { trigger } = require('../eventQueue/eventQueue');
@@ -59,9 +60,14 @@ const SlackWorkspaceService = services => ({
 
   async syncAll() {
     const workspaces = await SlackWorkspace.findAll();
-    await Promise.map(workspaces, async workspace =>
-      this.syncUsers(workspace.id),
-    );
+    await Promise.map(workspaces, async workspace => {
+      try {
+        this.syncUsers(workspace.id);
+      } catch (err) {
+        winston.error(`Couldn't sync Slack workspace ${workspace.domain}`);
+        winston.error(err);
+      }
+    });
   },
 });
 

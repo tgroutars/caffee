@@ -1,8 +1,12 @@
 const { Feedback: FeedbackService } = require('../../../../../services');
-const { Feedback } = require('../../../../../models');
+const { Feedback, ProductUser } = require('../../../../../models');
 const { postEphemeral } = require('../../../messages');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
-const addFeedbackToRoadmapItem = async (payload, { workspace, slackUser }) => {
+const addFeedbackToRoadmapItem = async (
+  payload,
+  { workspace, slackUser, user },
+) => {
   const {
     action,
     channel: { id: channel },
@@ -16,6 +20,14 @@ const addFeedbackToRoadmapItem = async (payload, { workspace, slackUser }) => {
     name: { feedbackId },
   } = action;
   const feedback = await Feedback.findById(feedbackId);
+
+  const productUser = await ProductUser.find({
+    where: { productId: feedback.productId, userId: user.id },
+  });
+  if (!productUser || !productUser.isPM) {
+    throw new SlackPermissionError();
+  }
+
   const { accessToken } = workspace;
 
   if (feedback.roadmapItemId || feedback.archivedAt) {

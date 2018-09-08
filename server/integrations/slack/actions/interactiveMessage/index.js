@@ -1,9 +1,11 @@
 const Promise = require('bluebird');
+const SlackClient = require('@slack/client').WebClient;
 
 const HashStore = require('../../../../lib/redis/HashStore');
 const interactions = require('./interactions');
 const { postEphemeral } = require('../../messages');
 const { SlackUser, SlackWorkspace } = require('../../../../models');
+const { SlackUserError } = require('../../../../lib/errors');
 
 const actionValueStore = new HashStore('slack:action_value');
 
@@ -38,6 +40,7 @@ const interactiveMessage = async rawPayload => {
     action,
     team: { id: workspaceSlackId },
     user: { id: userSlackId },
+    channel: { id: channel },
   } = payload;
 
   const slackUser = await SlackUser.find({
@@ -58,9 +61,6 @@ const interactiveMessage = async rawPayload => {
   const { workspace, user } = slackUser;
 
   if (!action.name) {
-    const {
-      channel: { id: channel },
-    } = payload;
     await postEphemeral('action_expired')()({
       channel,
       user: slackUser.slackId,
@@ -73,8 +73,21 @@ const interactiveMessage = async rawPayload => {
   if (typeof interaction !== 'function') {
     throw new Error(`Unknow interaction: ${type}`);
   }
+  try {
+    await interaction(payload, { workspace, slackUser, user });
+  } catch (err) {
+    if (err instanceof SlackUserError) {
+      const slackClient = new SlackClient(workspace.accessToken);
+      await slackClient.chat.postEphemeral({
+        ...err.userMessage,
+        channel,
+        user: userSlackId,
+      });
+      return;
+    }
 
-  await interaction(payload, { workspace, slackUser, user });
+    throw err;
+  }
 };
 
 module.exports = interactiveMessage;

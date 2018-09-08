@@ -6,8 +6,11 @@ const {
   SlackInstall: SlackInstallService,
   Product: ProductService,
 } = require('../../../../../services');
-const { SlackInstall, Product } = require('../../../../../models');
-const { SlackDialogSubmissionError } = require('../../../../../lib/errors');
+const { SlackInstall, Product, ProductUser } = require('../../../../../models');
+const {
+  SlackDialogSubmissionError,
+  SlackUserError,
+} = require('../../../../../lib/errors');
 
 const handleError = err => {
   const slackErrorCode = err.data && err.data.error;
@@ -35,7 +38,7 @@ const handleError = err => {
 
 // We need to actually create the channel to validate the channel name
 // So we just create it in the validate
-const validate = async (payload, { slackUser, workspace }) => {
+const validate = async (payload, { slackUser, workspace, user }) => {
   const { submission, callback_id: callbackId } = payload;
   const { slackInstallId } = callbackId;
   const channelName = trimStart(trim(submission.channel), '#');
@@ -48,7 +51,12 @@ const validate = async (payload, { slackUser, workspace }) => {
 
   const { product } = slackInstall;
 
-  // TODO: Don't create channel if already exists
+  const productUser = await ProductUser.find({
+    where: { productId: product.id, userId: user.id },
+  });
+  if (!productUser || !productUser.isAdmin) {
+    throw new SlackUserError(`Only admins can create a new channel`);
+  }
 
   try {
     const { channel } = await slackClient.conversations.create({

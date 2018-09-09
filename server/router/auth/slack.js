@@ -3,9 +3,10 @@ const axios = require('axios');
 const querystring = require('querystring');
 const SlackClient = require('@slack/client').WebClient;
 const Promise = require('bluebird');
+const moment = require('moment');
 
 const { getUserVals } = require('../../integrations/slack/helpers/user');
-const { Product } = require('../../models');
+const { Product, SlackWorkspace } = require('../../models');
 const {
   Product: ProductService,
   SlackWorkspace: SlackWorkspaceService,
@@ -59,13 +60,24 @@ router.get('/authorize/callback', async ctx => {
       redirect_uri: AUTHORIZE_REDIRECT_URI,
     },
   });
+
   if (!access.ok) {
     ctx.throw(401);
   }
 
   const {
+    refresh_token: refreshToken,
+    access_token: accessToken,
+    expires_in: tokenExpiresIn,
+    team_id: workspaceSlackId,
     authorizing_user: { app_home: appHome },
   } = access;
+  const tokenExpiresAt = moment().add(tokenExpiresIn, 'seconds');
+
+  await SlackWorkspace.update(
+    { refreshToken, tokenExpiresAt, accessToken },
+    { where: { slackId: workspaceSlackId } },
+  );
 
   ctx.redirect(`https://slack.com/app_redirect?channel=${appHome}`);
 });
@@ -101,7 +113,10 @@ router.get('/install/callback', async ctx => {
     authorizing_user: { user_id: userSlackId, app_home: appHome },
     app_user_id: appUserId,
     app_id: appId,
+    refresh_token: refreshToken,
+    expires_in: tokenExpiresIn,
   } = access;
+  const tokenExpiresAt = moment().add(tokenExpiresIn, 'seconds');
 
   const slackClient = new SlackClient(accessToken);
   const [{ user: userInfo }, { team: workspaceInfo }] = await Promise.all([
@@ -118,6 +133,8 @@ router.get('/install/callback', async ctx => {
     domain,
   } = workspaceInfo;
   const [workspace] = await SlackWorkspaceService.findOrCreate({
+    refreshToken,
+    tokenExpiresAt,
     accessToken,
     domain,
     appId,

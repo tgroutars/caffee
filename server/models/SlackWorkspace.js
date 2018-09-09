@@ -40,6 +40,16 @@ module.exports = (sequelize, DataTypes) => {
         field: 'app_user_id',
         allowNull: false,
       },
+      refreshToken: {
+        type: DataTypes.STRING,
+        field: 'refresh_token',
+        allowNull: true,
+      },
+      tokenExpiresAt: {
+        type: DataTypes.DATE,
+        field: 'token_expires_at',
+        allowNull: true,
+      },
     },
     {
       indexes: [

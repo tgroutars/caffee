@@ -17,6 +17,8 @@ const SlackWorkspaceService = services => ({
     image,
     name,
     slackId,
+    refreshToken,
+    tokenExpiresAt,
   }) {
     const [workspace, created] = await SlackWorkspace.findOrCreate({
       where: { slackId },
@@ -27,6 +29,8 @@ const SlackWorkspaceService = services => ({
         image,
         appId,
         appUserId,
+        refreshToken,
+        tokenExpiresAt,
       },
     });
     if (created) {

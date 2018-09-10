@@ -1,20 +1,11 @@
 const Promise = require('bluebird');
 
-const { Feedback, User, SlackUser, SlackWorkspace } = require('../../models');
+const { Feedback, User, SlackWorkspace } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 
 const feedbackArchived = async ({ feedbackId, archivedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
-    include: [
-      {
-        model: User,
-        as: 'author',
-        include: [
-          { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
-        ],
-      },
-      'externalRefs',
-    ],
+    include: ['externalRefs'],
   });
   const archivedBy = await User.findById(archivedById);
   const { externalRefs } = feedback;

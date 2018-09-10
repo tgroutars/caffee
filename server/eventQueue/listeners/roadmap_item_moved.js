@@ -1,9 +1,16 @@
+const Promise = require('bluebird');
+
+const { RoadmapStage } = require('../../models');
 const { Activity: ActivityService } = require('../../services');
 
 module.exports = async ({ roadmapItemId, oldStageId, newStageId }) => {
+  const [oldStage, newStage] = await Promise.all([
+    RoadmapStage.findById(oldStageId),
+    RoadmapStage.findById(newStageId),
+  ]);
   await ActivityService.createMoved(roadmapItemId, {
-    oldStageId,
-    newStageId,
+    oldStage,
+    newStage,
   });
 };
 

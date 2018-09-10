@@ -1,3 +1,5 @@
+const pick = require('lodash/pick');
+
 const { Activity, RoadmapItem } = require('../models');
 
 const RoadmapItemService = (/* services */) => ({
@@ -21,15 +23,15 @@ const RoadmapItemService = (/* services */) => ({
     return activity;
   },
 
-  async createMoved(roadmapItemId, { oldStageId, newStageId }) {
+  async createMoved(roadmapItemId, { oldStage, newStage }) {
     const roadmapItem = await RoadmapItem.findById(roadmapItemId);
     const activity = await Activity.create({
       productId: roadmapItem.productId,
       roadmapItemId: roadmapItem.id,
       type: 'moved',
       activity: {
-        oldStageId,
-        newStageId,
+        oldStage: pick(oldStage, ['id', 'name']),
+        newStage: pick(newStage, ['id', 'name']),
       },
     });
     return activity;

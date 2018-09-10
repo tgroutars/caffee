@@ -49,6 +49,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: [],
       },
+      isPilot: {
+        type: DataTypes.BOOLEAN,
+        field: 'is_pilot',
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {},
   );

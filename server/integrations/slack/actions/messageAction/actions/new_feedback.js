@@ -41,7 +41,7 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
     })({
       accessToken,
       channel,
-      user: slackUser.id,
+      user: slackUser.slackId,
     });
     return;
   }

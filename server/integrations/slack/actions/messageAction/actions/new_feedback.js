@@ -1,3 +1,6 @@
+const Promise = require('bluebird');
+const SlackClient = require('@slack/client').WebClient;
+
 const { SlackUser, ProductUser } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
@@ -8,7 +11,7 @@ const postChooseProductMessage = postEphemeral('feedback_choose_product');
 const newFeedback = async (payload, { workspace, slackUser, user }) => {
   const {
     channel: { id: channel },
-    message: { text, user: messageUserSlackId, files },
+    message: { text, user: messageUserSlackId, files, replies, ts },
     trigger_id: triggerId,
   } = payload;
 
@@ -22,6 +25,21 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
   const messageSlackUser = await SlackUser.find({
     where: { slackId: messageUserSlackId },
   });
+
+  let defaultFeedback = text;
+  if (replies && replies.length) {
+    const slackClient = new SlackClient(accessToken);
+    const { messages } = await slackClient.conversations.replies({
+      channel,
+      ts,
+    });
+    defaultFeedback = (await Promise.map(messages, async message => {
+      const commentSlackUser = await SlackUser.find({
+        where: { workspaceId: workspace.id, slackId: message.user },
+      });
+      return `${commentSlackUser.name}: ${message.text}`;
+    })).join('\n');
+  }
 
   const defaultAuthorId = messageSlackUser
     ? messageSlackUser.userId
@@ -37,7 +55,7 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
       products,
       defaultAuthorId,
       defaultAuthorName,
-      defaultFeedback: text,
+      defaultFeedback,
     })({
       accessToken,
       channel,
@@ -57,7 +75,7 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
     defaultAuthorId,
     defaultAuthorName,
     product,
-    defaultFeedback: text,
+    defaultFeedback,
     selectAuthor: productUser.isPM,
   })({
     accessToken,

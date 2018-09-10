@@ -1,9 +1,8 @@
 const Promise = require('bluebird');
 
-const { Feedback, User, SlackUser } = require('../../models');
+const { Feedback, User, SlackUser, SlackWorkspace } = require('../../models');
 const { postMessage } = require('../../integrations/slack/messages');
 
-// TODO: send the message in threads instead of just to author
 const feedbackArchived = async ({ feedbackId, archivedById }) => {
   const feedback = await Feedback.findById(feedbackId, {
     include: [
@@ -14,20 +13,27 @@ const feedbackArchived = async ({ feedbackId, archivedById }) => {
           { model: SlackUser, as: 'slackUsers', include: ['workspace'] },
         ],
       },
+      'externalRefs',
     ],
   });
   const archivedBy = await User.findById(archivedById);
-  const { author } = feedback;
-  const { slackUsers } = author;
+  const { externalRefs } = feedback;
+
   const postFeedbackArchivedMessage = postMessage('feedback_archived')({
     feedback,
     archivedBy,
   });
 
-  await Promise.map(slackUsers, async slackUser => {
-    const { workspace, slackId: userSlackId } = slackUser;
+  await Promise.map(externalRefs, async externalRef => {
+    const { channel, ts, workspaceId } = externalRef.props;
+    const workspace = await SlackWorkspace.findById(workspaceId);
     const { accessToken } = workspace;
-    await postFeedbackArchivedMessage({ accessToken, channel: userSlackId });
+    await postFeedbackArchivedMessage({
+      accessToken,
+      channel,
+      threadTS: ts,
+      replyBroadcast: true,
+    });
   });
 };
 

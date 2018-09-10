@@ -39,13 +39,15 @@ const getPostMessage = isEphemeral => type => {
 
   return (...messageArgs) => {
     const rawMessage = getMessage(...messageArgs);
-    return async ({ accessToken, channel, user }) => {
+    return async ({ accessToken, channel, user, threadTS, replyBroadcast }) => {
       const message = await preProcessMessage(rawMessage);
       const slackClient = new SlackClient(accessToken);
       return slackClient.apiCall(method, {
         ...message,
         channel,
         user,
+        thread_ts: threadTS,
+        reply_broadcast: replyBroadcast,
       });
     };
   };

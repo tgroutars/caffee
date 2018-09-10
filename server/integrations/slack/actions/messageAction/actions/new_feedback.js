@@ -33,12 +33,13 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
       channel,
       ts,
     });
-    defaultFeedback = (await Promise.map(messages, async message => {
+    const thread = (await Promise.map(messages, async message => {
       const commentSlackUser = await SlackUser.find({
         where: { workspaceId: workspace.id, slackId: message.user },
       });
       return `${commentSlackUser.name}: ${message.text}`;
     })).join('\n');
+    defaultFeedback = `${defaultFeedback}\n\nOriginal thread:\n${thread}`;
   }
 
   const defaultAuthorId = messageSlackUser

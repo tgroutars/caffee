@@ -118,7 +118,7 @@ const RoadmapItemService = (/* services */) => ({
       { archivedAt: null },
       { where: { id: roadmapItemId } },
     );
-    await trigger('roadmap_item_created', {
+    await trigger('roadmap_item_unarchived', {
       roadmapItemId,
     });
   },

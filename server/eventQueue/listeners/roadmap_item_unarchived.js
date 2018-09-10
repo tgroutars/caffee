@@ -1,7 +1,7 @@
 const { Activity: ActivityService } = require('../../services');
 
 module.exports = async ({ roadmapItemId }) => {
-  await ActivityService.createCreated(roadmapItemId);
+  await ActivityService.createUnarchived(roadmapItemId);
 };
 
 // TODO: Send updates

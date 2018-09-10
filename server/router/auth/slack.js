@@ -72,12 +72,14 @@ router.get('/authorize/callback', async ctx => {
     team_id: workspaceSlackId,
     authorizing_user: { app_home: appHome },
   } = access;
-  const tokenExpiresAt = moment().add(tokenExpiresIn, 'seconds');
 
-  await SlackWorkspace.update(
-    { refreshToken, tokenExpiresAt, accessToken },
-    { where: { slackId: workspaceSlackId } },
-  );
+  const vals = { accessToken };
+  if (refreshToken && tokenExpiresIn) {
+    vals.refreshToken = refreshToken;
+    vals.tokenExpiresAt = moment().add(tokenExpiresIn, 'seconds');
+  }
+
+  await SlackWorkspace.update(vals, { where: { slackId: workspaceSlackId } });
 
   ctx.redirect(`https://slack.com/app_redirect?channel=${appHome}`);
 });
@@ -116,7 +118,6 @@ router.get('/install/callback', async ctx => {
     refresh_token: refreshToken,
     expires_in: tokenExpiresIn,
   } = access;
-  const tokenExpiresAt = moment().add(tokenExpiresIn, 'seconds');
 
   const slackClient = new SlackClient(accessToken);
   const [{ user: userInfo }, { team: workspaceInfo }] = await Promise.all([
@@ -132,9 +133,8 @@ router.get('/install/callback', async ctx => {
     icon: { image_132: workspaceImage },
     domain,
   } = workspaceInfo;
-  const [workspace] = await SlackWorkspaceService.findOrCreate({
-    refreshToken,
-    tokenExpiresAt,
+
+  const workspaceVals = {
     accessToken,
     domain,
     appId,
@@ -142,7 +142,13 @@ router.get('/install/callback', async ctx => {
     slackId: workspaceSlackId,
     name: workspaceName,
     image: workspaceImage,
-  });
+  };
+  if (refreshToken && tokenExpiresIn) {
+    workspaceVals.refreshToken = refreshToken;
+    workspaceVals.tokenExpiresAt = moment().add(tokenExpiresIn, 'seconds');
+  }
+
+  const [workspace] = await SlackWorkspaceService.findOrCreate(workspaceVals);
 
   const userVals = getUserVals(userInfo);
   const [slackUser] = await SlackUserService.findOrCreate({

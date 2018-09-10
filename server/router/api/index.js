@@ -12,6 +12,7 @@ const feedbacksRouter = require('./feedbacks');
 const roadmapItemsRouter = require('./roadmapItems');
 const productsUsersRouter = require('./products.users');
 const slackInstallsRouter = require('./slackInstalls');
+const activitiesRouter = require('./activities');
 
 const router = new Router();
 
@@ -77,5 +78,6 @@ router.use(feedbacksRouter.routes(), feedbacksRouter.allowedMethods());
 router.use(roadmapItemsRouter.routes(), roadmapItemsRouter.allowedMethods());
 router.use(productsUsersRouter.routes(), productsUsersRouter.allowedMethods());
 router.use(slackInstallsRouter.routes(), slackInstallsRouter.allowedMethods());
+router.use(activitiesRouter.routes(), activitiesRouter.allowedMethods());
 
 module.exports = router;

@@ -23,15 +23,16 @@ const channelMessage = async (payload, { workspace }) => {
     subtype,
   } = event;
 
+  const { accessToken, appUserId } = workspace;
   if (
     !includes(['channel', 'group', 'im', 'mpim'], channelType) ||
-    subtype === 'message_changed'
+    subtype === 'message_changed' ||
+    userSlackId === appUserId
   ) {
     return;
   }
 
   const rawText = event.text || '';
-  const { accessToken, appUserId } = workspace;
   const appMention = `<@${appUserId}>`;
   if (!rawText.includes(appMention)) {
     return;

@@ -10,10 +10,14 @@ import { isCurrentProductAdminSelector } from '../../selectors/product';
 const StyledMenu = styled(Menu)`
   line-height: 64px;
 `;
+const StyleMenuItem = styled(Menu.Item)`
+  float: left;
+`;
 const IconButton = styled(Menu.Item)`
   width: 64px;
   padding-left: 20px;
   padding-right: 20px;
+  float: left;
 `;
 const NavIcon = styled(Icon)`
   svg {
@@ -41,9 +45,9 @@ const Nav = ({ pathname, isUserAdmin }) => {
           <NavIcon type="home" />
         </Link>
       </IconButton>
-      <Menu.Item key="inbox">
+      <StyleMenuItem key="inbox">
         <Link to={`/manage/${productId}/inbox`}>Inbox</Link>
-      </Menu.Item>
+      </StyleMenuItem>
       {isUserAdmin ? (
         <SettingsMenuItem key="settings">
           <Link to={`/manage/${productId}/settings`}>

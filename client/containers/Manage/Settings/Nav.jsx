@@ -12,7 +12,8 @@ const StyledSider = styled(Sider)`
   .ant-layout-sider-children {
     height: 100%;
     background: #f0f2f5;
-  }#f0f2f5
+  }
+  height: calc(100vh - 128px);
 `;
 const StyledMenu = styled(Menu)`
   margin-top: 20px;

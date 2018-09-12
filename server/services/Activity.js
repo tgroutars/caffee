@@ -30,19 +30,22 @@ const RoadmapItemService = (/* services */) => ({
       roadmapItemId: roadmapItem.id,
       type: 'moved',
       activity: {
-        oldStage: pick(oldStage, ['id', 'name']),
-        newStage: pick(newStage, ['id', 'name']),
+        oldStage: pick(oldStage, ['id', 'name', 'position']),
+        newStage: pick(newStage, ['id', 'name', 'position']),
       },
     });
     return activity;
   },
 
   async createCreated(roadmapItemId) {
-    const roadmapItem = await RoadmapItem.findById(roadmapItemId);
+    const roadmapItem = await RoadmapItem.findById(roadmapItemId, {
+      include: ['stage'],
+    });
     const activity = await Activity.create({
       productId: roadmapItem.productId,
       roadmapItemId: roadmapItem.id,
       type: 'created',
+      activity: { stage: pick(roadmapItem.stage, ['id', 'name']) },
     });
     return activity;
   },

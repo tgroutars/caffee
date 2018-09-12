@@ -15,6 +15,12 @@ import { currentProductIdSelector } from '../../../../../selectors/product';
 import { roadmapStagesSelector } from '../../../../../selectors/roadmapStage';
 import { tagsSelector } from '../../../../../selectors/tag';
 
+const ActionButton = styled(Button)`
+  width: 100%;
+  .ant-btn {
+    width: 100%;
+  }
+`;
 const Popover = styled(AntPopover)``;
 const PopoverContentWrapper = styled.div`
   max-width: 300px;
@@ -157,7 +163,7 @@ class Create extends React.Component {
         onVisibleChange={this.handlePopoverVisibilityChange}
         content={this.renderPopoverContent()}
       >
-        <Button type="primary">Create roadmap item</Button>
+        <ActionButton type="primary">Create roadmap item</ActionButton>
       </Popover>
     );
   }

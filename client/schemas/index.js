@@ -29,6 +29,8 @@ export const feedback = new schema.Entity('feedbacks', {
 export const feedbacks = new schema.Array(feedback);
 export const slackInstall = new schema.Entity('slackInstalls');
 export const slackInstalls = new schema.Array(slackInstall);
+export const activity = new schema.Entity('activities');
+export const activities = new schema.Array(activity);
 export const product = new schema.Entity('products', {
   scopes,
   feedbacks,
@@ -37,6 +39,7 @@ export const product = new schema.Entity('products', {
   tags,
   users,
   slackInstalls,
+  activities,
 });
 export const products = new schema.Array(product);
 
@@ -61,4 +64,6 @@ export default {
   roadmapItems,
   slackInstall,
   slackInstalls,
+  activity,
+  activities,
 };

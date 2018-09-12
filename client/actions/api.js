@@ -89,4 +89,7 @@ export default {
     listChannels: apiCall.bind(this, 'slackInstalls.listChannels'),
     setChannel: apiCall.bind(this, 'slackInstalls.setChannel'),
   },
+  activities: {
+    list: apiCall.bind(this, 'activities.list'),
+  },
 };

@@ -7,6 +7,7 @@ import { Layout as AntLayout } from 'antd';
 
 import { fetchProduct } from '../../actions/products';
 import Inbox from './Inbox/Inbox';
+import Updates from './Updates/Updates';
 import Settings from './Settings/Settings';
 import Nav from './Nav';
 
@@ -54,6 +55,7 @@ class Manage extends React.Component {
             <Switch>
               <Redirect exact from={url} to={`${url}/inbox/unprocessed`} />
               <Route path={`${url}/inbox`} component={Inbox} />
+              <Route path={`${url}/updates/:filter`} component={Updates} />
               <Route path={`${url}/settings`} component={Settings} />
             </Switch>
           ) : null}

@@ -46,7 +46,10 @@ const Nav = ({ pathname, isUserAdmin }) => {
         </Link>
       </IconButton>
       <StyleMenuItem key="inbox">
-        <Link to={`/manage/${productId}/inbox`}>Inbox</Link>
+        <Link to={`/manage/${productId}/inbox/unprocessed`}>Inbox</Link>
+      </StyleMenuItem>
+      <StyleMenuItem key="updates">
+        <Link to={`/manage/${productId}/updates/pending`}>Updates</Link>
       </StyleMenuItem>
       {isUserAdmin ? (
         <SettingsMenuItem key="settings">

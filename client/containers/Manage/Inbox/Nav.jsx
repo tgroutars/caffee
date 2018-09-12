@@ -29,7 +29,7 @@ const StyledMenuItem = styled(Menu.Item)`
   && {
     &.ant-menu-item-selected {
       background: #f0f2f5;
-      ${'' /* background: white; */} a {
+      a {
         transition: all 0.1s;
         font-size: 16px;
       }

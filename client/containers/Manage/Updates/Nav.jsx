@@ -28,10 +28,13 @@ const StyledMenu = styled(Menu)`
 `;
 const StyledMenuItem = styled(Menu.Item)`
   && {
+    transition: all 0.1s;
+    &.ant-menu-item-active {
+      background: rgba(0, 0, 0, 0);
+    }
     &.ant-menu-item-selected {
       background: #f0f2f5;
       a {
-        transition: all 0.1s;
         font-size: 16px;
       }
       border-left: 3px solid #1890ff;

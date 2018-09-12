@@ -5,8 +5,8 @@ import { currentProductSelector } from './product';
 
 const filterFuncs = {
   pending: activity => !activity.sentAt && !activity.discardedAt,
-  // processed: feedback => !!feedback.roadmapItemId,
-  // archived: feedback => !!feedback.archivedAt,
+  sent: feedback => !!feedback.sentAt,
+  discarded: feedback => !!feedback.discardedAt,
 };
 
 const entitiesSelector = state => state.entities;

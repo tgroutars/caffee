@@ -4,6 +4,7 @@ const SlackClient = require('@slack/client').WebClient;
 const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
+const { SlackPermissionError } = require('../../../../../lib/errors');
 
 const { Op } = Sequelize;
 
@@ -18,11 +19,11 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
   } = payload;
 
   const products = await user.getProducts({
-    through: { where: { role: { [Op.in]: ['user', 'admin'] } } },
+    through: { where: { role: { [Op.in]: ['author', 'user', 'admin'] } } },
   });
 
   if (!products.length) {
-    return;
+    throw new SlackPermissionError();
   }
 
   const { accessToken } = workspace;

@@ -1,30 +1,28 @@
-const {
-  SlackWorkspace,
-  SlackUser,
-  Sequelize,
-} = require('../../../../../models');
+const { User, ProductUser, Sequelize } = require('../../../../../models');
 
 const { Op } = Sequelize;
 
 const feedbackAuthorId = async payload => {
-  const {
-    team: { id: workspaceSlackId },
-    value,
-  } = payload;
-  const workspace = await SlackWorkspace.find({
-    where: { slackId: workspaceSlackId },
+  const { callback_id: callbackId, value } = payload;
+  const { productId } = callbackId;
+  const productUsers = await ProductUser.findAll({
+    where: { productId },
     include: [
       {
-        model: SlackUser,
-        as: 'slackUsers',
-        where: { name: { [Op.iLike]: `%${value.replace('%', '\\%')}%` } },
+        model: User,
+        as: 'user',
+        where: {
+          name: {
+            [Op.iLike]: `%${value.replace('%', '\\%')}%`,
+          },
+        },
       },
     ],
   });
-  const { slackUsers } = workspace;
-  return slackUsers.map(slackUser => ({
-    label: slackUser.name,
-    value: slackUser.userId,
+
+  return productUsers.map(({ user }) => ({
+    label: user.name,
+    value: user.id,
   }));
 };
 

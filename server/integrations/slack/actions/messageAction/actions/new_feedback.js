@@ -1,9 +1,11 @@
 const Promise = require('bluebird');
 const SlackClient = require('@slack/client').WebClient;
 
-const { SlackUser, ProductUser } = require('../../../../../models');
+const { SlackUser, ProductUser, Sequelize } = require('../../../../../models');
 const { openDialog } = require('../../../dialogs');
 const { postEphemeral } = require('../../../messages');
+
+const { Op } = Sequelize;
 
 const openFeedbackDialog = openDialog('feedback');
 const postChooseProductMessage = postEphemeral('feedback_choose_product');
@@ -15,7 +17,9 @@ const newFeedback = async (payload, { workspace, slackUser, user }) => {
     trigger_id: triggerId,
   } = payload;
 
-  const products = await user.getProducts();
+  const products = await user.getProducts({
+    through: { where: { role: { [Op.in]: ['user', 'admin'] } } },
+  });
 
   if (!products.length) {
     return;

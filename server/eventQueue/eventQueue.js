@@ -22,7 +22,7 @@ queue.process(50, async job => {
     } catch (err) {
       winston.error(`Error processing event ${type}:`);
       winston.error(err);
-      winston.error(`payload: ${payload}`);
+      winston.error(`payload: ${JSON.stringify(payload)}`);
     }
   });
 });

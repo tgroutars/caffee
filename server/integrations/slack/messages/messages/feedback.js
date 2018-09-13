@@ -3,6 +3,8 @@ const uniqBy = require('lodash/uniqBy');
 
 const andify = require('../../../../lib/andify');
 
+const { WEB_BASE_URL } = process.env;
+
 const newFeedback = ({
   userTo,
   feedback,
@@ -95,6 +97,13 @@ const newFeedback = ({
         },
         text: 'Archive',
         style: 'danger',
+      },
+      {
+        type: 'button',
+        url: `${WEB_BASE_URL}/manage/${product.id}/inbox/unprocessed/${
+          feedback.id
+        }`,
+        text: 'Open in Caffee',
       },
     ];
   }

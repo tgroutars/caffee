@@ -5,6 +5,7 @@ import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
 import Nav from './Nav';
+import UpdatesList from './UpdatesList';
 import { listActivities } from '../../../actions/activities';
 import { currentProductIdSelector } from '../../../selectors/product';
 import { currentFilterSelector } from '../../../selectors/activity';
@@ -19,10 +20,14 @@ const StyledContent = styled(Content)`
   background: #fff;
   background: rgba(0, 0, 0, 0);
   display: grid;
-  grid-template-columns: 500px auto;
+  grid-template-columns: 700px;
   grid-template-rows: auto;
   overflow-x: scroll !important;
   overflow-y: hidden !important;
+`;
+const ListContainer = styled.div`
+  padding: 24px;
+  overflow-y: scroll;
 `;
 
 // TODO: extract layout in component
@@ -47,7 +52,12 @@ class Updates extends React.Component {
     return (
       <StyledLayout>
         <Nav />
-        <StyledContent />
+        <StyledContent>
+          <ListContainer>
+            <h1>Updates</h1>
+            <UpdatesList />
+          </ListContainer>
+        </StyledContent>
       </StyledLayout>
     );
   }

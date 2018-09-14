@@ -41,7 +41,10 @@ export const pendingActivitiesSelector = createSelector(
 export const currentActivitiesSelector = createSelector(
   activitiesSelector,
   currentFilterSelector,
-  (activities, filter) => activities.filter(filterFuncs[filter]),
+  (activities, filter) =>
+    activities
+      .filter(filterFuncs[filter])
+      .sort((a1, a2) => (a1.createdAt > a2.createdAt ? 1 : -1)),
 );
 
 export const currentFeedbackIdSelector = createSelector(

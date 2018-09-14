@@ -21,7 +21,7 @@ const serializeActivity = activity => ({
     'updatedAt',
   ]),
   roadmapItem: activity.roadmapItem
-    ? pick(activity.roadmapItem, ['id', 'title'])
+    ? pick(activity.roadmapItem, ['id', 'title', 'followerCount'])
     : undefined,
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { List, Input, Button } from 'antd';
+import { List as AntList, Input, Button } from 'antd';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
@@ -10,6 +10,9 @@ import { currentActivitiesSelector } from '../../../selectors/activity';
 
 const Bold = styled.span`
   font-weight: bold;
+`;
+const List = styled(AntList)`
+  max-width: 700px;
 `;
 
 class UpdatesList extends React.Component {
@@ -32,6 +35,8 @@ class UpdatesList extends React.Component {
             Created in <Bold>{activity.stage.name}</Bold>
           </span>
         );
+      case 'archived':
+        return <span>Archived</span>;
       default:
         return null;
     }

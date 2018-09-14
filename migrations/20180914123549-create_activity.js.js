@@ -26,7 +26,7 @@ module.exports = {
         onDelete: 'cascade',
       },
       type: {
-        type: Sequelize.ENUM('created', 'moved', 'archived', 'unarchived'),
+        type: Sequelize.ENUM('created', 'moved', 'archived'),
         allowNull: false,
       },
       activity: {

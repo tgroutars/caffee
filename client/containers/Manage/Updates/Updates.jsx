@@ -20,7 +20,7 @@ const StyledContent = styled(Content)`
   background: #fff;
   background: rgba(0, 0, 0, 0);
   display: grid;
-  grid-template-columns: 700px;
+  grid-template-columns: auto;
   grid-template-rows: auto;
   overflow-x: scroll !important;
   overflow-y: hidden !important;

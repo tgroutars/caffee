@@ -13,16 +13,6 @@ const RoadmapItemService = (/* services */) => ({
     return activity;
   },
 
-  async createUnarchived(roadmapItemId) {
-    const roadmapItem = await RoadmapItem.findById(roadmapItemId);
-    const activity = await Activity.create({
-      productId: roadmapItem.productId,
-      roadmapItemId: roadmapItem.id,
-      type: 'unarchived',
-    });
-    return activity;
-  },
-
   async createMoved(roadmapItemId, { oldStage, newStage }) {
     const roadmapItem = await RoadmapItem.findById(roadmapItemId);
     const activity = await Activity.create({
